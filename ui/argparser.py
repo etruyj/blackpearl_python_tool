@@ -60,6 +60,9 @@ def getCommand():
 def getEndpoint():
     return endpoint
 
+def getOption4():
+    return option4
+
 def getSecretKey():
     return secret_key
 

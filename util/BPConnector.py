@@ -43,6 +43,12 @@ class BPConnector:
     #   Calls to the SDK
     #================================================================
 
+    def createBucket(self, name, data_policy, owner, logbook):
+        return SDKCommands.createBucket(self.client, name, data_policy, owner, logbook)
+
+    def createDataPolicy(self, name, force_puts, min_spanning, blobbing, checksum_type, blob_size, get_priority, put_priority, verify_after_write, verify_priority, end_to_end_crc, versions_to_keep, rebuild_priority, versioning, logbook):
+        return SDKCommands.createDataPolicy(self.client, name, force_puts, min_spanning, blobbing, checksum_type, blob_size, get_priority, put_priority, verify_after_write, verify_priority, end_to_end_crc, versions_to_keep, rebuild_priority, versioning, logbook)
+
     def getBuckets(self, logbook):
         return SDKCommands.getBuckets(self.client, logbook)
 
@@ -51,6 +57,12 @@ class BPConnector:
 
     def getBucketNames(self, logbook):
         return SDKCommands.getBucketNames(self.client, logbook)
+
+    def getDataPolicies(self, logbook):
+        return SDKCommands.getDataPolicies(self.client, logbook)
+
+    def getStorageDomains(self, logbook):
+        return SDKCommands.getStorageDomains(self.client, logbook)
 
     def getUsers(self, logbook):
         return SDKCommands.getUsers(self.client, logbook)

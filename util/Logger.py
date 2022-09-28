@@ -11,6 +11,8 @@
 #   4 - error
 #====================================================================
 
+from datetime import datetime
+
 class Logger:
 
     def __init__(self, location, max_size, count, level):
@@ -32,8 +34,11 @@ class Logger:
         self.writeLog("WARN: " + line, 3)
 
     def writeLog(self, line, level):
+        now = datetime.now()
+        datestr = now.strftime("%Y/%m/%d %H:%M:%S")
+
         if(level >= self.log_level):
             #write log
             f = open(self.path, "a")
-            f.write(line + "\n")
+            f.write(datestr + " : " + line + "\n")
             f.close()

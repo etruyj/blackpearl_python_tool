@@ -13,14 +13,18 @@ if(aparser.isValid):
 
     if controller.clientValid():
         match aparser.getCommand():
-         case "fetch-config":
-             response = controller.fetchConfig()
-         case "list-buckets":
-             response = controller.listBuckets()
-         case "list-users":
-             response = controller.listUsers()
-         case _:
-             print("ERROR: Invalid command selected. Please type help to see valid commands.")
+            case "configure-bp":
+                response = controller.configureBP(aparser.getOption4())
+            case "fetch-config":
+                response = controller.fetchConfig()
+            case "list-buckets":
+                response = controller.listBuckets()
+            case "list-data-policies" | "list-policies":
+                response = controller.listDataPolicies()
+            case "list-users":
+                response = controller.listUsers()
+            case _:
+                print("ERROR: Invalid command selected. Please type help to see valid commands.")
 
         Display.output(response)
 else:
