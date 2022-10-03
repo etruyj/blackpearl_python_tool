@@ -22,6 +22,18 @@ def createBucket(blackpearl, name, data_policy, owner, logbook):
         print(e)
         logbook.ERROR("Failed to create bucket [" + name + "]")
 
+def createDataPersistenceRule(blackpearl, data_policy_id, isolation, storage_domain_id, storage_type, minimum_days, logbook):
+    try:
+        logbook.INFO("Adding data persistence rule [domain: " + storage_domain_id + " to data_policy_id [" + data_policy_id + "]")
+        logbook.DEBUG("blackpearl.put_data_persistence_rule_spectra_s3(" + data_policy_id + ", " + isolation + ", " + storage_domain_id + ", " + storage_type + ", " + str(minimum_days) + ")...")
+
+        createPersistenceRule = blackpearl.put_data_persistence_rule_spectra_s3(ds3.PutDataPersistenceRuleSpectraS3Request(data_policy_id, isolation, storage_domain_id, storage_type, minimum_days))
+
+        return createDataPersistenceRule
+    except Exception as e:
+        print(e)
+        logbook.ERROR("Failed to add data persistence rule to data policy.")
+
 def createDataPolicy(blackpearl, name, force_puts, min_spanning, blobbing, checksum_type, blob_size, get_priority, put_priority, verify_after_write, verify_priority, end_to_end_crc, versions_to_keep, rebuild_priority, versioning, logbook):
     try:
         logbook.INFO("Creating data policy [" + name + "]...")
@@ -29,10 +41,47 @@ def createDataPolicy(blackpearl, name, force_puts, min_spanning, blobbing, check
         
         createPolicyResponse = blackpearl.put_data_policy_spectra_s3(ds3.PutDataPolicySpectraS3Request(name, force_puts, min_spanning, blobbing, checksum_type, blob_size, get_priority, put_priority, verify_after_write, verify_priority, end_to_end_crc, versions_to_keep, rebuild_priority, versioning))
 
-        return createPolicyResponse
+        return createPolicyResponse.result
     except Exception as e:
         print(e)
         logbook.ERROR("Failed to create data policy [" + name + "]")
+
+def createStorageDomain(blackpearl, name, auto_eject_threshold, auto_eject_cron, auto_eject_cancellation, auto_eject_on_completion, auto_eject_on_full, ltfs_file_naming, verification_frequency_days, auto_compaction_threshold, media_ejection_allowed, secure_media_allocation, verify_prior_to_eject, write_optimization, logbook):
+    try:
+        logbook.INFO("Creating storage domain [ ]...")
+        logbook.DEBUG("blackpearl.put_storage_domain_spectra_s3()...")
+        
+        createStorageDomain = blackpearl.put_storage_domain_spectra_s3(ds3.PutStorageDomainSpectraS3Request(name, auto_eject_threshold, auto_eject_cron, auto_eject_cancellation, auto_eject_on_completion, auto_eject_on_full, ltfs_file_naming, verification_frequency_days, auto_compaction_threshold, media_ejection_allowed, secure_media_allocation, verify_prior_to_eject, write_optimization))
+
+        return createStorageDomain.result
+    except Exception as e:
+        print(e)
+        logbook.ERROR("Unabled to create storage domain [" + name + "]")
+
+def createStorageDomainPoolMember(blackpearl, pool_id, storage_domain_id, write_optimization, logbook):
+    try:
+        logbook.INFO("Adding pool partition to storage domain...")
+        logbook.DEBUG("blackpearl.put_pool_storage_domain_member_spectra_s3_request()...")
+
+        createPoolMember = blackpearl.put_pool_storage_domain_member_spectra_s3(ds3.PutPoolStorageDomainMemberSpectraS3Request(pool_id, storage_domain_id, write_optimization))
+
+        return createPoolMember
+    except Exception as e:
+        print(e)
+        logbook.ERROR("Unable to add pool partition [" + pool_id + "] to storage domain.")
+
+def createStorageDomainTapeMember(blackpearl, storage_domain_id, tape_par_id, tape_type, auto_compaction_threshold, write_preference, logbook):
+    try:
+        logbook.INFO("Adding tape partition to storage domain...")
+        logbook.DEBUG("blackpearl.put_tape_storage_domain_member_spectra_s3()...")
+
+        createTapeMember = blackpearl.put_tape_storage_domain_member_spectra_s3(ds3.PutTapeStorageDomainMemberSpectraS3Request(storage_domain_id, tape_par_id, tape_type, auto_compaction_threshold, write_preference))
+
+        return createTapeMember
+    except Exception as e:
+        print(e)
+        logbook.ERROR("Unabled to add tape partition [" + tape_par_id + "] to storage domain.")
+
 
 def getBuckets(blackpearl, logbook):
     try:
@@ -89,6 +138,18 @@ def getDataPolicies(blackpearl, logbook):
         print(e)
         logbook.ERROR("Failed to retrieve data policies.")
 
+def getDiskPartitions(blackpearl, logbook):
+    try:
+        logbook.INFO("Fetching disk partitions...")
+        logbook.DEBUG("Calling blackpearl.get_pool_partitions_spectra_s3()...")
+
+        getDiskPartitions = blackpearl.get_pool_partitions_spectra_s3(ds3.GetPoolPartitionsSpectraS3Request())
+
+        return getDiskPartitions.result['PoolPartitionList']
+    except Exception as e:
+        print(e)
+        logbook.ERROR("Failed to retrieve disk partitions.")
+
 def getStorageDomains(blackpearl, logbook):
     try:
         logbook.INFO("Fetching storage domains...")
@@ -101,6 +162,18 @@ def getStorageDomains(blackpearl, logbook):
     except Exception as e:
         print(e)
         logbook.ERROR("Failed to retrieve storage domains.")
+
+def getTapePartitions(blackpearl, logbook):
+    try:
+        logbook.INFO("Fetching tape partition information..")
+        logbook.DEBUG("Calling blackpearl.get_tape_partitions_spectra_s3()...")
+
+        getTapePartitions = blackpearl.get_tape_partitions_spectra_s3(ds3.GetTapePartitionsSpectraS3Request())
+
+        return getTapePartitions.result['TapePartitionList']
+    except Exception as e:
+        print(e)
+        logbook.ERROR("Unable to retrieve tape partition information.")
 
 def getUsers(blackpearl, logbook):
     try:

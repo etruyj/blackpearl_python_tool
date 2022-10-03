@@ -43,12 +43,24 @@ class BPConnector:
     #   Calls to the SDK
     #================================================================
 
+    def addDataPersistenceRule(self, data_policy_id, isolation, storage_domain_id, storage_type, days_to_retain, logbook):
+        return SDKCommands.createDataPersistenceRule(self.client, data_policy_id, isolation, storage_domain_id, storage_type, days_to_retain, logbook)
+
+    def addDiskPartitionToStorageDomain(self, pool_id, storage_domain_id, write_optimization, logbook):
+        return SDKCommands.createStorageDomainPoolMember(self.client, pool_id, storage_domain_id, write_optimization, logbook)
+
+    def addTapePartitionToStorageDomain(self, storage_domain_id, tape_par_id, tape_type, auto_compaction, write_optimization, logbook):
+        return SDKCommands.createStorageDomainTapeMember(self.client, storage_domain_id, tape_par_id, tape_type, auto_compaction, write_optimization, logbook)
+
     def createBucket(self, name, data_policy, owner, logbook):
         return SDKCommands.createBucket(self.client, name, data_policy, owner, logbook)
 
     def createDataPolicy(self, name, force_puts, min_spanning, blobbing, checksum_type, blob_size, get_priority, put_priority, verify_after_write, verify_priority, end_to_end_crc, versions_to_keep, rebuild_priority, versioning, logbook):
         return SDKCommands.createDataPolicy(self.client, name, force_puts, min_spanning, blobbing, checksum_type, blob_size, get_priority, put_priority, verify_after_write, verify_priority, end_to_end_crc, versions_to_keep, rebuild_priority, versioning, logbook)
 
+    def createStorageDomain(self, name, auto_eject_threshold, auto_eject_cron, auto_eject_cancellation, auto_eject_on_completion, auto_eject_on_full, ltfs_file_naming, verification_frequency_days, auto_compaction_threshold, media_ejection_allowed, secure_media_allocation, verify_prior_to_eject, write_optimization, logbook):
+        return SDKCommands.createStorageDomain(self.client, name, auto_eject_threshold, auto_eject_cron, auto_eject_cancellation, auto_eject_on_completion, auto_eject_on_full, ltfs_file_naming, verification_frequency_days, auto_compaction_threshold, media_ejection_allowed, secure_media_allocation, verify_prior_to_eject, write_optimization, logbook)
+    
     def getBuckets(self, logbook):
         return SDKCommands.getBuckets(self.client, logbook)
 
@@ -61,8 +73,14 @@ class BPConnector:
     def getDataPolicies(self, logbook):
         return SDKCommands.getDataPolicies(self.client, logbook)
 
+    def getDiskPartitions(self, logbook):
+        return SDKCommands.getDiskPartitions(self.client, logbook)
+
     def getStorageDomains(self, logbook):
         return SDKCommands.getStorageDomains(self.client, logbook)
+
+    def getTapePartitions(self, logbook):
+        return SDKCommands.getTapePartitions(self.client, logbook)
 
     def getUsers(self, logbook):
         return SDKCommands.getUsers(self.client, logbook)

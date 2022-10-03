@@ -14,7 +14,7 @@ import command.ListUsers as ListUsers
 
 class Controller:
     def __init__(self, endpoint, access_key, secret_key):
-        self.logbook = Logger("../log/bp_scrip.log", 1024, 1, 1)
+        self.logbook = Logger("../log/bp_scrip.log", 1024, 1, 2)
         self.blackpearl = BPConnector(endpoint, access_key, secret_key, self.logbook)
 
     def clientValid(self):
