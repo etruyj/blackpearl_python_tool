@@ -21,6 +21,8 @@ if(aparser.isValid):
                 response = controller.listBuckets()
             case "list-data-policies" | "list-policies":
                 response = controller.listDataPolicies()
+            case "list-pools":
+                response = controller.listPools()
             case "list-users":
                 response = controller.listUsers()
             case _:

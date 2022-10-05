@@ -46,6 +46,24 @@ def createDataPolicy(blackpearl, name, force_puts, min_spanning, blobbing, check
         print(e)
         logbook.ERROR("Failed to create data policy [" + name + "]")
 
+def createDiskPartition(blackpearl, name, partition_type, logbook):
+    try:
+        logbook.INFO("Creating disk partition [" + name + "]...");
+        logbook.DEBUG("blackpearl.put_pool_partition_spectra_s3()...");
+
+        if(partition_type == "nearline" or partition_type == "online"):
+            createDiskPartitionResponse = blackpearl.put_pool_partition_spectra_s3(ds3.PutPoolPartitionSpectraS3Request(name, partition_type))
+
+            print(vars(createDiskPartitionResponse))
+
+            return createDiskPartitionResponse
+        else:
+            logbook.ERROR("Invalid partition type [" + partition_type + "] specified.")
+
+    except Exception as e:
+        print(e)
+        logbook.ERROR("Failed to create disk partition [" + name + "]")
+
 def createStorageDomain(blackpearl, name, auto_eject_threshold, auto_eject_cron, auto_eject_cancellation, auto_eject_on_completion, auto_eject_on_full, ltfs_file_naming, verification_frequency_days, auto_compaction_threshold, media_ejection_allowed, secure_media_allocation, verify_prior_to_eject, write_optimization, logbook):
     try:
         logbook.INFO("Creating storage domain [ ]...")
@@ -149,6 +167,18 @@ def getDiskPartitions(blackpearl, logbook):
     except Exception as e:
         print(e)
         logbook.ERROR("Failed to retrieve disk partitions.")
+
+def getPools(blackpearl, logbook):
+    try:
+        logbook.INFO("Fetching pools..")
+        logbook.DEBUG("Calling blackpearl.get_pools_spectra_s3()...")
+
+        getPools = blackpearl.get_pools_spectra_s3(ds3.GetPoolsSpectraS3Request())
+
+        print(vars(getPools))
+    except Exception as e:
+        print(e)
+        logbook.ERROR("Failed to retrieve pools.")
 
 def getStorageDomains(blackpearl, logbook):
     try:

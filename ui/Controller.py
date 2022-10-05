@@ -10,11 +10,12 @@ from util.Logger import Logger
 import command.ConfigureBlackPearl as ConfigureBlackPearl
 import command.ListBuckets as ListBuckets
 import command.ListDataPolicies as ListDataPolicies
+import command.ListPools as ListPools
 import command.ListUsers as ListUsers
 
 class Controller:
     def __init__(self, endpoint, access_key, secret_key):
-        self.logbook = Logger("../log/bp_scrip.log", 1024, 1, 2)
+        self.logbook = Logger("../log/bp_script.log", 1024, 1, 2)
         self.blackpearl = BPConnector(endpoint, access_key, secret_key, self.logbook)
 
     def clientValid(self):
@@ -31,6 +32,9 @@ class Controller:
 
     def listDataPolicies(self):
         return ListDataPolicies.createList(self.blackpearl, self.logbook)
+
+    def listPools(self):
+        return ListPools.createList(self.blackpearl, self.logbook)
 
     def listUsers(self):
         return ListUsers.createList(self.blackpearl, self.logbook)

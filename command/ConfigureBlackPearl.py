@@ -5,6 +5,7 @@
 import command.AddDataPersistenceRule as AddDataPersistenceRule
 import command.AddStorageDomainMember as AddStorageDomainMember
 import command.CreateDataPolicy as CreateDataPolicy
+import command.CreateDiskPartition as CreateDiskPartition
 import command.CreateStorageDomain as CreateStorageDomain
 import command.ListDataPolicies as ListDataPolicies
 import command.ListStorageDomains as ListStorageDomains
@@ -49,6 +50,10 @@ def fromFile(blackpearl, file_path, logbook):
             logbook.INFO("Configuration contains (" + str(len(config['volumes'])) + ") volumes.")
         if('shares' in config.keys()):
             logbook.INFO("Configuration contains (" + str(len(config['shares'])) + ") shares.")
+
+        # Create Disk Partitions
+        if('disk_partitions' in config.keys()):
+            success.append(createDiskPartitions(blackpearl, config['disk_partitions'], logbook))
 
         # Create Storage Domains
         if('storage_domains' in config.keys()):
@@ -137,6 +142,19 @@ def createDataPolicies(blackpearl, policy_list, logbook):
 
     return success
 
+def createDiskPartitions(blackpearl, disk_partition_list, logbook):
+    success = 0
+
+    logbook.INFO("Creating disk partitions...")
+
+    for disk_par in disk_partition_list:
+        result = CreateDiskPartition.verifyThenCreate(blackpearl, disk_par, logbook)
+
+        if(result != None):
+            success += 1
+
+    return success
+
 def createStorageDomains(blackpearl, domain_list, logbook):
     success = 0
 
@@ -164,14 +182,20 @@ def createStorageDomains(blackpearl, domain_list, logbook):
 def report(success, config, logbook):
     print("Configuration complete.")
 
-    if('storage_domains' in config.keys() and len(success) > 0 != None):
-            logbook.INFO("Sucessfully created " + str(success[0]) + "/" + str(len(config['storage_domains'])) + " storage domains.")
-            print("Sucessfully created " + str(success[0]) + "/" + str(len(config['storage_domains'])) + " storage domains.")
-    if('data_policies' in config.keys() and len(success) > 1 != None):
-            logbook.INFO("Sucessfully created " + str(success[1]) + "/" + str(len(config['data_policies'])) + " data policies.")
-            print("Sucessfully created " + str(success[1]) + "/" + str(len(config['data_policies'])) + " data policies.")
-    if('buckets' in config.keys() and len(success) > 2 != None):
-            logbook.INFO("Sucessfully created " + str(success[2]) + "/" + str(len(config['buckets'])) + " buckets.")
-            print("Sucessfully created " + str(success[2]) + "/" + str(len(config['buckets'])) + " buckets.")
+    if('disk_partitions' in config.keys() and len(success) > 0 != None):
+            logbook.INFO("Successfully created " + str(success[0]) + "/" + str(len(config['disk_partitions'])) + " disk partitions.")
+            print("Successfully created " + str(success[0]) + "/" + str(len(config['disk_partitions'])) + " disk partitions.")
+
+    if('storage_domains' in config.keys() and len(success) > 1 != None):
+            logbook.INFO("Sucessfully created " + str(success[1]) + "/" + str(len(config['storage_domains'])) + " storage domains.")
+            print("Sucessfully created " + str(success[1]) + "/" + str(len(config['storage_domains'])) + " storage domains.")
+    
+    if('data_policies' in config.keys() and len(success) > 2 != None):
+            logbook.INFO("Sucessfully created " + str(success[2]) + "/" + str(len(config['data_policies'])) + " data policies.")
+            print("Sucessfully created " + str(success[2]) + "/" + str(len(config['data_policies'])) + " data policies.")
+    
+    if('buckets' in config.keys() and len(success) > 3 != None):
+            logbook.INFO("Sucessfully created " + str(success[3]) + "/" + str(len(config['buckets'])) + " buckets.")
+            print("Sucessfully created " + str(success[3]) + "/" + str(len(config['buckets'])) + " buckets.")
 
 
