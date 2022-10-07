@@ -6,6 +6,7 @@ import command.AddDataPersistenceRule as AddDataPersistenceRule
 import command.AddStorageDomainMember as AddStorageDomainMember
 import command.CreateDataPolicy as CreateDataPolicy
 import command.CreateDiskPartition as CreateDiskPartition
+import command.CreateShare as CreateShare
 import command.CreateStorageDomain as CreateStorageDomain
 import command.ListDataPolicies as ListDataPolicies
 import command.ListStorageDomains as ListStorageDomains
@@ -13,8 +14,10 @@ import command.ListUsers as ListUsers
 import util.input.ImportJson as ImportJson
 import util.map.MapDataPolicies as MapDataPolicies
 import util.map.MapPartitions as MapPartitions
+import util.map.MapServices as MapServices
 import util.map.MapStorageDomains as MapStorageDomains
 import util.map.MapUsers as MapUsers
+import util.map.MapVolumes as MapVolumes
 import util.Logger as Logger
 
 import collections.abc
@@ -23,7 +26,7 @@ def fromFile(blackpearl, file_path, logbook):
     logbook.INFO("Configuring BlackPearl with configuration file " + file_path)
     logbook.DEBUG("Calling ImportJson.fromFile(" + file_path + ")...")
 
-    success = []
+    successes = {}
     config = ImportJson.fromFile(file_path)
     
     if(config == None):
@@ -51,22 +54,35 @@ def fromFile(blackpearl, file_path, logbook):
         if('shares' in config.keys()):
             logbook.INFO("Configuration contains (" + str(len(config['shares'])) + ") shares.")
 
-        # Create Disk Partitions
-        if('disk_partitions' in config.keys()):
-            success.append(createDiskPartitions(blackpearl, config['disk_partitions'], logbook))
+        # Configure Management Path Parameters
+        if(blackpearl.verifyManagementConnection(logbook)):
+            # Create shares
+            if('shares' in config.keys()):
+                successes['shares'] = createShares(blackpearl, config['shares'], logbook)
 
-        # Create Storage Domains
-        if('storage_domains' in config.keys()):
-            success.append(createStorageDomains(blackpearl, config['storage_domains'], logbook))
+        else:
+            logbook.WARN("Unable to connect to management interface. Skipping configuration of pools, volumes, and shares.")
 
-        # Create Data Policies
-        if('data_policies' in config.keys()):
-            success.append(createDataPolicies(blackpearl, config['data_policies'], logbook))
-        # Create Buckets
-        if('buckets' in config.keys()):
-           success.append(createBuckets(blackpearl, config['buckets'], logbook))
+        if(blackpearl.verifyDataConnection(logbook)):
+            # Create Disk Partitions
+            if('disk_partitions' in config.keys()):
+                successes['disk_partitions'] = createDiskPartitions(blackpearl, config['disk_partitions'], logbook)
 
-        report(success, config, logbook)
+            # Create Storage Domains
+            if('storage_domains' in config.keys()):
+                successes['storage_domains'] = createStorageDomains(blackpearl, config['storage_domains'], logbook)
+
+            # Create Data Policies
+            if('data_policies' in config.keys()):
+                successes['data_policies'] = createDataPolicies(blackpearl, config['data_policies'], logbook)
+            # Create Buckets
+            if('buckets' in config.keys()):
+                successes['buckets'] = createBuckets(blackpearl, config['buckets'], logbook)
+        else:
+            logbook.WARN("Unable to connect to data interface. Skipping configuration of disk partitions, storage domains, data policies, and buckets.")
+
+
+        report(successes, config, logbook)
 
 #========================================
 # Inner Functions
@@ -155,6 +171,60 @@ def createDiskPartitions(blackpearl, disk_partition_list, logbook):
 
     return success
 
+def createShares(blackpearl, shares, logbook):
+    success = 0
+
+    logbook.DEBUG("Calling blackpearl.getVolumes()...")
+    volumes = blackpearl.getVolumes(logbook)
+    vol_map = MapVolumes.createNameIDMap(volumes)
+
+    logbook.DEBUG("Calling blackpearl.getServices()...")
+    services = blackpearl.getServices(logbook)
+    service_map = MapServices.createNameIDMap(services)
+
+    if('cifs_shares' in shares.keys()):
+        if('CIFS' in service_map.keys()):
+            for cifs in shares['cifs_shares']:
+                if(cifs['volume_name'] in vol_map.keys()):
+                    logbook.DEBUG("Calling CreateShare.cifs(" + cifs['name'] + ", " + vol_map[cifs['volume_name']] + ", " + cifs['mount_point'] + ", read_only, " + service_map['CIFS'] + ")...")
+
+                    response = CreateShare.cifs(blackpearl, cifs['name'], vol_map[cifs['volume_name']], cifs['mount_point'], cifs['read_only'], service_map['CIFS'], logbook)
+
+                    if (response != None):
+                        success += 1
+                else:
+                    logbook.WARN("Unable to find volume id for volume [" + cifs['volume_name'] + "]")
+                    logbook.WARN("Skipping creation of share [" + cifs['mount_point'] + "]")
+                    print("WARNING: Unable to find volume id for volume [" + cifs['volume_name'] + "]")
+                    print("WARNING: Skipping creation of share [" + cifs['mount_point'] + "]")
+        else:
+            logbook.WARN("Unable to find service [CIFS].")
+            print("WARNING: Unable to find service [CIFS].")
+    
+    if('nfs_shares' in shares.keys()):
+        if('NFS' in service_map.keys()):
+            for nfs in shares['nfs_shares']:
+                if(nfs['volume_name'] in vol_map.keys()):
+                    logbook.DEBUG("CreateShare.nfs(blackpearl, nfs['comment'], vol_map[nfs['volume_name']], nfs['mount_point'], nfs['access_control'], logbook)...")
+
+                    response = CreateShare.nfs(blackpearl, nfs['comment'], vol_map[nfs['volume_name']], nfs['mount_point'], nfs['access_control'], service_map['NFS'], logbook)
+
+                    if (response != None):
+                        success += 1
+                else:
+                    logbook.WARN("Unable to find volume id for volume [" + nfs['volume_name'] + "]")
+                    logbook.WARN("Skipping creation of share [" + nfs['mount_point'] + "]")
+                    print("WARNING: Unable to find volume id for volume [" + nfs['volume_name'] + "]")
+                    print("WARNING: Skipping creation of share [" + nfs['mount_point'] + "]")
+        else:
+            logbook.WARN("Unable to find service [NFS].")
+            print("WARNING: Unable to find service [NFS].")
+
+    if('vail_shares' in shares.keys()):
+        pass
+
+    return success
+
 def createStorageDomains(blackpearl, domain_list, logbook):
     success = 0
 
@@ -179,23 +249,27 @@ def createStorageDomains(blackpearl, domain_list, logbook):
 
     return success
 
-def report(success, config, logbook):
+def report(successes, config, logbook):
     print("Configuration complete.")
 
-    if('disk_partitions' in config.keys() and len(success) > 0 != None):
-            logbook.INFO("Successfully created " + str(success[0]) + "/" + str(len(config['disk_partitions'])) + " disk partitions.")
-            print("Successfully created " + str(success[0]) + "/" + str(len(config['disk_partitions'])) + " disk partitions.")
+    if('shares' in config.keys()):
+            logbook.INFO("Successfully created " + str(successes['shares']) + "/" + str(len(config['shares'])) + " shares.")
+            print("Successfully created " + str(successes['shares']) + "/" + str(len(config['shares'])) + " shares.")
 
-    if('storage_domains' in config.keys() and len(success) > 1 != None):
-            logbook.INFO("Sucessfully created " + str(success[1]) + "/" + str(len(config['storage_domains'])) + " storage domains.")
-            print("Sucessfully created " + str(success[1]) + "/" + str(len(config['storage_domains'])) + " storage domains.")
+    if('disk_partitions' in config.keys()):
+            logbook.INFO("Successfully created " + str(successes['disk_partitions']) + "/" + str(len(config['disk_partitions'])) + " disk partitions.")
+            print("Successfully created " + str(successes['disk_partitions']) + "/" + str(len(config['disk_partitions'])) + " disk partitions.")
+
+    if('storage_domains' in config.keys()):
+            logbook.INFO("Sucessfully created " + str(successes['storage_domains']) + "/" + str(len(config['storage_domains'])) + " storage domains.")
+            print("Sucessfully created " + str(successes['storage_domains']) + "/" + str(len(config['storage_domains'])) + " storage domains.")
     
-    if('data_policies' in config.keys() and len(success) > 2 != None):
-            logbook.INFO("Sucessfully created " + str(success[2]) + "/" + str(len(config['data_policies'])) + " data policies.")
-            print("Sucessfully created " + str(success[2]) + "/" + str(len(config['data_policies'])) + " data policies.")
+    if('data_policies' in config.keys()):
+            logbook.INFO("Sucessfully created " + str(successes['data_policies']) + "/" + str(len(config['data_policies'])) + " data policies.")
+            print("Sucessfully created " + str(successes['data_policies']) + "/" + str(len(config['data_policies'])) + " data policies.")
     
-    if('buckets' in config.keys() and len(success) > 3 != None):
-            logbook.INFO("Sucessfully created " + str(success[3]) + "/" + str(len(config['buckets'])) + " buckets.")
-            print("Sucessfully created " + str(success[3]) + "/" + str(len(config['buckets'])) + " buckets.")
+    if('buckets' in config.keys()):
+            logbook.INFO("Sucessfully created " + str(successes['buckets']) + "/" + str(len(config['buckets'])) + " buckets.")
+            print("Sucessfully created " + str(successes['buckets']) + "/" + str(len(config['buckets'])) + " buckets.")
 
 

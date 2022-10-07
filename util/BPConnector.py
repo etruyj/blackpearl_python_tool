@@ -11,10 +11,16 @@ import util.http.HttpCommands as HttpCommands
 import util.sdk.SDKCommands as SDKCommands
 
 class BPConnector:
-    def __init__(self, endpoint, access_key, secret_key, logbook):
-        self.managementPathAuthentication(endpoint, access_key, secret_key, logbook)
+    def __init__(self, endpoint, username, password, access_key, secret_key, logbook):
+        if(username != "none" and password != "none"):
+            self.managementPathAuthentication(endpoint, username, password, logbook)
 
-        self.retrieveDataPathParameters(endpoint, access_key, logbook)
+            self.retrieveDataPathParameters(endpoint, username, logbook)
+        
+            # Save this for verifying connectivity.
+            self.management_path = endpoint
+        else:
+            self.dataPathAuthentication(endoint, access_key, secret_key, logbook)
 
     def dataPathAuthentication(self, endpoint, access_key, secret_key, logbook):
         logbook.INFO("Accessing data path...")
@@ -40,21 +46,36 @@ class BPConnector:
 
         self.dataPathAuthentication(data_path, keys['access_key'], keys['secret_key'], logbook)
 
-    def verifyConnection(self, logbook):
+    def verifyDataConnection(self, logbook):
         try:
             getServiceResponse = self.data_path_client.get_service(ds3.GetServiceRequest())
             return True
         except Exception as e:
-            if e.code == "InvalidAccessKeyId":
-                logbook.ERROR("Invalid access key")
+            if(e.code == "InvalidAccessKeyId"):
+                logbook.ERROR("Invalid access key.")
                 print("ERROR: Invalid access key.")
-            elif e.code == "InvalidSecurity":
-                logbook.ERROR("Invalid secret key")
-                print("ERROR: Invalid secret key")
+            elif(e.code == "InvalidSecurity"):
+                logbook.ERROR("Invalid secret key.")
+                print("ERROR: Invalid secret key.")
             else:
                 logbook.ERROR(e.code)
                 print(e.code)
+            
             return False
+
+    def verifyManagementConnection(self, logbook):
+        try:
+            test = HttpCommands.getNetworkInterfaces(self.management_path, self.token, logbook)
+
+            if(test != None):
+                return True
+            else:
+                logbook.ERROR("Unable to connect to management path.")
+                return False
+        except Exception as e:
+            logbook.ERROR("Failed to validate connection to management path.")
+            print(e)
+            print("ERROR: Failed to validate connection to management path.")
 
     #===============================================================
     # HTTP Functions
@@ -63,6 +84,20 @@ class BPConnector:
 
     def authenticate(self, url, username, password, logbook):
         return HttpCommands.authenticate(url, username, password, logbook)
+
+    def createCifsShare(self, name, path, volume_id, readonly, service_id, logbook):
+        return HttpCommands.createCifsShare(self.management_path, self.token, name, path, volume_id, readonly, service_id, logbook)
+
+    def createNfsShare(self, comment, volume, mount_point, path, access_control, service_id, logbook):
+        return HttpCommands.createNfsShare(self.management_path, self.token, comment, volume, mount_point, path, access_control, service_id, logbook)
+
+    def getServices(self, logbook):
+        # Literally get services
+        # Not DS3_JAVA_CLI's get_services
+        return HttpCommands.getServices(self.management_path, self.token, logbook)
+
+    def getVolumes(self, logbook):
+        return HttpCommands.getVolumes(self.management_path, self.token, logbook)
 
     #================================================================
     # SDK Functions

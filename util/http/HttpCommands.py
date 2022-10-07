@@ -21,6 +21,40 @@ def authenticate(url, username, password, logbook):
         logbook.ERROR("Failed to authenticate with username " + username)
         return "none"
 
+def createCifsShare(endpoint, token, name, path, volume_id, readonly, service_id, logbook):
+    logbook.INFO("Creating CIFS share [" + name + "]...")
+
+    url = "https://" + endpoint + "/api/shares"
+
+    logbook.DEBUG("Calling HttpHandler.post(" + url + ")...")
+
+    request_body = { "name": name, "path": path, "type": "Cifs", "readonly": readonly, "volume_id": volume_id, "service_id": service_id}
+    
+    response = HttpHandler.post(url, token, request_body, logbook)
+
+    if(response != None):
+        return response
+    else:
+        print("WARNING: Unabled to create share [" + name + "]")
+        logbook.ERROR("Unable to create share [" + name + "]")
+
+def createNfsShare(endpoint, token, comment, volume_id, mount_point, path, access_control, service_id, logbook):
+    logbook.INFO("Creating NFS share [" + mount_point + "]...")
+
+    url = "https://" + endpoint + "/api/shares"
+
+    logbook.DEBUG("Calling HttpHandler.post(" + url + ")...")
+
+    request_body = { "comment": comment, "mount_point": mount_point, "path": path, "type": "Nfs", "volume_id": volume_id, "access_control": access_control, "service_id": service_id}
+    
+    response = HttpHandler.post(url, token, request_body, logbook)
+
+    if(response != None):
+        return response
+    else:
+        print("WARNING: Unabled to create share [" + mount_point + "]")
+        logbook.ERROR("Unable to create share [" + mount_point + "]")
+
 def findDs3Credentials(endpoint, token, username, logbook):
     logbook.INFO("Finding DS3 keys for user [" + username + "]...")
 
@@ -71,6 +105,27 @@ def getNetworkInterfaces(endpoint, token, logbook):
             logbook.ERROR(e)
     else:
         logbook.ERROR("Failed to retrieve network interfaces.")
+
+def getServices(endpoint, token, logbook):
+    logbook.INFO("Fetching blackpearl services...")
+
+    url = "https://" + endpoint + "/api/services"
+
+    logbook.DEBUG("HttpHandler.get(" + url + ")")
+
+    response = HttpHandler.get(url, token, logbook)
+
+    if(response != None):
+        try:
+            data = json.loads(response)
+
+            logbook.INFO("Found (" + str(len(data['data'])) + ") services.")
+
+            return data['data']
+        except Exception as e:
+            print(e)
+            logbook.ERROR("JSON Parse Exception")
+            logbook.ERROR(e)
 
 def getUserKeys(endpoint, token, user_id, logbook):
     logbook.INFO("Fetching ds3 keys for user [" + str(user_id) + "]...")
@@ -124,3 +179,26 @@ def getUsers(endpoint, token, logbook):
             logbook.ERROR(e)
     else:
         logbook.ERROR("Failed to retrieve user list.")
+
+def getVolumes(endpoint, token, logbook):
+    logbook.INFO("Fetching system volumes...")
+
+    url = "https://" + endpoint + "/api/volumes?sort_by=name"
+
+    logbook.DEBUG("HttpHandler.get(" + url + ")")
+
+    response = HttpHandler.get(url, token, logbook)
+
+    if(response != None):
+        try:
+            data = json.loads(response)
+
+            logbook.INFO("Found (" + str(len(data['data'])) + ") volumes.")
+
+            return data['data']
+        except Exception as e:
+            print(e)
+            logbook.ERROR("JSON Parse Exception")
+            logbook.ERROR(e)
+    else:
+        logbook.ERROR("Failed to retrieve volume list.")

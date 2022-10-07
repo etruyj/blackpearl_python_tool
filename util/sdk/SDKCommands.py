@@ -54,8 +54,6 @@ def createDiskPartition(blackpearl, name, partition_type, logbook):
         if(partition_type == "nearline" or partition_type == "online"):
             createDiskPartitionResponse = blackpearl.put_pool_partition_spectra_s3(ds3.PutPoolPartitionSpectraS3Request(name, partition_type))
 
-            print(vars(createDiskPartitionResponse))
-
             return createDiskPartitionResponse
         else:
             logbook.ERROR("Invalid partition type [" + partition_type + "] specified.")

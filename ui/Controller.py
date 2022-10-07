@@ -14,12 +14,12 @@ import command.ListPools as ListPools
 import command.ListUsers as ListUsers
 
 class Controller:
-    def __init__(self, endpoint, access_key, secret_key):
+    def __init__(self, endpoint, username, password, access_key, secret_key):
         self.logbook = Logger("../log/bp_script.log", 1024, 1, 2)
-        self.blackpearl = BPConnector(endpoint, access_key, secret_key, self.logbook)
+        self.blackpearl = BPConnector(endpoint, username, password, access_key, secret_key, self.logbook)
 
     def clientValid(self):
-        return self.blackpearl.verifyConnection(self.logbook)
+        return self.blackpearl.verifyDataConnection(self.logbook)
     
     def configureBP(self, file_path):
         return ConfigureBlackPearl.fromFile(self.blackpearl, file_path, self.logbook)

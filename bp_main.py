@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-import ui.argparser as aparser
+import ui.ArgParser as aparser
 import ui.display.Display as Display
 from ui.Controller import Controller
 from ds3 import ds3
@@ -9,7 +9,7 @@ from ds3 import ds3
 aparser.parseArgs(sys.argv)
 
 if(aparser.isValid):
-    controller = Controller(aparser.getEndpoint(), aparser.getAccessKey(), aparser.getSecretKey())
+    controller = Controller(aparser.getEndpoint(), aparser.getUsername(), aparser.getPassword(), aparser.getAccessKey(), aparser.getSecretKey())
 
     if controller.clientValid():
         match aparser.getCommand():

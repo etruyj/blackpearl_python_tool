@@ -1,5 +1,5 @@
 #====================================================================
-# ui/argparser.py
+# ui/Argparser.py
 #   Description:
 #        Handles parsing command line arguments into operational
 #        variables.
@@ -14,6 +14,8 @@ option2_set = False
 option3_set = False
 option4_set = False
 endpoint = "127.0.0.1"
+username = "none"
+password = "none"
 access_key = "none"
 secret_key = "none"
 command = "none"
@@ -48,6 +50,13 @@ def parseArgs(args):
             case "--option4" | "--file":
                 i += 1
                 setOption4(args[i])
+            case "-p" | "--password":
+                i += 1
+                setPassword(args[i])
+            case "-u" | "--user" | "--username":
+                i += 1
+                setUsername(args[i])
+
 
 # Getters
 
@@ -68,6 +77,12 @@ def getSecretKey():
 
 def isValid():
     return is_valid
+
+def getPassword():
+    return password
+
+def getUsername():
+    return username
 
 # Setters
 
@@ -129,6 +144,14 @@ def setOption4(op):
     else:
         option4 = op
         option4_set = True
+
+def setPassword(pw):
+    global password
+    password = pw
+
+def setUsername(user):
+    global username
+    username = user
 
 def setSecretKey(key):
     global secret_key

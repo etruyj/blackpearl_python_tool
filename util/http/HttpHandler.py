@@ -1,6 +1,7 @@
 # HttpHandler
 #   Handles HTTP requests to the management path of the BlackPearl
 
+import json
 import requests
 
 def authenticate(address, username, password, logbook):
@@ -25,4 +26,17 @@ def get(address, token, logbook):
     if(r.status_code >=200 and r.status_code <= 230):
         return r.text
     else:
-        logbook.ERROR("[" + r.status_code + "] " + r.text);
+        logbook.ERROR("[" + str(r.status_code) + "] " + r.text);
+
+def post(address, token, request_body, logbook):
+    logbook.INFO("POST: " + address)
+
+    request_headers = {"Authorization" : "Bearer " + token}
+
+    r = requests.post(address, headers=request_headers, json = request_body, verify=False)
+
+    if(r.status_code >=200 and r.status_code <=230):
+        return r.text
+    else:
+        logbook.ERROR("[" + str(r.status_code) + "] " + r.text)
+        logbook.ERROR(str(request_body))
