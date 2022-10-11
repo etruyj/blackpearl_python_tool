@@ -10,3 +10,8 @@ def nfs(blackpearl, comment, volume, mount_point, access_control, service_id, lo
     path = "/" # Path can only be root
 
     return blackpearl.createNfsShare(comment, volume, mount_point, path, access_control, service_id, logbook)
+
+def vail(blackpearl, name, service_id, volume_id, logbook):
+    # This function exists to have a similar path to the other two functions.
+
+    return blackpearl.createVailShare(name, service_id, volume_id, logbook)

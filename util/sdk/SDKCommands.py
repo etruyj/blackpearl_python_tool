@@ -64,7 +64,7 @@ def createDiskPartition(blackpearl, name, partition_type, logbook):
 
 def createStorageDomain(blackpearl, name, auto_eject_threshold, auto_eject_cron, auto_eject_cancellation, auto_eject_on_completion, auto_eject_on_full, ltfs_file_naming, verification_frequency_days, auto_compaction_threshold, media_ejection_allowed, secure_media_allocation, verify_prior_to_eject, write_optimization, logbook):
     try:
-        logbook.INFO("Creating storage domain [ ]...")
+        logbook.INFO("Creating storage domain [" + name + "]...")
         logbook.DEBUG("blackpearl.put_storage_domain_spectra_s3()...")
         
         createStorageDomain = blackpearl.put_storage_domain_spectra_s3(ds3.PutStorageDomainSpectraS3Request(name, auto_eject_threshold, auto_eject_cron, auto_eject_cancellation, auto_eject_on_completion, auto_eject_on_full, ltfs_file_naming, verification_frequency_days, auto_compaction_threshold, media_ejection_allowed, secure_media_allocation, verify_prior_to_eject, write_optimization))
@@ -168,12 +168,13 @@ def getDiskPartitions(blackpearl, logbook):
 
 def getPools(blackpearl, logbook):
     try:
-        logbook.INFO("Fetching pools..")
+        logbook.INFO("Fetching pools...")
         logbook.DEBUG("Calling blackpearl.get_pools_spectra_s3()...")
 
         getPools = blackpearl.get_pools_spectra_s3(ds3.GetPoolsSpectraS3Request())
 
-        print(vars(getPools))
+        print("utils/sdk/SDKCommands.py: " + vars(getPools))
+        return getPools.result
     except Exception as e:
         print(e)
         logbook.ERROR("Failed to retrieve pools.")

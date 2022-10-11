@@ -8,12 +8,14 @@ import command.CreateDataPolicy as CreateDataPolicy
 import command.CreateDiskPartition as CreateDiskPartition
 import command.CreateShare as CreateShare
 import command.CreateStorageDomain as CreateStorageDomain
+import command.CreateVolume as CreateVolume
 import command.ListDataPolicies as ListDataPolicies
 import command.ListStorageDomains as ListStorageDomains
 import command.ListUsers as ListUsers
 import util.input.ImportJson as ImportJson
 import util.map.MapDataPolicies as MapDataPolicies
 import util.map.MapPartitions as MapPartitions
+import util.map.MapPools as MapPools
 import util.map.MapServices as MapServices
 import util.map.MapStorageDomains as MapStorageDomains
 import util.map.MapUsers as MapUsers
@@ -56,6 +58,10 @@ def fromFile(blackpearl, file_path, logbook):
 
         # Configure Management Path Parameters
         if(blackpearl.verifyManagementConnection(logbook)):
+            # Create Volumes
+            if('volumes' in config.keys()):
+                successes['volumes'] = createVolumes(blackpearl, config['volumes'], logbook)
+
             # Create shares
             if('shares' in config.keys()):
                 successes['shares'] = createShares(blackpearl, config['shares'], logbook)
@@ -221,7 +227,22 @@ def createShares(blackpearl, shares, logbook):
             print("WARNING: Unable to find service [NFS].")
 
     if('vail_shares' in shares.keys()):
-        pass
+        if('Vail' in service_map.keys()):
+            for share in shares['vail_shares']:
+                if(share['volume'] in vol_map.keys()):
+                    logbook.DEBUG("Calling CreateShare.vail(blackpearl, " + share['name'] + ", " + service_map['Vail'] + ", " + vol_map[share['volume']])
+
+                    response = CreateShare.vail(blackpearl, share['name'], service_map['Vail'], vol_map[share['volume']], logbook)
+
+                    if(response != None):
+                        success += 1
+                else:
+                    logbook.WARN("Unabled to find volume_id for volume [" + share['volume_name'] + "].")
+                    print("WARNING: Unabled to find volume_id for volume [" + share['volume_name'] + "].")
+        else:
+            logbook.WARN("Unable to find service [Vail].")
+            print("WARNING: Unable to find service [Vail].")
+
 
     return success
 
@@ -249,8 +270,32 @@ def createStorageDomains(blackpearl, domain_list, logbook):
 
     return success
 
+def createVolumes(blackpearl, volume_list, logbook):
+    success = 0
+
+    # This needs code
+    logbook.DEBUG("Calling blackpearl.getNASPools()...")
+    pools = blackpearl.getNASPools(logbook)
+    pool_map = MapPools.createNameIDMap(pools)
+
+    for volume in volume_list:
+        if(volume['pool_name'] in pool_map.keys()):
+            result = CreateVolume.fillFieldsThenVerify(blackpearl, volume, pool_map[volume['pool_name']], logbook)
+            
+            if(result != None):
+                success += 1
+        else:
+            logbook.WARN("Unable to find pool id for pool [" + volume['pool_name'] + "]")
+            print("Unable to find pool id for pool [" + volume['pool_name'] + "]")
+
+    return success
+
 def report(successes, config, logbook):
     print("Configuration complete.")
+
+    if('volumes' in config.keys()):
+            logbook.INFO("Successfully created " + str(successes['volumes']) + "/" + str(len(config['volumes'])) + " volumes.")
+            print("Successfully created " + str(successes['volumes']) + "/" + str(len(config['volumes'])) + " volumes.")
 
     if('shares' in config.keys()):
             logbook.INFO("Successfully created " + str(successes['shares']) + "/" + str(len(config['shares'])) + " shares.")
