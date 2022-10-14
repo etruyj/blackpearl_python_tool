@@ -14,7 +14,7 @@ def authenticate(address, username, password, logbook):
     if(r.status_code >= 200 and r.status_code <= 230):
         return r.text
     else:
-        logbook.ERROR("[" + r.status_code + "] " + r.text);
+        logbook.ERROR("[" + str(r.status_code) + "] " + r.text);
 
 def get(address, token, logbook):
     logbook.INFO("GET: " +  address);

@@ -6,6 +6,7 @@ import command.AddDataPersistenceRule as AddDataPersistenceRule
 import command.AddStorageDomainMember as AddStorageDomainMember
 import command.CreateDataPolicy as CreateDataPolicy
 import command.CreateDiskPartition as CreateDiskPartition
+import command.CreatePool as CreatePool
 import command.CreateShare as CreateShare
 import command.CreateStorageDomain as CreateStorageDomain
 import command.CreateVolume as CreateVolume
@@ -41,6 +42,8 @@ def fromFile(blackpearl, file_path, logbook):
 
         # Basic Report to Logs
         logbook.INFO("Configuration loaded.")
+        if('activation_keys' in config.keys()):
+            logbook.INFO("Configuration contains (" + str(len(config['activation_keys'] + ") activation keys.")
         if('buckets' in config.keys()):
             logbook.INFO("Configuration contains (" + str(len(config['buckets'])) + ") buckets.")
         if('data_policies' in config.keys()):
@@ -58,6 +61,15 @@ def fromFile(blackpearl, file_path, logbook):
 
         # Configure Management Path Parameters
         if(blackpearl.verifyManagementConnection(logbook)):
+            # Add Activation Keys
+            # Must be done first
+            if('activation_keys' in config.keys()):
+                successes['keys'] = addActivationKeys(blackpearl, config['activation_keys'], logbook)
+
+            # Create Pools
+            if('pools' in config.keys()):
+                successes['pools'] = createPools(blackpearl, config['pools'], logbook)
+
             # Create Volumes
             if('volumes' in config.keys()):
                 successes['volumes'] = createVolumes(blackpearl, config['volumes'], logbook)
@@ -93,6 +105,17 @@ def fromFile(blackpearl, file_path, logbook):
 #========================================
 # Inner Functions
 #========================================
+
+def addActivationKeys(blackpearl, key_list, logbook):
+    success = 0
+
+    for key in key_list:
+        response = blackpearl.addActivationKey(key, logbook)
+
+        if(response != None):
+            success += 1
+
+    return success
 
 def createBuckets(blackpearl, bucket_list, logbook):
     success = 0
@@ -171,6 +194,21 @@ def createDiskPartitions(blackpearl, disk_partition_list, logbook):
 
     for disk_par in disk_partition_list:
         result = CreateDiskPartition.verifyThenCreate(blackpearl, disk_par, logbook)
+
+        if(result != None):
+            success += 1
+
+    return success
+
+def createPools(blackpearl, pools, logbook):
+    success = 0
+    
+    logbook.DEBUG("Calling blackpearl.getDataDisks()...")
+    disk_list = blackpearl.getDataDisks(logbook)
+
+
+    for pool in pools:
+        result = CreatePool.buildPool(blackpearl, pool, disk_list, logbook)
 
         if(result != None):
             success += 1
@@ -292,6 +330,10 @@ def createVolumes(blackpearl, volume_list, logbook):
 
 def report(successes, config, logbook):
     print("Configuration complete.")
+
+    if('activation_keys' in config.keys()):
+            logbook.INFO("Successfully created " + str(successes['keys']) + "/" + str(len(config['activation_keys'])) + " activation keys.")
+            print("Successfully created " + str(successes['keys']) + "/" + str(len(config['activation_keys'])) + " activation keyss.")
 
     if('volumes' in config.keys()):
             logbook.INFO("Successfully created " + str(successes['volumes']) + "/" + str(len(config['volumes'])) + " volumes.")

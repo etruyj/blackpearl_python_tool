@@ -4,6 +4,23 @@
 import json
 import util.http.HttpHandler as HttpHandler
 
+def addActivationKey(endpoint, token, key, logbook):
+    logbook.INFO("Adding activation key [" + key + "].")
+
+    url = "https://" + endpoint + "/api/activation_keys"
+
+    logbook.DEBUG("Calling HttpHandler.post(" + url + ")...")
+
+    request_body = { "raw_key": key }
+
+    response = HttpHandler.post(url, token, request_body, logbook)
+
+    if(response != None):
+        return response
+    else:
+        logbook.WARN("Unabled to add key [" + key + "] to BlackPearl.")
+        print("WARNING: Unabled to add key [" + key + "] to BlackPearl.")
+
 def authenticate(url, username, password, logbook):
     response = HttpHandler.authenticate(url, username, password, logbook)
 
@@ -55,6 +72,21 @@ def createNfsShare(endpoint, token, comment, volume_id, mount_point, path, acces
         print("WARNING: Unabled to create share [" + mount_point + "]")
         logbook.ERROR("Unable to create share [" + mount_point + "]")
 
+def createPool(endpoint, token, pool, logbook):
+    logbook.INFO("Creating NAS pool [" + pool.name() + "]...")
+    
+    url = "https://" + endpoint + "/api/nas/pool"
+
+    logbook.DEBUG("Calling HttpHandler.post(" + url + ")...")
+    
+    response = HttpHandler.post(url, token, pool, logbook)
+
+    if(response != None):
+        return response
+    else:
+        print("WARNING: Unable to create pool [" + pool.name() + "]")
+        logbook.WARN("Unabled to create pool [" + pool.name() + "]")
+
 def createVailShare(endpoint, token, name, volume_id, service_id, logbook):
     logbook.INFO("Creating Vail share [" + name + "]...")
 
@@ -99,6 +131,24 @@ def findDs3Credentials(endpoint, token, username, logbook):
             if(user['name'] == username):
                 keys = getUserKeys(endpoint, token, user['id'], logbook)
                 return keys
+
+def getDataDisks(endpoint, token, logbook):
+    logbook.INFO("Fetching data disks...")
+
+    url = "https://" + endpoint + "/api/data_disks"
+
+    logbook.DEBUG("Calling HttpHandler.get(" + url + ")...")
+
+    response = HttpHandler.get(url, token, logbook)
+
+    if(response != None):
+        data = json.loads(response)
+
+        logbook.INFO("Found (" + str(len(data['data'])) + ") data disks.")
+
+        return data['data']
+    else:
+        logbook.WARN("Unabled to retrieve list of data disks.")
 
 def getDataPathIP(endpoint, token, logbook):
     logbook.INFO("Querying data path IP address...");

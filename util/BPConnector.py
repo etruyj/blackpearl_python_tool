@@ -82,6 +82,9 @@ class BPConnector:
     #   HTTP Calls to the Management Path
     #===============================================================
 
+    def addActivationKey(self, key, logbook):
+        return HttpCommands.addActivationKey(self.management_path, self.token, key, logbook)
+
     def authenticate(self, url, username, password, logbook):
         return HttpCommands.authenticate(url, username, password, logbook)
 
@@ -91,12 +94,18 @@ class BPConnector:
     def createNfsShare(self, comment, volume, mount_point, path, access_control, service_id, logbook):
         return HttpCommands.createNfsShare(self.management_path, self.token, comment, volume, mount_point, path, access_control, service_id, logbook)
 
+    def createPool(self, pool, logbook):
+        return HttpCommands.createPool(self.management_path, self.token, pool, logbook)
+
     def createVailShare(self, name, service_id, volume_id, logbook):
         return HttpCommands.createVailShare(self.management_path, self.token, name, service_id, volume_id, logbook)
 
     def createVolume(self, access_time, case_insensitive, compression, deduplication, name, nfi_repeat_schedule_daily, nfi_repeat_schedule_hour, nfi_repeat_schedule_minute, nfi_repeat_schedule_unit, nfi_repeat_schedule_weekly, nfi_volume_policy_bucket_id, nfi_volume_policy_cron_string, nfi_volume_policy_enabled, nfi_volume_policy_nfi_system_id, nfi_volume_policy, pool_id, quota, reservation, read_only, size, snapshot_change_threshold, vol_type, logbook):
         return HttpCommands.createVolume(self.management_path, self.token, access_time, case_insensitive, compression, deduplication, name, nfi_repeat_schedule_daily, nfi_repeat_schedule_hour, nfi_repeat_schedule_minute, nfi_repeat_schedule_unit, nfi_repeat_schedule_weekly, nfi_volume_policy_bucket_id, nfi_volume_policy_cron_string, nfi_volume_policy_enabled, nfi_volume_policy_nfi_system_id, nfi_volume_policy, pool_id, quota, reservation, read_only, size, snapshot_change_threshold, vol_type, logbook)
 
+
+    def getDataDisks(self, logbook):
+        return HttpCommands.getDataDisks(self.management_path, self.token, logbook)
 
     def getServices(self, logbook):
         # Literally get services
