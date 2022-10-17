@@ -30,7 +30,7 @@ def bytesToHumanReadable(storage):
     return format_float + " " + unit
 
 def humanReadableToBytes(storage):
-    if(storage.find(" ") != -1):
+    if(str(storage).find(" ") == -1):
         # Doesn't contain a space
         # No units specified
         # Assuming this is bytes.

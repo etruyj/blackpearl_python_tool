@@ -73,19 +73,25 @@ def createNfsShare(endpoint, token, comment, volume_id, mount_point, path, acces
         logbook.ERROR("Unable to create share [" + mount_point + "]")
 
 def createPool(endpoint, token, pool, logbook):
-    logbook.INFO("Creating NAS pool [" + pool.name() + "]...")
+    logbook.INFO("Creating NAS pool [" + pool.getName() + "]...")
     
-    url = "https://" + endpoint + "/api/nas/pool"
+    url = "https://" + endpoint + "/api/nas/pools"
 
     logbook.DEBUG("Calling HttpHandler.post(" + url + ")...")
+   
+    # Due to requiring a variable to use the built-in name 'type'
+    # this complex json has to be manually constructed.
+    # lamesauce
     
-    response = HttpHandler.post(url, token, pool, logbook)
+    request_body = pool.toJson()
+    
+    response = HttpHandler.post(url, token, request_body, logbook)
 
     if(response != None):
         return response
     else:
-        print("WARNING: Unable to create pool [" + pool.name() + "]")
-        logbook.WARN("Unabled to create pool [" + pool.name() + "]")
+        print("WARNING: Unable to create pool [" + pool.getName() + "]")
+        logbook.WARN("Unabled to create pool [" + pool.getName() + "]")
 
 def createVailShare(endpoint, token, name, volume_id, service_id, logbook):
     logbook.INFO("Creating Vail share [" + name + "]...")
@@ -186,6 +192,7 @@ def getNetworkInterfaces(endpoint, token, logbook):
         except Exception as e:
             print(e)
             logbook.ERROR("JSON Parse Exception")
+            logbook.ERROR(response)
             logbook.ERROR(e)
     else:
         logbook.ERROR("Failed to retrieve network interfaces.")

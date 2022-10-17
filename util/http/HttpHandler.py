@@ -31,9 +31,11 @@ def get(address, token, logbook):
 def post(address, token, request_body, logbook):
     logbook.INFO("POST: " + address)
 
-    request_headers = {"Authorization" : "Bearer " + token}
+    request_headers = {"Authorization" : "Bearer " + token, "Content-Type": "application/json", "User-Agent": "Python-3.10-requests", "Accept": "*/*", "Connection": "keep-alive"}
 
-    r = requests.post(address, headers=request_headers, json = request_body, verify=False)
+    request_body = json.dumps(request_body)
+
+    r = requests.post(address, headers=request_headers, data = request_body, verify=False)
 
     if(r.status_code >=200 and r.status_code <=230):
         return r.text

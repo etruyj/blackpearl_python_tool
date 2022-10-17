@@ -17,7 +17,7 @@ def assignDisks(disk_list, drive_count, stripes, parity, logbook):
             if(disk['pool_status'] == "available"):
                 print(disk['physical_path'] + " " + disk['pool_status'])
 
-                pool.addDiskToStripe(stripe, disk['physical_path'], disk['size'], "data")
+                pool.addDiskToStripe(stripe, disk['id'], disk['size'], "disk")
                 drives_in_stripe += 1
                 drives_assigned += 1
 
@@ -27,7 +27,10 @@ def assignDisks(disk_list, drive_count, stripes, parity, logbook):
                     # Next Stripe
                     drives_in_stripe = 0
                     stripe += 1
-                    pool.addStripeToTopology("data")
+                    # Check to make sure we don't create a blank
+                    # stripe at the end of the list.
+                    if(drives_assigned < drive_count):
+                        pool.addStripeToTopology(parity)
 
     if(drives_assigned == drive_count):
         # Drives assigned successfully.
@@ -43,6 +46,8 @@ def buildPool(blackpearl, pool, disk_list, logbook):
     
     if('name' not in pool.keys()):
         logbook.WARN("No name specified for pool. Skipping pool creation.")
+    elif('stripes' not in pool.keys()):
+        logbook.WARN("Missing required parameter 'stripes' for pool [" + pool['name'] + "]");
     else:
         logbook.INFO("Creating pool [" + pool['name'] + "]...")
         
@@ -51,11 +56,11 @@ def buildPool(blackpearl, pool, disk_list, logbook):
             print("WARNING: Power saving mode not set for pool [" + pool['name'] + "]. Setting to disabled.")
             pool['power_saving_mode'] = "disabled"
 
-        pool = assignDisks(disk_list, pool['drive_count'], pool['stripes'], pool['protection_level'], logbook)
+        pool_settings = assignDisks(disk_list, pool['drive_count'], pool['stripes'], pool['protection_level'], logbook)
 
-        if(pool != None):
-            pool.setName(pool['name'])
-            pool.setPowerMode(pool['power_saving_mode'])
+        if(pool_settings != None):
+            pool_settings.setName(pool['name'])
+            pool_settings.setPowerMode(pool['power_saving_mode'])
 
             logbook.DEBUG("Calling blackpearl.createPool()...")
-            return blackpearl.createPool(pool, logbook)
+            return blackpearl.createPool(pool_settings, logbook)

@@ -18,7 +18,7 @@ class Children:
     def diskId(self):
         return self.disk_id
 
-    def size(self):
+    def getSize(self):
         return self.size
 
     def type(self):
@@ -32,6 +32,10 @@ class Children:
 
     def setDiskType(self, t):
         self.disk_type = t
+
+    def toJson(self):
+        json = {"disk_id": self.disk_id, "type": self.disk_type, "size": self.size, "children": self.children }
+        return json
 
 class Stripe:
 
@@ -52,14 +56,37 @@ class Stripe:
         return self.children[i].diskType()
 
     def size(self, i):
-        return self.children[i].size()
+        return self.children[i].getSize()
+
+    def toJson(self):
+        # Clean the json output based on the pool
+        # configuration.
+        # If single disk exists or if no parity is
+        # selected, nothing is specified.
+        if(self.count() > 2):
+            stripes = []
+    
+            for disk in self.children:
+                stripes.append(disk.toJson())
+        else:
+            # Single disk
+            # No array.
+            # For loop just for clean way to reference
+            # the single disk.
+            for disk in self.children:
+                stripes = disk.toJson()
+
+        if(self.stripe_type == "none"):
+            json = stripes
+        else:
+            json = { "type": self.stripe_type, "children": stripes }
+        
+        return json
 
     def type(self):
         return stripe_type
 
 class NasPool:
-    name = 0
-    power_saving_mode = "disabled"
 
     def __init__(self, parity, stripe_count):
         # Var declaration
@@ -67,6 +94,7 @@ class NasPool:
         self.children = []
         self.disk_ids = []
         self.zil_drives = []
+        self.special_disk_ids = []
         self.type = "pool"
         self.health = None
         self.size = None
@@ -92,22 +120,22 @@ class NasPool:
     def addStripeToTopology(self, parity):
         self.topology.append(Stripe(parity))
 
-    def getStripeDiskCount(stripe):
-        return len(self.topology[stripe].count())
+    def getStripeDiskCount(self, stripe):
+        return self.topology[stripe].count()
 
-    def getStripeDiskSize(stripe, disk):
+    def getStripeDiskSize(self, stripe, disk):
         return self.topology[stripe].size(disk)
 
     def calcSizes(self):
         # Calculate the total size of the disks
         for stripe in range(0, len(self.topology)):
-            for disk in range(0, len(self.getStripeDiskCount(stripe))):
+            for disk in range(0, self.getStripeDiskCount(stripe)):
                 self.raw_size += self.getStripeDiskSize(stripe, disk)
 
         # Calculate the overhead
         # var declaration and for case "none"
         self.overhead = 0
-        match(protection):
+        match(self.protection):
             case "mirror":
                 self.overhead = self.raw_size / 2
             case "single":
@@ -128,14 +156,44 @@ class NasPool:
         # Available = raw_size - overhead
         self.available = self.raw_size - self.overhead
 
-    def name():
+    def getName(self):
         return self.name
 
-    def setName(n):
+    def getPowerMode(self):
+        return self.power_saving_mode
+
+    def getProtection(self):
+        return self.protection_mode
+
+    def setName(self, n):
         self.name = n
 
-    def setPowerMode(mode):
+    def setPowerMode(self, mode):
         self.power_saving_mode = mode
 
     def stripeCount(self):
         return len(self.topology)
+
+    def toJson(self):
+        topo = []
+        for stripe in self.topology:
+            topo.append(stripe.toJson())
+
+        if(self.power_saving_mode):
+            psm = "enabled"
+        else:
+            psm = "disabled"
+
+
+        json = { "available": self.available, "health": self.health,
+                "protection": self.protection, "size": self.size,
+                "stripes": self.stripes, "type": self.type, "used": self.used,
+                "overhead": self.overhead, "children": self.children, 
+                "high_water_mark": str(self.high_water_mark),
+                "power_saving_mode": psm,
+                "disk_ids": self.disk_ids, "zil_drives": self.zil_drives,
+                "special_disk_ids": self.special_disk_ids,
+                "topology": topo, "raw_size": self.raw_size, 
+                "name": self.name, "protection_select": self.protection_select }
+
+        return json

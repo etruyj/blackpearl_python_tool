@@ -43,7 +43,7 @@ def fromFile(blackpearl, file_path, logbook):
         # Basic Report to Logs
         logbook.INFO("Configuration loaded.")
         if('activation_keys' in config.keys()):
-            logbook.INFO("Configuration contains (" + str(len(config['activation_keys'] + ") activation keys.")
+            logbook.INFO("Configuration contains (" + str(len(config['activation_keys'])) + ") activation keys.")
         if('buckets' in config.keys()):
             logbook.INFO("Configuration contains (" + str(len(config['buckets'])) + ") buckets.")
         if('data_policies' in config.keys()):
@@ -334,6 +334,10 @@ def report(successes, config, logbook):
     if('activation_keys' in config.keys()):
             logbook.INFO("Successfully created " + str(successes['keys']) + "/" + str(len(config['activation_keys'])) + " activation keys.")
             print("Successfully created " + str(successes['keys']) + "/" + str(len(config['activation_keys'])) + " activation keyss.")
+
+    if('pools' in config.keys()):
+            logbook.INFO("Successfully created " + str(successes['pools']) + "/" + str(len(config['pools'])) + " pools.")
+            print("Successfully created " + str(successes['pools']) + "/" + str(len(config['pools'])) + " pools.")
 
     if('volumes' in config.keys()):
             logbook.INFO("Successfully created " + str(successes['volumes']) + "/" + str(len(config['volumes'])) + " volumes.")
