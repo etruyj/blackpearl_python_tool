@@ -5,6 +5,8 @@
 #        variables.
 #====================================================================
 
+import ui.display.Display as Display
+
 # Variable declarations
 https = True
 is_valid = False
@@ -13,6 +15,7 @@ option1_set = False
 option2_set = False
 option3_set = False
 option4_set = False
+print_text = False
 endpoint = "127.0.0.1"
 username = "none"
 password = "none"
@@ -21,6 +24,9 @@ secret_key = "none"
 command = "none"
 
 def parseArgs(args):
+    global is_valid
+    global print_text
+    
     # range(1, len(args)) is used as arg 0 is the script itself
     for i in range(1, len(args)):
         match args[i]:
@@ -33,6 +39,10 @@ def parseArgs(args):
             case "-e" | "--endpoint":
                 i += 1
                 setEndpoint(args[i])
+            case "-h" | "--help":
+                Display.fileContents("../lib/help/options.txt")
+                is_valid = False
+                print_text = True
             case "--http":
                 https = False
             case "-k" | "--secret" | "--secret-key":
@@ -56,7 +66,10 @@ def parseArgs(args):
             case "-u" | "--user" | "--username":
                 i += 1
                 setUsername(args[i])
-
+            case "--version":
+                Display.fileContents("../lib/help/version.txt")
+                is_valid = False
+                print_text = True
 
 # Getters
 
@@ -83,6 +96,9 @@ def getPassword():
 
 def getUsername():
     return username
+
+def printedText():
+    return print_text
 
 # Setters
 

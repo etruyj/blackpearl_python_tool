@@ -40,8 +40,7 @@ def humanReadableToBytes(storage):
         # Attempting to covert to bytes.
         unit = storage[(storage.find(" ") + 1):]
         storage = int(storage[:storage.find(" ")])
-        print(unit)
-
+        
         while(unit != "B"):
             match(unit):
                 case "EiB":

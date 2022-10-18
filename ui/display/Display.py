@@ -1,5 +1,15 @@
 from structures.BucketSummary import BucketSummary
 from structures.UserSummary import UserSummary
+import os
+
+def fileContents(path):
+    if(os.path.exists(path)):
+        f = open(path)
+        print(f.read())
+        f.close()
+
+    else:
+        print("Error [" + path + "] does not exist.")
 
 def output(output):
     if(output != None):

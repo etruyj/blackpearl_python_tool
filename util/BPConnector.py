@@ -12,6 +12,9 @@ import util.sdk.SDKCommands as SDKCommands
 
 class BPConnector:
     def __init__(self, endpoint, username, password, access_key, secret_key, logbook):
+        # Determine if the connection information is valid.
+        self.validConnection = True
+
         if(username != "none" and password != "none"):
             self.managementPathAuthentication(endpoint, username, password, logbook)
 
@@ -20,7 +23,7 @@ class BPConnector:
             # Save this for verifying connectivity.
             self.management_path = endpoint
         else:
-            self.dataPathAuthentication(endoint, access_key, secret_key, logbook)
+            self.dataPathAuthentication(endpoint, access_key, secret_key, logbook)
 
     def dataPathAuthentication(self, endpoint, access_key, secret_key, logbook):
         logbook.INFO("Accessing data path...")
@@ -32,11 +35,15 @@ class BPConnector:
             logbook.INFO("Creating connection to BlackPearl [" +endpoint + "].")
             logbook.INFO("Using access key " + access_key)
 
-            self.data_path_client = client = ds3.Client(endpoint, ds3.Credentials(access_key, secret_key))
+            self.data_path_client = ds3.Client(endpoint, ds3.Credentials(access_key, secret_key))
         
     def managementPathAuthentication(self, endpoint, username, password, logbook):
         logbook.INFO("Accessing management path...")
         self.token =  self.authenticate(endpoint, username, password, logbook)
+
+        # Verify the connection
+        if(self.token == "none"):
+            self.validConnection = False
 
     def retrieveDataPathParameters(self, endpoint, username, logbook):
         logbook.INFO("Searching for data path credentials...")

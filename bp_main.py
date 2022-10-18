@@ -8,12 +8,12 @@ from ds3 import ds3
 
 aparser.parseArgs(sys.argv)
 
-if(aparser.isValid):
+if(aparser.isValid()):
     controller = Controller(aparser.getEndpoint(), aparser.getUsername(), aparser.getPassword(), aparser.getAccessKey(), aparser.getSecretKey())
 
     if controller.clientValid():
         match aparser.getCommand():
-            case "configure-bp":
+            case "configure":
                 response = controller.configureBP(aparser.getOption4())
             case "fetch-config":
                 response = controller.fetchConfig()
@@ -29,6 +29,5 @@ if(aparser.isValid):
                 print("ERROR: Invalid command selected. Please type help to see valid commands.")
 
         Display.output(response)
-else:
-    print("Invalid option selected. Type help to see valid options")
-
+elif(not aparser.printedText()):
+   print("Invalid option selected. Type --help to see valid options")
