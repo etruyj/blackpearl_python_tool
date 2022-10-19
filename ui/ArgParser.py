@@ -9,7 +9,7 @@ import ui.display.Display as Display
 
 # Variable declarations
 https = True
-is_valid = False
+is_valid = True
 command_set = False
 option1_set = False
 option2_set = False

@@ -98,11 +98,11 @@ class BPConnector:
     def createCifsShare(self, name, path, volume_id, readonly, service_id, logbook):
         return HttpCommands.createCifsShare(self.management_path, self.token, name, path, volume_id, readonly, service_id, logbook)
 
+    def createNASPool(self, pool, logbook):
+        return HttpCommands.createPool(self.management_path, self.token, pool, logbook)
+
     def createNfsShare(self, comment, volume, mount_point, path, access_control, service_id, logbook):
         return HttpCommands.createNfsShare(self.management_path, self.token, comment, volume, mount_point, path, access_control, service_id, logbook)
-
-    def createPool(self, pool, logbook):
-        return HttpCommands.createPool(self.management_path, self.token, pool, logbook)
 
     def createVailShare(self, name, service_id, volume_id, logbook):
         return HttpCommands.createVailShare(self.management_path, self.token, name, service_id, volume_id, logbook)

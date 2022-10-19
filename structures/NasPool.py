@@ -96,6 +96,7 @@ class NasPool:
         self.zil_drives = []
         self.special_disk_ids = []
         self.type = "pool"
+        self.preferred_disk_type = "none"
         self.health = None
         self.size = None
         self.high_water_mark = 80
@@ -137,7 +138,7 @@ class NasPool:
         self.overhead = 0
         match(self.protection):
             case "mirror":
-                self.overhead = self.raw_size / 2
+                self.overhead = int(self.raw_size / 2)
             case "single":
                 for stripe in range(0, len(self.topology)):
                     if(self.getStripeDiskCount(stripe) > 0):
@@ -151,6 +152,15 @@ class NasPool:
                         # double parity mode. Grab the size of the first two.
                         self.overhead += self.getStripeDiskSize(stripe, 0)
                         self.overhead += self.getStripeDiskSize(stripe, 1)
+            case "triple":
+                for stripe in range(0, len(self.topology)):
+                    if(self.getStripeDiskCount(stripe) > 3):
+                        # Only need two of the disks for overhead in
+                        # double parity mode. Grab the size of the first two.
+                        self.overhead += self.getStripeDiskSize(stripe, 0)
+                        self.overhead += self.getStripeDiskSize(stripe, 1)
+                        self.overhead += self.getStripeDiskSize(stripe, 2)
+
 
         # Calc the availale space
         # Available = raw_size - overhead
@@ -161,6 +171,9 @@ class NasPool:
 
     def getPowerMode(self):
         return self.power_saving_mode
+
+    def getPreferredDiskType(self):
+        return self.preferred_disk_type
 
     def getProtection(self):
         return self.protection_mode

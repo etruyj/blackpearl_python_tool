@@ -203,12 +203,8 @@ def createDiskPartitions(blackpearl, disk_partition_list, logbook):
 def createPools(blackpearl, pools, logbook):
     success = 0
     
-    logbook.DEBUG("Calling blackpearl.getDataDisks()...")
-    disk_list = blackpearl.getDataDisks(logbook)
-
-
     for pool in pools:
-        result = CreatePool.buildPool(blackpearl, pool, disk_list, logbook)
+        result = CreatePool.buildPool(blackpearl, pool, logbook)
 
         if(result != None):
             success += 1
