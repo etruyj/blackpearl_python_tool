@@ -74,7 +74,6 @@ class Logger:
             if(i == 0 and self.log_count > 1):
                 os.rename(self.path, self.path + ".1")
             elif(os.path.exists(original_path)):
-                self.writeLog("Path exists!!!!!!", 10)
                 # move file
                 suffix_len = len(str(i))
                 new_path = original_path[:(len(original_path) - suffix_len)]
