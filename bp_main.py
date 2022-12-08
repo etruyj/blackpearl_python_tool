@@ -23,6 +23,8 @@ if(aparser.isValid()):
                 response = controller.listDataPolicies()
             case "list-pools":
                 response = controller.listPools()
+            case "list-tapes":
+                response = controller.listTapesAll()
             case "list-users":
                 response = controller.listUsers()
             case _:

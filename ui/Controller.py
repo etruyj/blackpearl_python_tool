@@ -11,6 +11,7 @@ import command.ConfigureBlackPearl as ConfigureBlackPearl
 import command.ListBuckets as ListBuckets
 import command.ListDataPolicies as ListDataPolicies
 import command.ListPools as ListPools
+import command.ListTapes as ListTapes
 import command.ListUsers as ListUsers
 
 class Controller:
@@ -35,6 +36,9 @@ class Controller:
 
     def listPools(self):
         return ListPools.createList(self.blackpearl, self.logbook)
+
+    def listTapesAll(self):
+        return ListTapes.allTapes(self.blackpearl, self.logbook)
 
     def listUsers(self):
         return ListUsers.createList(self.blackpearl, self.logbook)

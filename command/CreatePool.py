@@ -92,6 +92,7 @@ def buildPool(blackpearl, pool, logbook):
         if(pool_settings != None):
             pool_settings.setName(pool['name'])
             pool_settings.setPowerMode(pool['power_saving_mode'])
+            pool_settings.setType(pool['type'])
 
             if('type' in pool.keys()):
                 if(pool['type'] == "nas"):

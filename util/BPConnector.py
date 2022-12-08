@@ -26,13 +26,13 @@ class BPConnector:
             self.dataPathAuthentication(endpoint, access_key, secret_key, logbook)
 
     def dataPathAuthentication(self, endpoint, access_key, secret_key, logbook):
-        logbook.INFO("Accessing data path...")
+        logbook.INFO("Accessing data path: " + endpoint)
         if(access_key == "none" and secret_key == "none"):
             logbook.INFO("Creating client with environmental variables")
         
             self.data_path_client = ds3.createClientFromEnv()
         else:
-            logbook.INFO("Creating connection to BlackPearl [" +endpoint + "].")
+            logbook.INFO("Creating connection to BlackPearl [" + endpoint + "].")
             logbook.INFO("Using access key " + access_key)
 
             self.data_path_client = ds3.Client(endpoint, ds3.Credentials(access_key, secret_key))
@@ -49,12 +49,16 @@ class BPConnector:
         logbook.INFO("Searching for data path credentials...")
 
         data_path = HttpCommands.getDataPathIP(endpoint, self.token, logbook)
+        data_port = HttpCommands.getDataPathPort(endpoint, self.token, logbook)
         keys = HttpCommands.findDs3Credentials(endpoint, self.token, username, logbook)
 
-        self.dataPathAuthentication(data_path, keys['access_key'], keys['secret_key'], logbook)
+        self.dataPathAuthentication(data_path + ":" + data_port, keys['access_key'], keys['secret_key'], logbook)
 
     def verifyDataConnection(self, logbook):
         try:
+            # May not be able to do a get service if there are no buckets in
+            # the blackpearl. Skipping for now.
+            return True
             getServiceResponse = self.data_path_client.get_service(ds3.GetServiceRequest())
             return True
         except Exception as e:
@@ -174,6 +178,9 @@ class BPConnector:
 
     def getTapePartitions(self, logbook):
         return SDKCommands.getTapePartitions(self.data_path_client, logbook)
+
+    def getTapesAll(self, logbook):
+        return SDKCommands.getTapesAll(self.data_path_client, logbook)
 
     def getUsers(self, logbook):
         return SDKCommands.getUsers(self.data_path_client, logbook)

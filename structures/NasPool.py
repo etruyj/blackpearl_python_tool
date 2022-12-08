@@ -184,6 +184,9 @@ class NasPool:
     def setPowerMode(self, mode):
         self.power_saving_mode = mode
 
+    def setType(self, t):
+        self.type = t
+
     def stripeCount(self):
         return len(self.topology)
 

@@ -131,7 +131,7 @@ def getBucketNames(blackpearl, logbook):
         logbook.DEBUG("blackpear.get_service()")
         
         getServiceResponse = blackpearl.get_service(ds3.GetServiceRequest())
-        
+        logbook.INFO("BUCKET QUERY") 
         logbook.INFO("Found " + str(len(getServiceResponse.result['BucketList'])) + " buckets.")
 
         return getServiceResponse.result['BucketList']
@@ -203,6 +203,18 @@ def getTapePartitions(blackpearl, logbook):
     except Exception as e:
         print(e)
         logbook.ERROR("Unable to retrieve tape partition information.")
+
+def getTapesAll(blackpearl, logbook):
+    try:
+        logbook.INFO("Fetchin all tapes managed by BlackPearl...")
+        logbook.DEBUG("blackpearl.get_tapes_spectra_s3()...")
+
+        getTapes = blackpearl.get_tapes_spectra_s3(ds3.GetTapesSpectraS3Request())
+
+        print(vars(getTapes))
+    except Exception as e:
+        print(e)
+        logbook.ERROR("Unabled to fetch tapes from BlackPearl.")
 
 def getUsers(blackpearl, logbook):
     try:

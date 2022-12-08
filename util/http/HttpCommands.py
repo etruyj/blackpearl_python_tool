@@ -162,7 +162,9 @@ def getDataPathIP(endpoint, token, logbook):
 
     if(all_interfaces != None):
         for interface in all_interfaces:
-            if(interface['type'] == "data" and interface['up']):
+            # Need to better error handle lagged interfaces
+            # for data or management.
+            if((interface['type'] == "data") or (interface['type'] == "lagg") and interface['up']):
                 for address in interface['addresses']:
                     if(not address['autoconf']):
                         logbook.INFO("Found data path address [" + interface['name'] + "] " + address['address'])
@@ -172,6 +174,17 @@ def getDataPathIP(endpoint, token, logbook):
                         return ip
     else:
         logbook.ERROR("Unabled to determine data path address.")
+
+def getDataPathPort(endpoint, token, logbook):
+    logbook.INFO("Searching for data path port...")
+    
+    all_services = getServices(endpoint, token, logbook)
+   
+    if(all_services != None):
+        for service in all_services:
+            if(service['type'] == "DS3"):
+                logbook.INFO("DS3 is listening to port: " + str(service['port']))
+                return str(service['port'])
 
 def getNetworkInterfaces(endpoint, token, logbook):
     logbook.INFO("Fetching network interfaces...")
