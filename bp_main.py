@@ -25,6 +25,8 @@ if(aparser.isValid()):
                 response = controller.listPools()
             case "list-tapes":
                 response = controller.listTapesAll()
+            case "list-tape-partitions":
+                response = controller.listTapePartitions()
             case "list-users":
                 response = controller.listUsers()
             case _:

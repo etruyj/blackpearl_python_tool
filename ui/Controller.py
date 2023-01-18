@@ -12,6 +12,7 @@ import command.ListBuckets as ListBuckets
 import command.ListDataPolicies as ListDataPolicies
 import command.ListPools as ListPools
 import command.ListTapes as ListTapes
+import command.ListTapePartitions as ListTapePartitions
 import command.ListUsers as ListUsers
 
 class Controller:
@@ -39,6 +40,9 @@ class Controller:
 
     def listTapesAll(self):
         return ListTapes.allTapes(self.blackpearl, self.logbook)
+
+    def listTapePartitions(self):
+        return ListTapePartitions.all(self.blackpearl, self.logbook)
 
     def listUsers(self):
         return ListUsers.createList(self.blackpearl, self.logbook)
