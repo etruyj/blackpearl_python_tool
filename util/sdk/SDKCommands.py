@@ -186,7 +186,8 @@ def getStorageDomains(blackpearl, logbook):
 
         getStorageDomains = blackpearl.get_storage_domains_spectra_s3(ds3.GetStorageDomainsSpectraS3Request())
 
-        #print(vars(getStorageDomains))
+        logbook.INFO("Found (" + str(len(getStorageDomains.result['StorageDomainList'])) + ") storage domains.")
+
         return getStorageDomains.result['StorageDomainList']
     except Exception as e:
         print(e)
