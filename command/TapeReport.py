@@ -44,7 +44,6 @@ import util.map.MapBuckets as MapBuckets
 import util.map.MapStorageDomains as MapStorageDomains
 import util.map.MapTapePartitions as MapTapePartitions
 
-from structures.KeyPair import KeyPair
 from structures.TapeSummary import TapeSummary
 from structures.sdk.Tape import Tape
 

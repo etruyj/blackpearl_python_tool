@@ -5,7 +5,7 @@
 #           partition names to ids and vice versa.
 #====================================================================
 
-from structures.raw.TapePartition import TapePartition
+from structures.sdk.TapePartition import TapePartition
 
 def createIDNameMap(par_list):
     par_map = {}
