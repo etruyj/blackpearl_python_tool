@@ -1,7 +1,7 @@
 # ListStorageDomains.py
 
 from structures.StorageDomainSummary import StorageDomainSummary
-from structures.raw.StorageDomain import StorageDomain
+from structures.sdk.StorageDomain import StorageDomain
 
 def createList(blackpearl, logbook):
     logbook.INFO("Creating list of storage domains...")

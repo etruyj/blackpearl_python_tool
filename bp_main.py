@@ -32,6 +32,8 @@ if(aparser.isValid()):
                 response = controller.listTapePartitions()
             case "list-users":
                 response = controller.listUsers()
+            case "tape-report":
+                response = controller.tapeReport(aparser.getOption2(), aparser.getOption3())
             case _:
                 print("ERROR: Invalid command selected. Please type help to see valid commands.")
         

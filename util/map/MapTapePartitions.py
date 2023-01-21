@@ -13,6 +13,8 @@ def createIDNameMap(par_list):
     if(par_list != None):
         for par in par_list:
             par_map[par.getPartitionId()] = par.getName()
+    else:
+        print("No par list")
 
     return par_map
 

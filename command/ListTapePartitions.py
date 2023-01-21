@@ -4,9 +4,9 @@
 #           Provides a list of Tape Partitions
 #====================================================================
 
-from structures.raw.TapePartition import TapePartition
+from structures.sdk.TapePartition import TapePartition
 
-def all(blackpearl, logbook):
+def createList(blackpearl, logbook):
     logbook.INFO("Retrieving list of tape partitions")
     logbook.DEBUG("Calling blackpearl.getTapePartitions()")
     output = []
@@ -33,6 +33,7 @@ def all(blackpearl, logbook):
             partition.setState(par['State'])
 
             output.append(partition)
-            
+           
+        return output
     else:
         logbook.WARN("No tape partitions found.")

@@ -5,6 +5,30 @@
 #====================================================================
 
 class Tape:
+    #============================================
+    # Getters
+    #============================================
+    def getBarcode(self):
+        return self.barcode
+
+    def getBucketId(self):
+        return self.bucket_id
+
+    def getState(self):
+        return self.state
+
+    def getStorageDomainMemberId(self):
+        return self.storage_domain_id
+
+    def getTapeType(self):
+        return self.tape_type
+
+    def getPartitionId(self):
+        return self.partition_id
+
+    #============================================
+    # Setters
+    #============================================
     def setAssignedToStorageDomain(self, v):
         self.assigned_to_storage_domain = v
 
@@ -16,9 +40,6 @@ class Tape:
 
     def setBucketId(self, b):
         self.bucket_id = b
-
-    def setBucketName(self, b):
-        self.bucket_name = b
 
     def setDescription(self, d):
         self.description = d
@@ -59,9 +80,6 @@ class Tape:
     def setPartitionId(self, d):
         self.partition_id = d
 
-    def setPartitionName(self, d):
-        self.partition_name = d
-
     def setPreviousState(self, d):
         self.previous_state = d
 
@@ -73,9 +91,6 @@ class Tape:
 
     def setStorageDomainId(self, d):
         self.storage_domain_id = d
-
-    def setStorageDomainName(self, d):
-        self.storage_domain_name = d
 
     def setTakeOwnershipPending(self, d):
         self.take_ownership_pending = d
@@ -92,11 +107,13 @@ class Tape:
     def setWriteProtected(self, d):
         self.write_protected = d
 
+    #============================================
+    # Variables
+    #============================================
     assigned_to_storage_domain = False
     available_raw_capacity = None
     barcode = None
     bucket_id = None
-    bucket_name = None
     description = None
     eject_date = None
     eject_label = None
@@ -110,12 +127,10 @@ class Tape:
     last_verified = None
     partially_verified_end_of_tape = None
     partition_id = None
-    partition_name = None
     previous_state = None
     serial_number = None
     state = None
     storage_domain_member_id = None
-    storage_domain_name = None
     take_ownership_pending = None
     total_raw_capacity = None
     tape_type = None

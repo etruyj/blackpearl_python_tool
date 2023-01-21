@@ -179,6 +179,20 @@ def getPools(blackpearl, logbook):
         print(e)
         logbook.ERROR("Failed to retrieve pools.")
 
+def getStorageDomainMembers(blackpearl, logbook):
+    try:
+        logbook.INFO("Fetching storage domain members...")
+        logbook.DEBUG("Calling blackpearl.get_storage_domain_members_spectra_s3()")
+
+        getStorageDomainMembers = blackpearl.get_storage_domain_members_spectra_s3(ds3.GetStorageDomainMembersSpectraS3Request())
+
+        logbook.INFO("Found (" + str(len(getStorageDomainMembers.result['StorageDomainMemberList'])) + ") storage domain members.")
+
+        return getStorageDomainMembers.result['StorageDomainMemberList']
+    except Exception as e:
+        print(e)
+        logbook.ERROR("Failed to retrieve storage domain members.")
+
 def getStorageDomains(blackpearl, logbook):
     try:
         logbook.INFO("Fetching storage domains...")
