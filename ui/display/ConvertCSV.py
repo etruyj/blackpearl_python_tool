@@ -64,13 +64,13 @@ def convertTapeSummary(output):
     toPrint = []
     row = ""
 
-    row = "barcode,bucket,state,tape_type,tape_partition,storage_domain"
+    row = "barcode,bucket,tape_partition,storage_domain,state,tape_type"
     toPrint.append(row)
 
     for line in output:
         row = str(line.getBarcode()) + "," + str(line.getBucket()) + ","
-        row += str(line.getState()) + "," + str(line.getTapeType()) + "," 
-        row += str(line.getTapePartition()) + "," + str(line.getStorageDomain())
+        row += str(line.getTapePartition()) + "," + str(line.getStorageDomain()) + ","
+        row += str(line.getState()) + "," + str(line.getTapeType())
 
         toPrint.append(row)
 

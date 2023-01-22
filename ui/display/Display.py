@@ -3,6 +3,7 @@ from structures.TapeSummary import TapeSummary
 from structures.UserSummary import UserSummary
 
 import ui.display.ConvertCSV as ConvertCSV
+import ui.display.ConvertTable as ConvertTable
 import ui.display.Print as Print
 import ui.display.Save as Save
 import os
@@ -20,8 +21,13 @@ def output(output, output_format="csv", file=None):
     toPrint = []
 
     # Covert output to the desired format
-    if(output_format == "csv"):
-        toPrint = ConvertCSV.toOutput(output)
+    match output_format:
+        case "csv":
+            toPrint = ConvertCSV.toOutput(output)
+        case "table":
+            toPrint = ConvertTable.toOutput(output)
+        case _:
+            toPrint = ConvertTable.toOutput(output)
 
     if(file==None or file==""):
         Print.toShell(toPrint)
