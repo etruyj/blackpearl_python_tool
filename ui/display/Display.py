@@ -2,6 +2,9 @@ from structures.BucketSummary import BucketSummary
 from structures.TapeSummary import TapeSummary
 from structures.UserSummary import UserSummary
 
+import ui.display.ConvertCSV as ConvertCSV
+import ui.display.Print as Print
+import ui.display.Save as Save
 import os
 
 def fileContents(path):
@@ -13,46 +16,14 @@ def fileContents(path):
     else:
         print("Error [" + path + "] does not exist.")
 
-def output(output):
-    if(output != None):
-        if(type(output) is dict):
-            printDict(output)
-        else:
-            for line in output:
-                if(isinstance(line, BucketSummary)):
-                    printBucket(line)
-                if(isinstance(line, TapeSummary)):
-                    printTape(line)
-                if(isinstance(line, UserSummary)):
-                    printUser(line)
-            
+def output(output, output_format="csv", file=None):
+    toPrint = []
 
-def printBucket(line):
-    print(line.name + " " + line.data_policy + " " + line.owner + " " + str(line.size))
+    # Covert output to the desired format
+    if(output_format == "csv"):
+        toPrint = ConvertCSV.toOutput(output)
 
-def printDict(output):
-    headers = []
-    line = ""
-    
-    # Get headers
-    for key in output.keys():
-        headers.append(key)
-
-
-    # Print Headers
-    #for i in range(0, len(headers)):
-    #    line += line + str(headers[i])
-
-    #    if(i<(len(headers) - 1)):
-    #       line += line + ","
-
-    #print(line)
-    
-    for i in range(0, len(headers)):
-           print(headers[i] + "," + str(output[headers[i]]))
-
-def printTape(tape):
-    print(tape.getBarcode() + "," + str(tape.getBucket()) + "," + str(tape.getTapePartition()) + "," + str(tape.getStorageDomain()) + "," + str(tape.getState()))
-
-def printUser(user):
-    print(user.name + " " + user.uuid)
+    if(file==None or file==""):
+        Print.toShell(toPrint)
+    else:
+        Save.toFile(toPrint, file)

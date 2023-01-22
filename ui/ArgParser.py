@@ -26,6 +26,7 @@ password = "none"
 access_key = "none"
 secret_key = "none"
 command = "none"
+output_format = "csv"
 
 def parseArgs(args):
     global is_valid
@@ -64,6 +65,9 @@ def parseArgs(args):
             case "--option4" | "--file":
                 i += 1
                 setOption4(args[i])
+            case "--output-format":
+                i += 1
+                setOutputFormat(args[i])
             case "-p" | "--password":
                 i += 1
                 setPassword(args[i])
@@ -109,6 +113,12 @@ def getOption4():
         return option4
     else:
         return ""
+
+def getOutputFormat():
+    if(output_format != None):
+        return output_format
+    else:
+        return "table"
 
 def getSecretKey():
     return secret_key
@@ -185,6 +195,10 @@ def setOption4(op):
     else:
         option4 = op
         option4_set = True
+
+def setOutputFormat(ou):
+    global output_format
+    output_format = ou
 
 def setPassword(pw):
     global password

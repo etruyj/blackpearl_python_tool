@@ -38,6 +38,6 @@ if(aparser.isValid()):
                 print("ERROR: Invalid command selected. Please type help to see valid commands.")
         
         if(response != None):
-            Display.output(response)
+            Display.output(response, aparser.getOutputFormat(), aparser.getOption4())
 elif(not aparser.printedText()):
    print("Invalid option selected. Type --help to see valid options")
