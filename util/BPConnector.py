@@ -173,6 +173,9 @@ class BPConnector:
     def getPools(self, logbook):
         return SDKCommands.getPools(self.data_path_client, logbook)
 
+    def getStorageDomainMembers(self, logbook):
+        return SDKCommands.getStorageDomainMembers(self.data_path_client, logbook)
+
     def getStorageDomains(self, logbook):
         return SDKCommands.getStorageDomains(self.data_path_client, logbook)
 

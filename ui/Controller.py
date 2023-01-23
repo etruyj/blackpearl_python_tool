@@ -11,12 +11,15 @@ import command.ConfigureBlackPearl as ConfigureBlackPearl
 import command.ListBuckets as ListBuckets
 import command.ListDataPolicies as ListDataPolicies
 import command.ListPools as ListPools
+import command.ListStorageDomains as ListStorageDomains
 import command.ListTapes as ListTapes
+import command.ListTapePartitions as ListTapePartitions
 import command.ListUsers as ListUsers
+import command.TapeReport as TapeReport
 
 class Controller:
     def __init__(self, endpoint, username, password, access_key, secret_key):
-        self.logbook = Logger("../log/bp_script.log", "10 KiB", 2, 2)
+        self.logbook = Logger("../log/bp_script.log", "100 KiB", 2, 2)
         self.blackpearl = BPConnector(endpoint, username, password, access_key, secret_key, self.logbook)
 
     def clientValid(self):
@@ -37,8 +40,17 @@ class Controller:
     def listPools(self):
         return ListPools.createList(self.blackpearl, self.logbook)
 
+    def listStorageDomains(self):
+        return ListStorageDomains.createList(self.blackpearl, self.logbook)
+
     def listTapesAll(self):
         return ListTapes.allTapes(self.blackpearl, self.logbook)
 
+    def listTapePartitions(self):
+        return ListTapePartitions.all(self.blackpearl, self.logbook)
+
     def listUsers(self):
         return ListUsers.createList(self.blackpearl, self.logbook)
+
+    def tapeReport(self, group_by, filter_by):
+        return TapeReport.createReport(group_by, filter_by, self.blackpearl, self.logbook)

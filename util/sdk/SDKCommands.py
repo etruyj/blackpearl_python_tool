@@ -179,6 +179,20 @@ def getPools(blackpearl, logbook):
         print(e)
         logbook.ERROR("Failed to retrieve pools.")
 
+def getStorageDomainMembers(blackpearl, logbook):
+    try:
+        logbook.INFO("Fetching storage domain members...")
+        logbook.DEBUG("Calling blackpearl.get_storage_domain_members_spectra_s3()")
+
+        getStorageDomainMembers = blackpearl.get_storage_domain_members_spectra_s3(ds3.GetStorageDomainMembersSpectraS3Request())
+
+        logbook.INFO("Found (" + str(len(getStorageDomainMembers.result['StorageDomainMemberList'])) + ") storage domain members.")
+
+        return getStorageDomainMembers.result['StorageDomainMemberList']
+    except Exception as e:
+        print(e)
+        logbook.ERROR("Failed to retrieve storage domain members.")
+
 def getStorageDomains(blackpearl, logbook):
     try:
         logbook.INFO("Fetching storage domains...")
@@ -186,7 +200,8 @@ def getStorageDomains(blackpearl, logbook):
 
         getStorageDomains = blackpearl.get_storage_domains_spectra_s3(ds3.GetStorageDomainsSpectraS3Request())
 
-        #print(vars(getStorageDomains))
+        logbook.INFO("Found (" + str(len(getStorageDomains.result['StorageDomainList'])) + ") storage domains.")
+
         return getStorageDomains.result['StorageDomainList']
     except Exception as e:
         print(e)
@@ -199,6 +214,8 @@ def getTapePartitions(blackpearl, logbook):
 
         getTapePartitions = blackpearl.get_tape_partitions_spectra_s3(ds3.GetTapePartitionsSpectraS3Request())
 
+        logbook.INFO("Found (" + str(len(getTapePartitions.result['TapePartitionList'])) + ") tape partitions.")
+
         return getTapePartitions.result['TapePartitionList']
     except Exception as e:
         print(e)
@@ -209,9 +226,11 @@ def getTapesAll(blackpearl, logbook):
         logbook.INFO("Fetchin all tapes managed by BlackPearl...")
         logbook.DEBUG("blackpearl.get_tapes_spectra_s3()...")
 
-        getTapes = blackpearl.get_tapes_spectra_s3(ds3.GetTapesSpectraS3Request())
+        getTapesResponse = blackpearl.get_tapes_spectra_s3(ds3.GetTapesSpectraS3Request())
 
-        print(vars(getTapes))
+        logbook.INFO("Found (" + str(len(getTapesResponse.result['TapeList'])) + ") tapes")
+
+        return getTapesResponse.result['TapeList']
     except Exception as e:
         print(e)
         logbook.ERROR("Unabled to fetch tapes from BlackPearl.")

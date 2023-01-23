@@ -37,21 +37,22 @@ def createList(blackpearl, logbook):
     else:
         for bucket in bucket_list:
             summary = BucketSummary()
-            summary.name = bucket['Name']
+            summary.setName(bucket['Name'])
+            summary.setId(bucket['Id'])
 
             if(user_map[bucket['UserId']] == None):
                 logbook.WARN("Unable to find user with id [" + bucket['UserId'] + "]")
-                summary.owner = bucket['UserId']
+                summary.setOwner(bucket['UserId'])
             else:
-                summary.owner = user_map[bucket['UserId']]
+                summary.setOwner(user_map[bucket['UserId']])
 
             if(policy_map[bucket['DataPolicyId']] == None):
                 logbook.WARN("Unabled to find data policy with id [" + bucke['DataPolicyId'] + "]")
-                summary.data_policy = bucket['DataPolicyId']
+                summary.setDataPolicy(bucket['DataPolicyId'])
             else:
-                summary.data_policy = policy_map[bucket['DataPolicyId']]
+                summary.setDataPolicy(policy_map[bucket['DataPolicyId']])
 
-            summary.size = bucket['LogicalUsedCapacity']
+            summary.setSize(bucket['LogicalUsedCapacity'])
 
             output.append(summary)
 

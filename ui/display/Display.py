@@ -1,5 +1,11 @@
 from structures.BucketSummary import BucketSummary
+from structures.TapeSummary import TapeSummary
 from structures.UserSummary import UserSummary
+
+import ui.display.ConvertCSV as ConvertCSV
+import ui.display.ConvertTable as ConvertTable
+import ui.display.Print as Print
+import ui.display.Save as Save
 import os
 
 def fileContents(path):
@@ -11,16 +17,19 @@ def fileContents(path):
     else:
         print("Error [" + path + "] does not exist.")
 
-def output(output):
-    if(output != None):
-        for line in output:
-            if(isinstance(line, BucketSummary)):
-                printBucket(line)
-            if(isinstance(line, UserSummary)):
-                printUser(line)
+def output(output, output_format="csv", file=None):
+    toPrint = []
 
-def printBucket(line):
-    print(line.name + " " + line.data_policy + " " + line.owner + " " + str(line.size))
+    # Covert output to the desired format
+    match output_format:
+        case "csv":
+            toPrint = ConvertCSV.toOutput(output)
+        case "table":
+            toPrint = ConvertTable.toOutput(output)
+        case _:
+            toPrint = ConvertTable.toOutput(output)
 
-def printUser(user):
-    print(user.name + " " + user.uuid)
+    if(file==None or file==""):
+        Print.toShell(toPrint)
+    else:
+        Save.toFile(toPrint, file)
