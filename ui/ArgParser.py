@@ -26,7 +26,7 @@ password = "none"
 access_key = "none"
 secret_key = "none"
 command = "none"
-output_format = "csv"
+output_format = "table"
 
 def parseArgs(args):
     global is_valid
