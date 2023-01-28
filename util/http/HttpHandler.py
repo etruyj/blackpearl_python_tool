@@ -3,12 +3,16 @@
 
 import json
 import requests
+from urllib3.exceptions import InsecureRequestWarning
 
 def authenticate(address, username, password, logbook):
     logbook.INFO("Authenticating with BlackPearl at " + address + " with username " + username)
 
     json_body = {'username': username, 'password': password}
 
+    # Suppress insecure SSL certificate warning.
+    requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+    
     r = requests.post("https://" + address + "/api/tokens.json", data = json_body, verify=False)
 
     if(r.status_code >= 200 and r.status_code <= 230):
@@ -21,6 +25,9 @@ def get(address, token, logbook):
 
     request_headers = {"Authorization" : "Bearer " + token}
 
+    # Suppress insecure SSL certificate warning.
+    requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+    
     r = requests.get(address, headers=request_headers, verify=False)
 
     if(r.status_code >=200 and r.status_code <= 230):
@@ -35,6 +42,9 @@ def post(address, token, request_body, logbook):
 
     request_body = json.dumps(request_body)
 
+    # Suppress insecure SSL certificate warning.
+    requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+    
     r = requests.post(address, headers=request_headers, data = request_body, verify=False)
 
     if(r.status_code >=200 and r.status_code <=230):
