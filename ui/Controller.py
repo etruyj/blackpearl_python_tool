@@ -23,7 +23,7 @@ class Controller:
         self.blackpearl = BPConnector(endpoint, username, password, access_key, secret_key, self.logbook)
 
     def clientValid(self):
-        return self.blackpearl.verifyDataConnection(self.logbook)
+        return self.blackpearl.verifyConnection(self.logbook)
     
     def configureBP(self, file_path):
         return ConfigureBlackPearl.fromFile(self.blackpearl, file_path, self.logbook)
