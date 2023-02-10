@@ -44,7 +44,7 @@ class Controller:
         return ListStorageDomains.createList(self.blackpearl, self.logbook)
 
     def listTapesAll(self):
-        return ListTapes.allTapes(self.blackpearl, self.logbook)
+        return ListTapes.createList(self.blackpearl, self.logbook)
 
     def listTapePartitions(self):
         return ListTapePartitions.all(self.blackpearl, self.logbook)
