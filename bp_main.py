@@ -39,5 +39,9 @@ if(aparser.isValid()):
         
         if(response != None):
             Display.output(response, aparser.getOutputFormat(), aparser.getOption4())
+    else:
+        # Connection is invalid
+        print("Unable to connect to BlackPearl at " + aparser.getEndpoint() + " with username " + aparser.getUsername())
+
 elif(not aparser.printedText()):
    print("Invalid option selected. Type --help to see valid options")

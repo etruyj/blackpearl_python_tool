@@ -33,9 +33,10 @@ def authenticate(url, username, password, logbook):
         except Exception as e:
             print(e)
             logbook.ERROR(e)
+            logbook.ERROR("Failed to authenticate with username " + username)
             return "none"
     else:
-        logbook.ERROR("Failed to authenticate with username " + username)
+        logbook.ERROR("Unable to connect to BlackPearl management path: " + url)
         return "none"
 
 def createCifsShare(endpoint, token, name, path, volume_id, readonly, service_id, logbook):

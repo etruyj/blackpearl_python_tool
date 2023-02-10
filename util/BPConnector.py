@@ -18,25 +18,31 @@ class BPConnector:
         if(username != "none" and password != "none"):
             self.managementPathAuthentication(endpoint, username, password, logbook)
 
-            self.retrieveDataPathParameters(endpoint, username, logbook)
+            if(self.validConnection):
+                self.retrieveDataPathParameters(endpoint, username, logbook)
         
-            # Save this for verifying connectivity.
-            self.management_path = endpoint
+                # Save this for verifying connectivity.
+                self.management_path = endpoint
         else:
             self.dataPathAuthentication(endpoint, access_key, secret_key, logbook)
 
     def dataPathAuthentication(self, endpoint, access_key, secret_key, logbook):
-        logbook.INFO("Accessing data path: " + endpoint)
-        if(access_key == "none" and secret_key == "none"):
-            logbook.INFO("Creating client with environmental variables")
-        
-            self.data_path_client = ds3.createClientFromEnv()
-        else:
-            logbook.INFO("Creating connection to BlackPearl [" + endpoint + "].")
-            logbook.INFO("Using access key " + access_key)
+        try:
+            logbook.INFO("Accessing data path: " + endpoint)
 
-            self.data_path_client = ds3.Client(endpoint, ds3.Credentials(access_key, secret_key))
+            if(access_key == "none" and secret_key == "none"):
+                logbook.INFO("Creating client with environmental variables")
         
+                self.data_path_client = ds3.createClientFromEnv()
+            else:
+                logbook.INFO("Creating connection to BlackPearl [" + endpoint + "].")
+                logbook.INFO("Using access key " + access_key)
+
+                self.data_path_client = ds3.Client(endpoint, ds3.Credentials(access_key, secret_key))
+        except Exception as e:
+            print(e)
+            self.validConnection = False
+
     def managementPathAuthentication(self, endpoint, username, password, logbook):
         logbook.INFO("Accessing management path...")
         self.token =  self.authenticate(endpoint, username, password, logbook)
@@ -54,12 +60,17 @@ class BPConnector:
 
         self.dataPathAuthentication(data_path + ":" + data_port, keys['access_key'], keys['secret_key'], logbook)
 
+    def verifyConnection(self, logbook):
+        if(self.validConnection and self.verifyDataConnection(logbook)):
+            return True
+        else:
+            return False
+
     def verifyDataConnection(self, logbook):
         try:
             # May not be able to do a get service if there are no buckets in
             # the blackpearl. Skipping for now.
-            return True
-            getServiceResponse = self.data_path_client.get_service(ds3.GetServiceRequest())
+            getServiceResponse = self.data_path_client.get_net_client()
             return True
         except Exception as e:
             if(e.code == "InvalidAccessKeyId"):
