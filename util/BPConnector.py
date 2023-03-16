@@ -57,8 +57,14 @@ class BPConnector:
         data_path = HttpCommands.getDataPathIP(endpoint, self.token, logbook)
         data_port = HttpCommands.getDataPathPort(endpoint, self.token, logbook)
         keys = HttpCommands.findDs3Credentials(endpoint, self.token, username, logbook)
-
-        self.dataPathAuthentication(data_path + ":" + data_port, keys['access_key'], keys['secret_key'], logbook)
+    
+        if(keys != None):
+            self.dataPathAuthentication(data_path + ":" + data_port, keys['access_key'], keys['secret_key'], logbook)
+        else:
+            # If keys were able to be found, don't attempt to connect to the BlackPearl
+            # and just mark the data path client as None (null) to allow for the 
+            # the script to check if the connection is valid.
+            self.data_path_client = None
 
     def verifyConnection(self, logbook):
         if(self.validConnection and self.verifyDataConnection(logbook)):
@@ -68,10 +74,13 @@ class BPConnector:
 
     def verifyDataConnection(self, logbook):
         try:
-            # May not be able to do a get service if there are no buckets in
-            # the blackpearl. Skipping for now.
-            getServiceResponse = self.data_path_client.get_net_client()
-            return True
+            if(self.data_path_client != None):
+                getServiceResponse = self.data_path_client.get_net_client()
+                return True
+            else:
+                logbook.ERROR("Unable to connect to data path.")
+                print("ERROR: Unable to connect to data path.")
+                return False
         except Exception as e:
             if(e.code == "InvalidAccessKeyId"):
                 logbook.ERROR("Invalid access key.")
