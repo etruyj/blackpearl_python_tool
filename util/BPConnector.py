@@ -155,55 +155,109 @@ class BPConnector:
     #================================================================
 
     def addDataPersistenceRule(self, data_policy_id, isolation, storage_domain_id, storage_type, days_to_retain, logbook):
-        return SDKCommands.createDataPersistenceRule(self.data_path_client, data_policy_id, isolation, storage_domain_id, storage_type, days_to_retain, logbook)
+        try:
+            return SDKCommands.createDataPersistenceRule(self.data_path_client, data_policy_id, isolation, storage_domain_id, storage_type, days_to_retain, logbook)
+        except Exception as e:
+            raise e
 
     def addDiskPartitionToStorageDomain(self, pool_id, storage_domain_id, write_optimization, logbook):
-        return SDKCommands.createStorageDomainPoolMember(self.data_path_client, pool_id, storage_domain_id, write_optimization, logbook)
+        try:
+            return SDKCommands.createStorageDomainPoolMember(self.data_path_client, pool_id, storage_domain_id, write_optimization, logbook)
+        except Exception as e:
+            raise e
 
     def addTapePartitionToStorageDomain(self, storage_domain_id, tape_par_id, tape_type, auto_compaction, write_optimization, logbook):
-        return SDKCommands.createStorageDomainTapeMember(self.data_path_client, storage_domain_id, tape_par_id, tape_type, auto_compaction, write_optimization, logbook)
+        try:
+            return SDKCommands.createStorageDomainTapeMember(self.data_path_client, storage_domain_id, tape_par_id, tape_type, auto_compaction, write_optimization, logbook)
+        except Exception as e:
+            raise e
 
     def createBucket(self, name, data_policy, owner, logbook):
-        return SDKCommands.createBucket(self.data_path_client, name, data_policy, owner, logbook)
+        try:
+            return SDKCommands.createBucket(self.data_path_client, name, data_policy, owner, logbook)
+        except Exception as e:
+            raise e
 
     def createDataPolicy(self, name, force_puts, min_spanning, blobbing, checksum_type, blob_size, get_priority, put_priority, verify_after_write, verify_priority, end_to_end_crc, versions_to_keep, rebuild_priority, versioning, logbook):
-        return SDKCommands.createDataPolicy(self.data_path_client, name, force_puts, min_spanning, blobbing, checksum_type, blob_size, get_priority, put_priority, verify_after_write, verify_priority, end_to_end_crc, versions_to_keep, rebuild_priority, versioning, logbook)
+        try:
+            return SDKCommands.createDataPolicy(self.data_path_client, name, force_puts, min_spanning, blobbing, checksum_type, blob_size, get_priority, put_priority, verify_after_write, verify_priority, end_to_end_crc, versions_to_keep, rebuild_priority, versioning, logbook)
+        except Exception as e:
+            raise e
 
     def createDiskPartition(self, name, partition_type, logbook):
-        return SDKCommands.createDiskPartition(self.data_path_client, name, partition_type, logbook)
+        try:
+            return SDKCommands.createDiskPartition(self.data_path_client, name, partition_type, logbook)
+        except Exception as e:
+            raise e
 
     def createStorageDomain(self, name, auto_eject_threshold, auto_eject_cron, auto_eject_cancellation, auto_eject_on_completion, auto_eject_on_full, ltfs_file_naming, verification_frequency_days, auto_compaction_threshold, media_ejection_allowed, secure_media_allocation, verify_prior_to_eject, write_optimization, logbook):
-        return SDKCommands.createStorageDomain(self.data_path_client, name, auto_eject_threshold, auto_eject_cron, auto_eject_cancellation, auto_eject_on_completion, auto_eject_on_full, ltfs_file_naming, verification_frequency_days, auto_compaction_threshold, media_ejection_allowed, secure_media_allocation, verify_prior_to_eject, write_optimization, logbook)
-    
+        try:
+            return SDKCommands.createStorageDomain(self.data_path_client, name, auto_eject_threshold, auto_eject_cron, auto_eject_cancellation, auto_eject_on_completion, auto_eject_on_full, ltfs_file_naming, verification_frequency_days, auto_compaction_threshold, media_ejection_allowed, secure_media_allocation, verify_prior_to_eject, write_optimization, logbook)
+        except Exception as e:
+            raise e
+
     def getBuckets(self, logbook):
-        return SDKCommands.getBuckets(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getBuckets(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
 
     def getBucketInfo(self, bucket, logbook):
-        return SDKCommands.getBucketInfo(self.data_path_client, bucket, logbook)
+        try:
+            return SDKCommands.getBucketInfo(self.data_path_client, bucket, logbook)
+        except Exception as e:
+            raise e
 
     def getBucketNames(self, logbook):
-        return SDKCommands.getBucketNames(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getBucketNames(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
 
     def getDataPolicies(self, logbook):
-        return SDKCommands.getDataPolicies(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getDataPolicies(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
 
     def getDiskPartitions(self, logbook):
-        return SDKCommands.getDiskPartitions(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getDiskPartitions(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
 
     def getPools(self, logbook):
-        return SDKCommands.getPools(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getPools(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
 
     def getStorageDomainMembers(self, logbook):
-        return SDKCommands.getStorageDomainMembers(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getStorageDomainMembers(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
 
     def getStorageDomains(self, logbook):
-        return SDKCommands.getStorageDomains(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getStorageDomains(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
 
     def getTapePartitions(self, logbook):
-        return SDKCommands.getTapePartitions(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getTapePartitions(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
 
     def getTapesAll(self, logbook):
-        return SDKCommands.getTapesAll(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getTapesAll(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
 
     def getUsers(self, logbook):
-        return SDKCommands.getUsers(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getUsers(self.data_path_client, logbook)
+        except Exception as e:
+            raise e

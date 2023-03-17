@@ -27,80 +27,84 @@ import collections.abc
 
 def fromFile(blackpearl, file_path, logbook):
     logbook.INFO("Configuring BlackPearl with configuration file " + file_path)
-    logbook.DEBUG("Calling ImportJson.fromFile(" + file_path + ")...")
+    try:
+        logbook.DEBUG("Calling ImportJson.fromFile(" + file_path + ")...")
 
-    successes = {}
-    config = ImportJson.fromFile(file_path)
+        successes = {}
+        config = ImportJson.fromFile(file_path)
     
-    if(config == None):
-        logbook.ERROR("Unable to open file.")
-    else:
-        # BP Log Parser Fetch Array
-        # Check for and correct.
-        if(isinstance(config, collections.abc.Sequence)):
-            config = config[0]
+        if(config == None):
+            logbook.ERROR("Unable to open file.")
+        else:
+            # BP Log Parser Fetch Array
+            # Check for and correct.
+            if(isinstance(config, collections.abc.Sequence)):
+                config = config[0]
 
-        # Basic Report to Logs
-        logbook.INFO("Configuration loaded.")
-        if('activation_keys' in config.keys()):
-            logbook.INFO("Configuration contains (" + str(len(config['activation_keys'])) + ") activation keys.")
-        if('buckets' in config.keys()):
-            logbook.INFO("Configuration contains (" + str(len(config['buckets'])) + ") buckets.")
-        if('data_policies' in config.keys()):
-            logbook.INFO("Configuration contains (" + str(len(config['data_policies'])) + ") data policies.")
-        if('storage_domains' in config.keys()):
-            logbook.INFO("Configuration contains (" + str(len(config['storage_domains'])) + ") storage_domains.")
-        if('disk_partitions' in config.keys()):
-            logbook.INFO("Configuration contains (" + str(len(config['disk_partitions'])) + ") disk partitions.")
-        if('pools' in config.keys()):
-            logbook.INFO("Configuration contains (" + str(len(config['pools'])) + ") pools.")
-        if('volumes' in config.keys()):
-            logbook.INFO("Configuration contains (" + str(len(config['volumes'])) + ") volumes.")
-        if('shares' in config.keys()):
-            logbook.INFO("Configuration contains (" + str(len(config['shares'])) + ") shares.")
-
-        # Configure Management Path Parameters
-        if(blackpearl.verifyManagementConnection(logbook)):
-            # Add Activation Keys
-            # Must be done first
+            # Basic Report to Logs
+            logbook.INFO("Configuration loaded.")
             if('activation_keys' in config.keys()):
-                successes['keys'] = addActivationKeys(blackpearl, config['activation_keys'], logbook)
-
-            # Create Pools
-            if('pools' in config.keys()):
-                successes['pools'] = createPools(blackpearl, config['pools'], logbook)
-
-            # Create Volumes
-            if('volumes' in config.keys()):
-                successes['volumes'] = createVolumes(blackpearl, config['volumes'], logbook)
-
-            # Create shares
-            if('shares' in config.keys()):
-                successes['shares'] = createShares(blackpearl, config['shares'], logbook)
-
-        else:
-            logbook.WARN("Unable to connect to management interface. Skipping configuration of pools, volumes, and shares.")
-
-        if(blackpearl.verifyDataConnection(logbook)):
-            # Create Disk Partitions
-            if('disk_partitions' in config.keys()):
-                successes['disk_partitions'] = createDiskPartitions(blackpearl, config['disk_partitions'], logbook)
-
-            # Create Storage Domains
-            if('storage_domains' in config.keys()):
-                successes['storage_domains'] = createStorageDomains(blackpearl, config['storage_domains'], logbook)
-
-            # Create Data Policies
-            if('data_policies' in config.keys()):
-                successes['data_policies'] = createDataPolicies(blackpearl, config['data_policies'], logbook)
-            # Create Buckets
+                logbook.INFO("Configuration contains (" + str(len(config['activation_keys'])) + ") activation keys.")
             if('buckets' in config.keys()):
-                successes['buckets'] = createBuckets(blackpearl, config['buckets'], logbook)
-        else:
-            logbook.WARN("Unable to connect to data interface. Skipping configuration of disk partitions, storage domains, data policies, and buckets.")
+                logbook.INFO("Configuration contains (" + str(len(config['buckets'])) + ") buckets.")
+            if('data_policies' in config.keys()):
+                logbook.INFO("Configuration contains (" + str(len(config['data_policies'])) + ") data policies.")
+            if('storage_domains' in config.keys()):
+                logbook.INFO("Configuration contains (" + str(len(config['storage_domains'])) + ") storage_domains.")
+            if('disk_partitions' in config.keys()):
+                logbook.INFO("Configuration contains (" + str(len(config['disk_partitions'])) + ") disk partitions.")
+            if('pools' in config.keys()):
+                logbook.INFO("Configuration contains (" + str(len(config['pools'])) + ") pools.")
+            if('volumes' in config.keys()):
+                logbook.INFO("Configuration contains (" + str(len(config['volumes'])) + ") volumes.")
+            if('shares' in config.keys()):
+                logbook.INFO("Configuration contains (" + str(len(config['shares'])) + ") shares.")
+
+            # Configure Management Path Parameters
+            if(blackpearl.verifyManagementConnection(logbook)):
+                # Add Activation Keys
+                # Must be done first
+                if('activation_keys' in config.keys()):
+                    successes['keys'] = addActivationKeys(blackpearl, config['activation_keys'], logbook)
+
+                # Create Pools
+                if('pools' in config.keys()):
+                    successes['pools'] = createPools(blackpearl, config['pools'], logbook)
+
+                # Create Volumes
+                if('volumes' in config.keys()):
+                    successes['volumes'] = createVolumes(blackpearl, config['volumes'], logbook)
+
+                # Create shares
+                if('shares' in config.keys()):
+                    successes['shares'] = createShares(blackpearl, config['shares'], logbook)
+
+            else:
+                logbook.WARN("Unable to connect to management interface. Skipping configuration of pools, volumes, and shares.")
+
+            if(blackpearl.verifyDataConnection(logbook)):
+                # Create Disk Partitions
+                if('disk_partitions' in config.keys()):
+                    successes['disk_partitions'] = createDiskPartitions(blackpearl, config['disk_partitions'], logbook)
+
+                # Create Storage Domains
+                if('storage_domains' in config.keys()):
+                    successes['storage_domains'] = createStorageDomains(blackpearl, config['storage_domains'], logbook)
+
+                # Create Data Policies
+                if('data_policies' in config.keys()):
+                    successes['data_policies'] = createDataPolicies(blackpearl, config['data_policies'], logbook)
+            # Create Buckets
+                if('buckets' in config.keys()):
+                    successes['buckets'] = createBuckets(blackpearl, config['buckets'], logbook)
+            else:
+                logbook.WARN("Unable to connect to data interface. Skipping configuration of disk partitions, storage domains, data policies, and buckets.")
 
 
-        report(successes, config, logbook)
+            report(successes, config, logbook)
+    except Exception as e:
+        logbook.ERROR(e.__str__())
+        return e.__str__()
 
 #========================================
 # Inner Functions
