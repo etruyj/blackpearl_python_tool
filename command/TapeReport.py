@@ -59,32 +59,40 @@ def createReport(group_by, filter_by, blackpearl, logbook):
         domain_list = ListStorageDomains.createList(blackpearl, logbook)
         member_list = ListStorageDomainMembers.createList(blackpearl, logbook)
 
-        logbook.INFO("Mapping ids to names...")
-        bucket_map = MapBuckets.createIDNameMap(bucket_list)
-        par_map = MapTapePartitions.createIDNameMap(par_list)
-        member_domain_map = MapStorageDomains.createMemberNameMap(domain_list, member_list)
-
-        # Parse Filter By
-        params = None
-        if(filter_by != None):
-            params = filter_by.split(":")
-
-        if(len(params) == 2):
-            logbook.INFO("Filtering results by " + str(params[0]) + ":" + str(params[1]))
+        # Error handling.
+        # If the bucket list is not actually a list, don't continue to process.
+        # The first failure for not enough privileges is list users in the 
+        # ListBuckets call.
+        if(not isinstance(bucket_list, list)):
+            # Pass the error message over to the output.
+            output = bucket_list
         else:
+            logbook.INFO("Mapping ids to names...")
+            bucket_map = MapBuckets.createIDNameMap(bucket_list)
+            par_map = MapTapePartitions.createIDNameMap(par_list)
+            member_domain_map = MapStorageDomains.createMemberNameMap(domain_list, member_list)
+
+            # Parse Filter By
             params = None
+            if(filter_by != None):
+                params = filter_by.split(":")
 
-        # Build List
-        if(tape_list != None):
-            match group_by:
-                case "bucket":
-                    output = listGroupBucket(tape_list, bucket_map, params, logbook)
-                case _:
-                    output = listAllTapes(tape_list, bucket_map, par_map, member_domain_map, params, logbook)
+            if(len(params) == 2):
+                logbook.INFO("Filtering results by " + str(params[0]) + ":" + str(params[1]))
+            else:
+                params = None
 
-        else:
-            print("No tapes returned from report.")
-            logbook.ERROR("No tapes returned from report.")
+            # Build List
+            if(tape_list != None):
+                match group_by:
+                    case "bucket":
+                        output = listGroupBucket(tape_list, bucket_map, params, logbook)
+                    case _:
+                        output = listAllTapes(tape_list, bucket_map, par_map, member_domain_map, params, logbook)
+
+            else:
+                print("No tapes returned from report.")
+                logbook.ERROR("No tapes returned from report.")
 
         return output
     except Exception as e:

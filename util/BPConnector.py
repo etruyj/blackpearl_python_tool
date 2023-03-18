@@ -16,13 +16,17 @@ class BPConnector:
         self.validConnection = True
 
         if(username != "none" and password != "none"):
-            self.managementPathAuthentication(endpoint, username, password, logbook)
+            try:
+                self.managementPathAuthentication(endpoint, username, password, logbook)
 
-            if(self.validConnection):
-                self.retrieveDataPathParameters(endpoint, username, logbook)
+                if(self.validConnection):
+                    self.retrieveDataPathParameters(endpoint, username, logbook)
         
-                # Save this for verifying connectivity.
-                self.management_path = endpoint
+                    # Save this for verifying connectivity.
+                    self.management_path = endpoint
+            except Exception as e:
+                logbook.ERROR(e.__str__())
+                raise e
         else:
             self.dataPathAuthentication(endpoint, access_key, secret_key, logbook)
 
@@ -45,26 +49,39 @@ class BPConnector:
 
     def managementPathAuthentication(self, endpoint, username, password, logbook):
         logbook.INFO("Accessing management path...")
-        self.token =  self.authenticate(endpoint, username, password, logbook)
+        try:
+            self.token =  self.authenticate(endpoint, username, password, logbook)
 
-        # Verify the connection
-        if(self.token == "none"):
-            self.validConnection = False
+            # Verify the connection
+            if(self.token == "none"):
+                self.validConnection = False
+        except Exception as e:
+            logbook.ERROR(e.__str__())
+
+            if("nodename nor servname provided" in e.__str__()):
+                raise Exception("Failed to resolve hostname: " + endpoint)
+            else:
+                raise Exception("Failed to connect to BlackPearl management port: " + endpoint)
+            
 
     def retrieveDataPathParameters(self, endpoint, username, logbook):
         logbook.INFO("Searching for data path credentials...")
 
-        data_path = HttpCommands.getDataPathIP(endpoint, self.token, logbook)
-        data_port = HttpCommands.getDataPathPort(endpoint, self.token, logbook)
-        keys = HttpCommands.findDs3Credentials(endpoint, self.token, username, logbook)
+        try:
+            data_path = HttpCommands.getDataPathIP(endpoint, self.token, logbook)
+            data_port = HttpCommands.getDataPathPort(endpoint, self.token, logbook)
+            keys = HttpCommands.findDs3Credentials(endpoint, self.token, username, logbook)
     
-        if(keys != None):
-            self.dataPathAuthentication(data_path + ":" + data_port, keys['access_key'], keys['secret_key'], logbook)
-        else:
-            # If keys were able to be found, don't attempt to connect to the BlackPearl
-            # and just mark the data path client as None (null) to allow for the 
-            # the script to check if the connection is valid.
-            self.data_path_client = None
+            if(keys != None):
+                self.dataPathAuthentication(data_path + ":" + data_port, keys['access_key'], keys['secret_key'], logbook)
+            else:
+                # If keys were able to be found, don't attempt to connect to the BlackPearl
+                # and just mark the data path client as None (null) to allow for the 
+                # the script to check if the connection is valid.
+                self.data_path_client = None
+        except Exception as e:
+            logbook.ERROR(e.__str__())
+            raise e
 
     def verifyConnection(self, logbook):
         if(self.validConnection and self.verifyDataConnection(logbook)):
