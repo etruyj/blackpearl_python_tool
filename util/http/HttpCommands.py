@@ -135,7 +135,7 @@ def findDs3Credentials(endpoint, token, username, logbook):
 
     if(users != None):
         for user in users:
-            if(user['name'] == username):
+            if(user['username'] == username):
                 keys = getUserKeys(endpoint, token, user['id'], logbook)
                 return keys
 

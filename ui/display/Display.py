@@ -20,14 +20,21 @@ def fileContents(path):
 def output(output, output_format="csv", file=None):
     toPrint = []
 
-    # Covert output to the desired format
-    match output_format:
-        case "csv":
-            toPrint = ConvertCSV.toOutput(output)
-        case "table":
-            toPrint = ConvertTable.toOutput(output)
-        case _:
-            toPrint = ConvertTable.toOutput(output)
+    # Handle error outputs. If the output is a single string
+    # there is no need to format it and it should be printed
+    # to the shell instead of saved to a file.
+    if(isinstance(output, str)):
+        toPrint.append(output)
+        file =""
+    else:
+        # Covert output to the desired format
+        match output_format:
+            case "csv":
+                toPrint = ConvertCSV.toOutput(output)
+            case "table":
+                toPrint = ConvertTable.toOutput(output)
+            case _:
+                toPrint = ConvertTable.toOutput(output)
 
     if(file==None or file==""):
         Print.toShell(toPrint)

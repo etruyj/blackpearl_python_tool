@@ -19,8 +19,12 @@ def createBucket(blackpearl, name, data_policy, owner, logbook):
 
         return createBucketResponse
     except Exception as e:
-        print(e)
-        logbook.ERROR("Failed to create bucket [" + name + "]")
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform put-bucket")
+        else:
+            raise Exception("Failed to create bucket [" + name + "].")
 
 def createDataPersistenceRule(blackpearl, data_policy_id, isolation, storage_domain_id, storage_type, minimum_days, logbook):
     try:
@@ -31,8 +35,12 @@ def createDataPersistenceRule(blackpearl, data_policy_id, isolation, storage_dom
 
         return createDataPersistenceRule
     except Exception as e:
-        print(e)
-        logbook.ERROR("Failed to add data persistence rule to data policy.")
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform put-data-persistence-rule")
+        else:
+            raise Exception("Failed to add data persistene rule to data policy.")
 
 def createDataPolicy(blackpearl, name, force_puts, min_spanning, blobbing, checksum_type, blob_size, get_priority, put_priority, verify_after_write, verify_priority, end_to_end_crc, versions_to_keep, rebuild_priority, versioning, logbook):
     try:
@@ -43,8 +51,12 @@ def createDataPolicy(blackpearl, name, force_puts, min_spanning, blobbing, check
 
         return createPolicyResponse.result
     except Exception as e:
-        print(e)
-        logbook.ERROR("Failed to create data policy [" + name + "]")
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform put-data-policy")
+        else:
+            raise Exception("Failed to create data policy [" + name + "].")
 
 def createDiskPartition(blackpearl, name, partition_type, logbook):
     try:
@@ -59,8 +71,12 @@ def createDiskPartition(blackpearl, name, partition_type, logbook):
             logbook.ERROR("Invalid partition type [" + partition_type + "] specified.")
 
     except Exception as e:
-        print(e)
-        logbook.ERROR("Failed to create disk partition [" + name + "]")
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform put-disk-partition")
+        else:
+            raise Exception("Failed to create disk partition [" + name + "].")
 
 def createStorageDomain(blackpearl, name, auto_eject_threshold, auto_eject_cron, auto_eject_cancellation, auto_eject_on_completion, auto_eject_on_full, ltfs_file_naming, verification_frequency_days, auto_compaction_threshold, media_ejection_allowed, secure_media_allocation, verify_prior_to_eject, write_optimization, logbook):
     try:
@@ -71,8 +87,12 @@ def createStorageDomain(blackpearl, name, auto_eject_threshold, auto_eject_cron,
 
         return createStorageDomain.result
     except Exception as e:
-        print(e)
-        logbook.ERROR("Unabled to create storage domain [" + name + "]")
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform put-storage-domain")
+        else:
+            raise Exception("Unable to create storage domain [" + name + "].")
 
 def createStorageDomainPoolMember(blackpearl, pool_id, storage_domain_id, write_optimization, logbook):
     try:
@@ -83,8 +103,12 @@ def createStorageDomainPoolMember(blackpearl, pool_id, storage_domain_id, write_
 
         return createPoolMember
     except Exception as e:
-        print(e)
-        logbook.ERROR("Unable to add pool partition [" + pool_id + "] to storage domain.")
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform put-storage-domain-member")
+        else:
+            raise Exception("Unable to add pool partition [" + pool_id + "] to storage domain.")
 
 def createStorageDomainTapeMember(blackpearl, storage_domain_id, tape_par_id, tape_type, auto_compaction_threshold, write_preference, logbook):
     try:
@@ -95,8 +119,12 @@ def createStorageDomainTapeMember(blackpearl, storage_domain_id, tape_par_id, ta
 
         return createTapeMember
     except Exception as e:
-        print(e)
-        logbook.ERROR("Unabled to add tape partition [" + tape_par_id + "] to storage domain.")
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform modify-storage-domain")
+        else:
+            raise Exception("Unabled to add tape partition [" + tape_par_id + "] to storage domain.")
 
 
 def getBuckets(blackpearl, logbook):
@@ -111,8 +139,12 @@ def getBuckets(blackpearl, logbook):
         return getBucketsResponse.result['BucketList']
 
     except Exception as e:
-        print(e)
-        logbook.ERROR("Failed to retrieve buckets")
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform list-buckets")
+        else:
+            raise Exception("Unable to retrieve bucket list.")
 
 def getBucketInfo(blackpearl, name, logbook):
     try:
@@ -122,8 +154,12 @@ def getBucketInfo(blackpearl, name, logbook):
 
         print(vars(getBucketResponse))
     except Exception as e:
-        print(e)
-        logbook.ERROR("Failed to retrieve info.")
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform get-bucket-info")
+        else:
+            raise Exception("Unable to retrieve bucket info.")
 
 def getBucketNames(blackpearl, logbook):
     try:
@@ -137,8 +173,12 @@ def getBucketNames(blackpearl, logbook):
         return getServiceResponse.result['BucketList']
 
     except Exception as e:
-        print(e)
-        logbook.ERROR("Failed to retrieve buckets")
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform list-buckets")
+        else:
+            raise Exception("Unable to retrieve bucket list.")
 
 def getDataPolicies(blackpearl, logbook):
     try:
@@ -151,8 +191,12 @@ def getDataPolicies(blackpearl, logbook):
 
         return getDataPolicies.result['DataPolicyList']
     except Exception as e:
-        print(e)
-        logbook.ERROR("Failed to retrieve data policies.")
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform list-data-policies")
+        else:
+            raise Exception("Unable to retrieve data policies.")
 
 def getDiskPartitions(blackpearl, logbook):
     try:
@@ -163,8 +207,12 @@ def getDiskPartitions(blackpearl, logbook):
 
         return getDiskPartitions.result['PoolPartitionList']
     except Exception as e:
-        print(e)
-        logbook.ERROR("Failed to retrieve disk partitions.")
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform list-disk-partitions")
+        else:
+            raise Exception("Unable to retrieve disk partitions.")
 
 def getPools(blackpearl, logbook):
     try:
@@ -176,8 +224,12 @@ def getPools(blackpearl, logbook):
         print("utils/sdk/SDKCommands.py: " + vars(getPools))
         return getPools.result
     except Exception as e:
-        print(e)
-        logbook.ERROR("Failed to retrieve pools.")
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform list-pools")
+        else:
+            raise Exception("Unable to retrieve disk pools.")
 
 def getStorageDomainMembers(blackpearl, logbook):
     try:
@@ -190,8 +242,12 @@ def getStorageDomainMembers(blackpearl, logbook):
 
         return getStorageDomainMembers.result['StorageDomainMemberList']
     except Exception as e:
-        print(e)
-        logbook.ERROR("Failed to retrieve storage domain members.")
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform list-storage-domain-members")
+        else:
+            raise Exception("Unable to retrieve storage domain members.")
 
 def getStorageDomains(blackpearl, logbook):
     try:
@@ -204,8 +260,12 @@ def getStorageDomains(blackpearl, logbook):
 
         return getStorageDomains.result['StorageDomainList']
     except Exception as e:
-        print(e)
-        logbook.ERROR("Failed to retrieve storage domains.")
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform list-storage-domains")
+        else:
+            raise Exception("Unable to retrieve storage domains.")
 
 def getTapePartitions(blackpearl, logbook):
     try:
@@ -218,8 +278,12 @@ def getTapePartitions(blackpearl, logbook):
 
         return getTapePartitions.result['TapePartitionList']
     except Exception as e:
-        print(e)
-        logbook.ERROR("Unable to retrieve tape partition information.")
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform list-tape-partitions")
+        else:
+            raise Exception("Unable to retrieve tape partition information")
 
 def getTapesAll(blackpearl, logbook):
     try:
@@ -232,8 +296,12 @@ def getTapesAll(blackpearl, logbook):
 
         return getTapesResponse.result['TapeList']
     except Exception as e:
-        print(e)
-        logbook.ERROR("Unabled to fetch tapes from BlackPearl.")
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform list-tapes")
+        else:
+            raise Exception("Unable to retrieve tape list.")
 
 def getUsers(blackpearl, logbook):
     try:
@@ -246,5 +314,9 @@ def getUsers(blackpearl, logbook):
 
         return getUsersResponse.result['UserList']
     except Exception as e:
-        print(e)
-        logbook.ERROR("Failed to retrieve user list")
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform list-users")
+        else:
+            raise Exception("Unable to retrieve user list.")
