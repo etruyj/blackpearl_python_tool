@@ -6,6 +6,7 @@
 #       or to be saved to a file.
 #====================================================================
 
+from structures.BucketGroupTapes import BucketGroupTapes
 from structures.BucketSummary import BucketSummary
 from structures.TapeSummary import TapeSummary
 from structures.UserSummary import UserSummary
@@ -21,6 +22,8 @@ def toOutput(output):
             toPrint = convertDict(output)
         # Check to see if the output
         elif(len(output) >= 1):
+            if(isinstance(output[0], BucketGroupTapes)):
+                toPrint = convertBucketGroupSummary(output)
             if(isinstance(output[0], BucketSummary)):  
                 toPrint = convertBucketSummary(output)
             if(isinstance(output[0], TapeSummary)):
@@ -33,6 +36,24 @@ def toOutput(output):
 #================================================
 # Converters
 #================================================
+
+def convertBucketGroupSummary(output):
+    toPrint = []
+    
+    #headers
+    row = "bucket_name,tape_count,available_allocated,used,total_allocated"
+    toPrint.append(row)
+
+    #values
+    for line in output:
+        row = line.getBucketName() + ","
+        row += str(line.getTapeCount()) + "," 
+        row += StorageUnits.bytesToHumanReadable(int(line.getAvailableCapacity())) + ","
+        row += StorageUnits.bytesToHumanReadable(int(line.getUsedCapacity())) + ","
+        row += StorageUnits.bytesToHumanReadable(int(line.getTotalCapacity()))
+        toPrint.append(row)
+
+    return toPrint
 
 def convertBucketSummary(output):
     toPrint = []
@@ -64,13 +85,16 @@ def convertTapeSummary(output):
     toPrint = []
     row = ""
 
-    row = "barcode,bucket,tape_partition,storage_domain,state,tape_type"
+    row = "barcode,bucket,tape_partition,storage_domain,state,tape_type,available_capacity,used_capacity,total_capacity"
     toPrint.append(row)
 
     for line in output:
         row = str(line.getBarcode()) + "," + str(line.getBucket()) + ","
         row += str(line.getTapePartition()) + "," + str(line.getStorageDomain()) + ","
-        row += str(line.getState()) + "," + str(line.getTapeType())
+        row += str(line.getState()) + "," + str(line.getTapeType()) + ","
+        row += str(StorageUnits.bytesToHumanReadable(int(line.getAvailableCapacity()))) + ","
+        row += str(StorageUnits.bytesToHumanReadable(int(line.getUsedCapacity()))) + "," 
+        row += str(StorageUnits.bytesToHumanReadable(int(line.getTotalCapacity())))
 
         toPrint.append(row)
 

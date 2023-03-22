@@ -8,6 +8,9 @@ class Tape:
     #============================================
     # Getters
     #============================================
+    def getAvailableCapacity(self):
+        return self.available_raw_capacity
+    
     def getBarcode(self):
         return self.barcode
 
@@ -22,6 +25,9 @@ class Tape:
 
     def getTapeType(self):
         return self.tape_type
+
+    def getTotalCapacity(self):
+        return self.total_raw_capacity
 
     def getPartitionId(self):
         return self.partition_id
