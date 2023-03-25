@@ -3,38 +3,53 @@
 
 import json
 import requests
+from requests.exceptions import ConnectTimeout
 from urllib3.exceptions import InsecureRequestWarning
+
 
 def authenticate(address, username, password, logbook):
     logbook.INFO("Authenticating with BlackPearl at " + address + " with username " + username)
 
     json_body = {'username': username, 'password': password}
 
-    # Suppress insecure SSL certificate warning.
-    requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+    # Attempt Connection
+    try:
+        # Suppress insecure SSL certificate warning.
+        requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
     
-    r = requests.post("https://" + address + "/api/tokens.json", data = json_body, verify=False)
+        r = requests.post("https://" + address + "/api/tokens.json", data = json_body, verify=False, timeout=3)
 
-    if(r.status_code >= 200 and r.status_code <= 230):
-        return r.text
-    else:
-        print("[" + str(r.status_code) + "] " + r.text);
-        logbook.ERROR("[" + str(r.status_code) + "] " + r.text);
+        if(r.status_code >= 200 and r.status_code <= 230):
+            return r.text
+        else:
+            print("[" + str(r.status_code) + "] " + r.text);
+            logbook.ERROR("[" + str(r.status_code) + "] " + r.text);
+    except ConnectTimeout:
+        logbook.ERROR("Connection timed out.")
+    except Exception as e:
+        logbook.ERROR(e.__str__())
+        raise e
 
 def get(address, token, logbook):
     logbook.INFO("GET: " +  address);
 
     request_headers = {"Authorization" : "Bearer " + token}
 
-    # Suppress insecure SSL certificate warning.
-    requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+    try:
+        # Suppress insecure SSL certificate warning.
+        requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
     
-    r = requests.get(address, headers=request_headers, verify=False)
+        r = requests.get(address, headers=request_headers, verify=False, timeout=3)
 
-    if(r.status_code >=200 and r.status_code <= 230):
-        return r.text
-    else:
-        logbook.ERROR("[" + str(r.status_code) + "] " + r.text);
+        if(r.status_code >=200 and r.status_code <= 230):
+            return r.text
+        else:
+            logbook.ERROR("[" + str(r.status_code) + "] " + r.text);
+    except ConnectTimeout:
+        logbook.ERROR("Connection timed out.")
+    except Exception as e:
+        logbook.ERROR(e.__str__())
+        raise e
 
 def post(address, token, request_body, logbook):
     logbook.INFO("POST: " + address)
@@ -43,13 +58,19 @@ def post(address, token, request_body, logbook):
 
     request_body = json.dumps(request_body)
 
-    # Suppress insecure SSL certificate warning.
-    requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+    try:
+        # Suppress insecure SSL certificate warning.
+        requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
     
-    r = requests.post(address, headers=request_headers, data = request_body, verify=False)
+        r = requests.post(address, headers=request_headers, data = request_body, verify=False, timeout=3)
 
-    if(r.status_code >=200 and r.status_code <=230):
-        return r.text
-    else:
-        logbook.ERROR("[" + str(r.status_code) + "] " + r.text)
-        logbook.ERROR(str(request_body))
+        if(r.status_code >=200 and r.status_code <=230):
+            return r.text
+        else:
+            logbook.ERROR("[" + str(r.status_code) + "] " + r.text)
+            logbook.ERROR(str(request_body))
+    except ConnectTimeout:
+        logbook.ERROR("Connection timed out.")
+    except Exception as e:
+        logbook.ERROR(e.__str__())
+        raise e

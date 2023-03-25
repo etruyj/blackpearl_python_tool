@@ -16,13 +16,17 @@ class BPConnector:
         self.validConnection = True
 
         if(username != "none" and password != "none"):
-            self.managementPathAuthentication(endpoint, username, password, logbook)
+            try:
+                self.managementPathAuthentication(endpoint, username, password, logbook)
 
-            if(self.validConnection):
-                self.retrieveDataPathParameters(endpoint, username, logbook)
+                if(self.validConnection):
+                    self.retrieveDataPathParameters(endpoint, username, logbook)
         
-                # Save this for verifying connectivity.
-                self.management_path = endpoint
+                    # Save this for verifying connectivity.
+                    self.management_path = endpoint
+            except Exception as e:
+                logbook.ERROR(e.__str__())
+                raise e
         else:
             self.dataPathAuthentication(endpoint, access_key, secret_key, logbook)
 
@@ -45,20 +49,39 @@ class BPConnector:
 
     def managementPathAuthentication(self, endpoint, username, password, logbook):
         logbook.INFO("Accessing management path...")
-        self.token =  self.authenticate(endpoint, username, password, logbook)
+        try:
+            self.token =  self.authenticate(endpoint, username, password, logbook)
 
-        # Verify the connection
-        if(self.token == "none"):
-            self.validConnection = False
+            # Verify the connection
+            if(self.token == "none"):
+                self.validConnection = False
+        except Exception as e:
+            logbook.ERROR(e.__str__())
+
+            if("nodename nor servname provided" in e.__str__()):
+                raise Exception("Failed to resolve hostname: " + endpoint)
+            else:
+                raise Exception("Failed to connect to BlackPearl management port: " + endpoint)
+            
 
     def retrieveDataPathParameters(self, endpoint, username, logbook):
         logbook.INFO("Searching for data path credentials...")
 
-        data_path = HttpCommands.getDataPathIP(endpoint, self.token, logbook)
-        data_port = HttpCommands.getDataPathPort(endpoint, self.token, logbook)
-        keys = HttpCommands.findDs3Credentials(endpoint, self.token, username, logbook)
-
-        self.dataPathAuthentication(data_path + ":" + data_port, keys['access_key'], keys['secret_key'], logbook)
+        try:
+            data_path = HttpCommands.getDataPathIP(endpoint, self.token, logbook)
+            data_port = HttpCommands.getDataPathPort(endpoint, self.token, logbook)
+            keys = HttpCommands.findDs3Credentials(endpoint, self.token, username, logbook)
+    
+            if(keys != None):
+                self.dataPathAuthentication(data_path + ":" + data_port, keys['access_key'], keys['secret_key'], logbook)
+            else:
+                # If keys were able to be found, don't attempt to connect to the BlackPearl
+                # and just mark the data path client as None (null) to allow for the 
+                # the script to check if the connection is valid.
+                self.data_path_client = None
+        except Exception as e:
+            logbook.ERROR(e.__str__())
+            raise e
 
     def verifyConnection(self, logbook):
         if(self.validConnection and self.verifyDataConnection(logbook)):
@@ -68,10 +91,13 @@ class BPConnector:
 
     def verifyDataConnection(self, logbook):
         try:
-            # May not be able to do a get service if there are no buckets in
-            # the blackpearl. Skipping for now.
-            getServiceResponse = self.data_path_client.get_net_client()
-            return True
+            if(self.data_path_client != None):
+                getServiceResponse = self.data_path_client.get_net_client()
+                return True
+            else:
+                logbook.ERROR("Unable to connect to data path.")
+                print("ERROR: Unable to connect to data path.")
+                return False
         except Exception as e:
             if(e.code == "InvalidAccessKeyId"):
                 logbook.ERROR("Invalid access key.")
@@ -146,58 +172,112 @@ class BPConnector:
     #================================================================
 
     def addDataPersistenceRule(self, data_policy_id, isolation, storage_domain_id, storage_type, days_to_retain, logbook):
-        return SDKCommands.createDataPersistenceRule(self.data_path_client, data_policy_id, isolation, storage_domain_id, storage_type, days_to_retain, logbook)
+        try:
+            return SDKCommands.createDataPersistenceRule(self.data_path_client, data_policy_id, isolation, storage_domain_id, storage_type, days_to_retain, logbook)
+        except Exception as e:
+            raise e
 
     def addDiskPartitionToStorageDomain(self, pool_id, storage_domain_id, write_optimization, logbook):
-        return SDKCommands.createStorageDomainPoolMember(self.data_path_client, pool_id, storage_domain_id, write_optimization, logbook)
+        try:
+            return SDKCommands.createStorageDomainPoolMember(self.data_path_client, pool_id, storage_domain_id, write_optimization, logbook)
+        except Exception as e:
+            raise e
 
     def addTapePartitionToStorageDomain(self, storage_domain_id, tape_par_id, tape_type, auto_compaction, write_optimization, logbook):
-        return SDKCommands.createStorageDomainTapeMember(self.data_path_client, storage_domain_id, tape_par_id, tape_type, auto_compaction, write_optimization, logbook)
+        try:
+            return SDKCommands.createStorageDomainTapeMember(self.data_path_client, storage_domain_id, tape_par_id, tape_type, auto_compaction, write_optimization, logbook)
+        except Exception as e:
+            raise e
 
     def createBucket(self, name, data_policy, owner, logbook):
-        return SDKCommands.createBucket(self.data_path_client, name, data_policy, owner, logbook)
+        try:
+            return SDKCommands.createBucket(self.data_path_client, name, data_policy, owner, logbook)
+        except Exception as e:
+            raise e
 
     def createDataPolicy(self, name, force_puts, min_spanning, blobbing, checksum_type, blob_size, get_priority, put_priority, verify_after_write, verify_priority, end_to_end_crc, versions_to_keep, rebuild_priority, versioning, logbook):
-        return SDKCommands.createDataPolicy(self.data_path_client, name, force_puts, min_spanning, blobbing, checksum_type, blob_size, get_priority, put_priority, verify_after_write, verify_priority, end_to_end_crc, versions_to_keep, rebuild_priority, versioning, logbook)
+        try:
+            return SDKCommands.createDataPolicy(self.data_path_client, name, force_puts, min_spanning, blobbing, checksum_type, blob_size, get_priority, put_priority, verify_after_write, verify_priority, end_to_end_crc, versions_to_keep, rebuild_priority, versioning, logbook)
+        except Exception as e:
+            raise e
 
     def createDiskPartition(self, name, partition_type, logbook):
-        return SDKCommands.createDiskPartition(self.data_path_client, name, partition_type, logbook)
+        try:
+            return SDKCommands.createDiskPartition(self.data_path_client, name, partition_type, logbook)
+        except Exception as e:
+            raise e
 
     def createStorageDomain(self, name, auto_eject_threshold, auto_eject_cron, auto_eject_cancellation, auto_eject_on_completion, auto_eject_on_full, ltfs_file_naming, verification_frequency_days, auto_compaction_threshold, media_ejection_allowed, secure_media_allocation, verify_prior_to_eject, write_optimization, logbook):
-        return SDKCommands.createStorageDomain(self.data_path_client, name, auto_eject_threshold, auto_eject_cron, auto_eject_cancellation, auto_eject_on_completion, auto_eject_on_full, ltfs_file_naming, verification_frequency_days, auto_compaction_threshold, media_ejection_allowed, secure_media_allocation, verify_prior_to_eject, write_optimization, logbook)
-    
+        try:
+            return SDKCommands.createStorageDomain(self.data_path_client, name, auto_eject_threshold, auto_eject_cron, auto_eject_cancellation, auto_eject_on_completion, auto_eject_on_full, ltfs_file_naming, verification_frequency_days, auto_compaction_threshold, media_ejection_allowed, secure_media_allocation, verify_prior_to_eject, write_optimization, logbook)
+        except Exception as e:
+            raise e
+
     def getBuckets(self, logbook):
-        return SDKCommands.getBuckets(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getBuckets(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
 
     def getBucketInfo(self, bucket, logbook):
-        return SDKCommands.getBucketInfo(self.data_path_client, bucket, logbook)
+        try:
+            return SDKCommands.getBucketInfo(self.data_path_client, bucket, logbook)
+        except Exception as e:
+            raise e
 
     def getBucketNames(self, logbook):
-        return SDKCommands.getBucketNames(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getBucketNames(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
 
     def getCompletedJobs(self, logbook):
         return SDKCommands.getCompletedJobs(self.data_path_client, logbook)
 
     def getDataPolicies(self, logbook):
-        return SDKCommands.getDataPolicies(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getDataPolicies(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
 
     def getDiskPartitions(self, logbook):
-        return SDKCommands.getDiskPartitions(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getDiskPartitions(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
 
     def getPools(self, logbook):
-        return SDKCommands.getPools(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getPools(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
 
     def getStorageDomainMembers(self, logbook):
-        return SDKCommands.getStorageDomainMembers(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getStorageDomainMembers(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
 
     def getStorageDomains(self, logbook):
-        return SDKCommands.getStorageDomains(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getStorageDomains(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
 
     def getTapePartitions(self, logbook):
-        return SDKCommands.getTapePartitions(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getTapePartitions(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
 
     def getTapesAll(self, logbook):
-        return SDKCommands.getTapesAll(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getTapesAll(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
 
     def getUsers(self, logbook):
-        return SDKCommands.getUsers(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getUsers(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
