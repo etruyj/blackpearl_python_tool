@@ -232,7 +232,10 @@ class BPConnector:
             raise e
 
     def getCompletedJobs(self, logbook):
-        return SDKCommands.getCompletedJobs(self.data_path_client, logbook)
+        try:
+            return SDKCommands.getCompletedJobs(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
 
     def getDataPolicies(self, logbook):
         try:
