@@ -8,6 +8,7 @@ from util.BPConnector import BPConnector
 from util.Logger import Logger
 
 import command.ConfigureBlackPearl as ConfigureBlackPearl
+import command.JobReport as JobReport
 import command.ListBuckets as ListBuckets
 import command.ListDataPolicies as ListDataPolicies
 import command.ListPools as ListPools
@@ -30,6 +31,9 @@ class Controller:
 
     def fetchConfig(self):
         print("this worked too")
+
+    def jobReport(self):
+        return JobReport.createReport(self.blackpearl, self.logbook)
 
     def listBuckets(self):
         return ListBuckets.createList(self.blackpearl, self.logbook)

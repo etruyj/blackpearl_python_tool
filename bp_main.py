@@ -18,6 +18,8 @@ if(aparser.isValid()):
                 response = controller.configureBP(aparser.getOption4())
             case "fetch-config":
                 response = controller.fetchConfig()
+            case "job-report":
+                response = controller.jobReport()
             case "list-buckets":
                 response = controller.listBuckets()
             case "list-data-policies" | "list-policies":

@@ -175,6 +175,9 @@ class BPConnector:
     def getBucketNames(self, logbook):
         return SDKCommands.getBucketNames(self.data_path_client, logbook)
 
+    def getCompletedJobs(self, logbook):
+        return SDKCommands.getCompletedJobs(self.data_path_client, logbook)
+
     def getDataPolicies(self, logbook):
         return SDKCommands.getDataPolicies(self.data_path_client, logbook)
 

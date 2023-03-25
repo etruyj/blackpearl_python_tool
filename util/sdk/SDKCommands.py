@@ -140,6 +140,21 @@ def getBucketNames(blackpearl, logbook):
         print(e)
         logbook.ERROR("Failed to retrieve buckets")
 
+def getCompletedJobs(blackpearl, logbook):
+    try:
+        logbook.INFO("Fetching completed jobs...")
+        logbook.DEBUG("Calling blackpearl.get_completed_jobs_spectra_s3()...")
+
+        getCompletedJobs = blackpearl.get_completed_jobs_spectra_s3(ds3.GetCompletedJobsSpectraS3Request())
+
+        print(vars(getCompletedJobs))
+
+        logbook.INFO("Found (" + str(len(getCompletedJobs.result['CompletedJobsList'])) + ") completed jobs.")
+
+        return getCompletedJobs.result['CompletedJobsList']
+    except Exception as e:
+        print(e)
+
 def getDataPolicies(blackpearl, logbook):
     try:
         logbook.INFO("Fetching data policies...")
