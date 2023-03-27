@@ -187,11 +187,9 @@ def getCompletedJobs(blackpearl, logbook):
 
         getCompletedJobs = blackpearl.get_completed_jobs_spectra_s3(ds3.GetCompletedJobsSpectraS3Request())
 
-        print(vars(getCompletedJobs))
+        logbook.INFO("Found (" + str(len(getCompletedJobs.result['CompletedJobList'])) + ") completed jobs.")
 
-        logbook.INFO("Found (" + str(len(getCompletedJobs.result['CompletedJobsList'])) + ") completed jobs.")
-
-        return getCompletedJobs.result['CompletedJobsList']
+        return getCompletedJobs.result['CompletedJobList']
     except Exception as e:
         print(e)
 

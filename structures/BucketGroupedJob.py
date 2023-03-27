@@ -4,40 +4,40 @@
 #           This class holds information for jobs grouped by bucket
 #====================================================================
 
-class BucketGroupedJob
+class BucketGroupedJob:
     #============================================
     # Getters
     #============================================
     
-    def getBucketName(self):
-        self.bucket = None
+    def getBucket(self):
+        return self.bucket
 
     def getJobCount(self):
-        self.job_count = None
+        return self.job_count 
 
     def getReadCount(self):
-        self.job_read = None
+        return self.job_read 
 
     def getWriteCount(self):
-        self.job_write = None
+        return self.job_write 
 
     def getDataRead(self):
-        self.data_read_in_bytes = None
+        return self.data_read_in_bytes 
 
     def getDataWrite(self):
-        self.data_written_in_bytes = None
+        return self.data_written_in_bytes 
 
     def getDurationTotalRead(self):
-        self.duration_total_read = None
+        return self.duration_total_read 
 
     def getDurationTotalWrite(self):
-        self.duration_total_writes = None
+        return self.duration_total_writes 
 
     def getDurationAverageRead(self):
-        self.duration_average_read = None
+        return self.duration_average_read 
 
     def getDurationAverageWrite(self):
-        self.duration_average_write = None
+        return self.duration_average_write
 
     #============================================
     # Setters
@@ -47,13 +47,13 @@ class BucketGroupedJob
         if(data == None):
             data = 0
 
-        self.data_read_in_bytes += data
+        self.data_read_in_bytes += int(data)
 
     def addDataWritten(self, data):
         if(data == None):
             data = 0
 
-        self.data_written_in_bytes += data
+        self.data_written_in_bytes += int(data)
 
     def addDurationRead(self, job_start, job_end):
         if(job_start == None or job_end == None):
@@ -89,14 +89,14 @@ class BucketGroupedJob
     # Variables
     #============================================
     bucket = None
-    job_count = None
-    job_read = None
+    job_count = 0
+    job_read = 0
     job_read_ignore = 0 # private value for tracking the average info
-    job_write = None
+    job_write = 0
     job_write_ignore = 0 # privte value for tracking the average info
-    data_read_in_bytes = None
-    data_written_in_bytes = None
-    duration_total_read = None
-    duration_total_writes = None
-    duration_average_read = None
-    duration_average_write = None
+    data_read_in_bytes = 0
+    data_written_in_bytes = 0
+    duration_total_read = 0
+    duration_total_writes = 0
+    duration_average_read = 0
+    duration_average_write = 0

@@ -4,6 +4,7 @@
 #           Converts the output to a table format.
 #====================================================================
 
+from structures.BucketGroupedJob import BucketGroupedJob
 from structures.BucketGroupTapes import BucketGroupTapes
 from structures.BucketSummary import BucketSummary
 from structures.TapeSummary import TapeSummary
@@ -19,6 +20,8 @@ def toOutput(output):
         if(type(output) is dict):
             tables = loadDict(output)
         elif(len(output) >= 1):
+            if(isinstance(output[0], BucketGroupedJob)):
+                tables = loadBucketGroupedJobSummary(output)
             if(isinstance(output[0], BucketGroupTapes)):
                 tables = loadBucketGroupSummary(output)
             if(isinstance(output[0], BucketSummary)):
@@ -89,6 +92,32 @@ def buildRow(fields, column_size):
         row += "|"
 
     return row
+
+def loadBucketGroupedJobSummary(output):
+    table = []
+    row = []
+
+    # Load Table Headers
+    row.append("bucket name")
+    row.append("total jobs")
+    row.append("total writes")
+    row.append("data written")
+    row.append("total reads")
+    row.append("data read")
+    table.append(row)
+
+    # Load Valus
+    for job in output:
+        row = []
+        row.append(job.getBucket())
+        row.append(job.getJobCount())
+        row.append(job.getWriteCount())
+        row.append(StorageUnits.bytesToHumanReadable(int(job.getDataWrite())))
+        row.append(job.getReadCount())
+        row.append(StorageUnits.bytesToHumanReadable(int(job.getDataRead())))
+        table.append(row)
+
+    return table
 
 def loadBucketGroupSummary(output):
     table = []

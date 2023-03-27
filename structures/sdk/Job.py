@@ -15,7 +15,7 @@ class Job:
     def getCachedSize(self):
         return self.cached_size_in_bytes
     
-    def getChunkProccessOrder(self):
+    def getChunkProcessingOrder(self):
         return self.chunk_client_processing_order_guarante
     
     def getCompletedSize(self):
@@ -39,7 +39,7 @@ class Job:
     def getName(self):
         return self.name
 
-    def getOriginalSize(self);
+    def getOriginalSize(self):
         return self.original_size_in_bytes
 
     def getPriority(self):
@@ -65,7 +65,7 @@ class Job:
     def setCachedSize(self, in_bytes):
         self.cached_size_in_bytes = in_bytes
     
-    def setChunkProccessOrder(self, order):
+    def setChunkProcessingOrder(self, order):
         self.chunk_client_processing_order_guarante = order
     
     def setCompletedSize(self, in_bytes):
@@ -89,7 +89,7 @@ class Job:
     def setName(self, n):
         self.name = n
 
-    def setOriginalSize(self, in_bytes);
+    def setOriginalSize(self, in_bytes):
         self.original_size_in_bytes = in_bytes
 
     def setPriority(self, p):

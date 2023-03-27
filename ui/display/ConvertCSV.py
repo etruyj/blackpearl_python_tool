@@ -6,6 +6,7 @@
 #       or to be saved to a file.
 #====================================================================
 
+from structures.BucketGroupedJob import BucketGroupedJob
 from structures.BucketGroupTapes import BucketGroupTapes
 from structures.BucketSummary import BucketSummary
 from structures.TapeSummary import TapeSummary
@@ -22,6 +23,8 @@ def toOutput(output):
             toPrint = convertDict(output)
         # Check to see if the output
         elif(len(output) >= 1):
+            if(isinstance(output[0], BucketGroupedJob)):
+                toPrint = convertBucketGroupedJob(output)
             if(isinstance(output[0], BucketGroupTapes)):
                 toPrint = convertBucketGroupSummary(output)
             if(isinstance(output[0], BucketSummary)):  
@@ -36,6 +39,25 @@ def toOutput(output):
 #================================================
 # Converters
 #================================================
+
+def convertBucketGroupedJob(output):
+    toPrint = []
+
+    # headers
+    row = "bucket_name,total_jobs,puts,data_put,gets,data_get"
+    toPrint.append(row)
+
+    # Values
+    for line in output:
+        row = line.getBucket() + ","
+        row += str(line.getJobCount()) + ","
+        row += str(line.getWriteCount()) + ","
+        row += StorageUnits.bytesToHumanReadable(int(line.getDataWrite())) + ","
+        row += str(line.getReadCount()) + ","
+        row += StorageUnits.bytesToHumanReadable(int(line.getDataRead()))
+        toPrint.append(row)
+
+    return toPrint
 
 def convertBucketGroupSummary(output):
     toPrint = []
