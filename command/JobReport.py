@@ -12,7 +12,9 @@ import util.map.MapBuckets as MapBuckets
 from structures.BucketGroupedJob import BucketGroupedJob
 from structures.sdk.Job import Job
 
-def createReport(blackpearl, logbook):
+from datetime import datetime, timedelta, timezone
+
+def createReport(blackpearl, filter_by, logbook):
     logbook.INFO("Creating job report...")
     output = []
 
@@ -30,11 +32,13 @@ def createReport(blackpearl, logbook):
             bucket_map = MapBuckets.createIDNameMap(bucket_list)
             
             # Filter Params
-            # Add Code Here
-            
+            params = None
+            if(filter_by != None):
+                params = filter_by.split(":")
+
             # Build List
             if(job_list != None):
-                output = listGroupBucket(job_list, bucket_map, logbook)
+                output = listGroupBucket(job_list, bucket_map, params, logbook)
 
         return output
 
@@ -42,9 +46,25 @@ def createReport(blackpearl, logbook):
         logbook.ERROR(e.__str__())
         return e.__str__()
         
+def filterJob(job, filter_by):
+    # Find the oldest reference time by subtracting days or hours off now()
+    # must be converted to a timezone aware format hence the now(timezone.utc).astimezone()
+    # if oldest time < job_time, job occured before the filter range.
+    if(filter_by[0] == "hours"):
+        oldest_time = datetime.now(timezone.utc).astimezone() - timedelta(hours=int(filter_by[1]))
+    if(filter_by[0] == "days"):
+        oldest_time = datetime.now(timezone.utc).astimezone() - timedelta(days=int(filter_by[1]))
+   
+    job_time = datetime.strptime(job.getDateCompleted(), "%Y-%m-%dT%H:%M:%S.%f%z")
 
+    if(oldest_time == None):
+        # Invalid filter
+        return job
+    elif(oldest_time < job_time):
+        # Job occured older than the oldest time.
+        return job
 
-def listGroupBucket(job_list, bucket_map, logbook): #job list, bucket_map, filter, logbook
+def listGroupBucket(job_list, bucket_map, filter_by, logbook): #job list, bucket_map, filter, logbook
     logbook.INFO("Creating list grouped by bucket...")
     grouped_jobs = []
     job_map = {}
@@ -53,7 +73,8 @@ def listGroupBucket(job_list, bucket_map, logbook): #job list, bucket_map, filte
     # Error handling to make sure there is a list of jobs
     if(job_list != None):
         for job in job_list:
-            # Add filter by here
+            if(filter_by != None and len(filter_by) > 1):
+                job = filterJob(job, filter_by)
 
             if(job != None):
                 # Check to see if the bucket has been found already
