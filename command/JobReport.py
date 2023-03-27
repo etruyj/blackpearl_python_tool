@@ -34,6 +34,7 @@ def createReport(blackpearl, filter_by, logbook):
             # Filter Params
             params = None
             if(filter_by != None):
+                logbook.INFO("Applying filter [" + filter_by + "]")
                 params = filter_by.split(":")
 
             # Build List
@@ -68,7 +69,7 @@ def listGroupBucket(job_list, bucket_map, filter_by, logbook): #job list, bucket
     logbook.INFO("Creating list grouped by bucket...")
     grouped_jobs = []
     job_map = {}
-    new_buckets = 0
+    unfiltered_jobs = 0 # the count of jobs that passed the filter. used for messaging.
 
     # Error handling to make sure there is a list of jobs
     if(job_list != None):
@@ -77,11 +78,11 @@ def listGroupBucket(job_list, bucket_map, filter_by, logbook): #job list, bucket
                 job = filterJob(job, filter_by)
 
             if(job != None):
+                unfiltered_jobs += 1
                 # Check to see if the bucket has been found already
                 # if not create a new
                 if(job.getBucketId() not in job_map):
                     bgj = BucketGroupedJob()
-                    new_buckets += 1
                     bgj.setBucket(job.getBucketId())
                 
                     if(job.getRequestType() == "PUT"):
@@ -103,6 +104,11 @@ def listGroupBucket(job_list, bucket_map, filter_by, logbook): #job list, bucket
                         bgj.addDataRead(job.getCompletedSize())
 
                     job_map[job.getBucketId()] = bgj
+
+    # Additional messaging around the filter.
+    if(filter != None and unfiltered_jobs >= len(job_list)):
+        logbook.WARN("The filter did not apply to any jobs.")
+        print("WARNING: The filter did not catch any jobs.")
 
     # Convert map to list
     for key in job_map.keys():
