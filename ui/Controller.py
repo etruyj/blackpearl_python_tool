@@ -32,8 +32,8 @@ class Controller:
     def fetchConfig(self):
         print("this worked too")
 
-    def jobReport(self):
-        return JobReport.createReport(self.blackpearl, self.logbook)
+    def jobReport(self, filter_by):
+        return JobReport.createReport(self.blackpearl, filter_by, self.logbook)
 
     def listBuckets(self):
         return ListBuckets.createList(self.blackpearl, self.logbook)

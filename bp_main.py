@@ -19,7 +19,7 @@ if(aparser.isValid()):
             case "fetch-config":
                 response = controller.fetchConfig()
             case "job-report":
-                response = controller.jobReport()
+                response = controller.jobReport(aparser.getOption3())
             case "list-buckets":
                 response = controller.listBuckets()
             case "list-data-policies" | "list-policies":
