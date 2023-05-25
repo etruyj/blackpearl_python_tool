@@ -11,6 +11,7 @@ import command.ConfigureBlackPearl as ConfigureBlackPearl
 import command.JobReport as JobReport
 import command.ListBuckets as ListBuckets
 import command.ListDataPolicies as ListDataPolicies
+import command.ListObjects as ListObjects
 import command.ListPools as ListPools
 import command.ListStorageDomains as ListStorageDomains
 import command.ListTapes as ListTapes
@@ -40,6 +41,9 @@ class Controller:
 
     def listDataPolicies(self):
         return ListDataPolicies.createList(self.blackpearl, self.logbook)
+
+    def listObjects(self, bucket):
+        return ListObjects.createList(self.blackpearl, bucket, self.logbook)
 
     def listPools(self):
         return ListPools.createList(self.blackpearl, self.logbook)

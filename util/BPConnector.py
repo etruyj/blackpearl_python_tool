@@ -249,6 +249,13 @@ class BPConnector:
         except Exception as e:
             raise e
 
+    def getObjects(self, bucket_name, logbook):
+        try:
+            return SDKCommands.getObjects(self.data_path_client, bucket_name, logbook)
+        except Exception as e:
+            raise e
+
+
     def getPools(self, logbook):
         try:
             return SDKCommands.getPools(self.data_path_client, logbook)

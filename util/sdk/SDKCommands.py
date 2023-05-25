@@ -5,6 +5,7 @@
 #           commands.
 #====================================================================
 
+import json
 from ds3 import ds3
 from util.Logger import Logger
 
@@ -226,6 +227,25 @@ def getDiskPartitions(blackpearl, logbook):
             raise Exception("Access Denied: User does not have permission to perform list-disk-partitions")
         else:
             raise Exception("Unable to retrieve disk partitions.")
+
+def getObjects(blackpearl, bucket_name, logbook):
+    try:
+        logbook.INFO("Getting info on bucket [" + bucket_name + "]");
+        logbook.DEBUG("Calling blackpearl.get_bucket()");
+
+        getObjects = blackpearl.get_bucket(ds3.GetBucketRequest(bucket_name))
+      
+        logbook.INFO("Found (" + str(len(getObjects.result['ContentsList'])) + ") objects in the bucket.")
+
+        return  getObjects.result['ContentsList']
+
+    except Exception as e:
+        logbook.ERROR(e.__str__())
+
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform get-object")
+        else:
+            raise Exception("Unable to list objects.")
 
 def getPools(blackpearl, logbook):
     try:

@@ -11,6 +11,7 @@ from structures.BucketGroupTapes import BucketGroupTapes
 from structures.BucketSummary import BucketSummary
 from structures.TapeSummary import TapeSummary
 from structures.UserSummary import UserSummary
+from structures.sdk.Ds3Object import Ds3Object
 
 import util.convert.StorageUnits as StorageUnits
 
@@ -29,6 +30,8 @@ def toOutput(output):
                 toPrint = convertBucketGroupSummary(output)
             if(isinstance(output[0], BucketSummary)):  
                 toPrint = convertBucketSummary(output)
+            if(isinstance(output[0], Ds3Object)):
+                toPrint = convertDs3Object(output)
             if(isinstance(output[0], TapeSummary)):
                 toPrint = convertTapeSummary(output)
             if(isinstance(output[0], UserSummary)):
@@ -101,6 +104,21 @@ def convertDict(output):
     for i in range(0, len(headers)):
         toPrint.append(str(headers[i]) + "," + str(output[headers[i]]))
         
+    return toPrint
+
+def convertDs3Object(output):
+    toPrint = []
+    row = ""
+
+    # column headers
+    row = "object_name,size,owner,last_modified,version_id,is_latest,storage_class,etag"
+    toPrint.append(row)
+
+    for obj in output:
+        row = obj.getKey() + "," + StorageUnits.bytesToHumanReadable(int(obj.getSize())) + "," + obj.getOwnerDisplayName() + "," + obj.getLastModified() + "," + obj.getVersionId() + "," + obj.getIsLatest() + "," + obj.getStorageClass() + "," + obj.getEtag()
+
+        toPrint.append(row)
+
     return toPrint
 
 def convertTapeSummary(output):

@@ -14,7 +14,7 @@ class StorageDomainMember:
         return self.member_id
 
     def getDomainId(self):
-        return self.storage_domain_id
+        return self.domain_id
 
     #============================================
     # Setters

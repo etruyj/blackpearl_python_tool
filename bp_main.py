@@ -13,6 +13,7 @@ if(aparser.isValid()):
 
     if controller.clientValid():
         response = None # Declare response as none to allow testing for valid response.
+
         match aparser.getCommand():
             case "configure":
                 response = controller.configureBP(aparser.getOption4())
@@ -24,6 +25,8 @@ if(aparser.isValid()):
                 response = controller.listBuckets()
             case "list-data-policies" | "list-policies":
                 response = controller.listDataPolicies()
+            case "list-objects":
+                response = controller.listObjects(aparser.getOption1())
             case "list-pools":
                 response = controller.listPools()
             case "list-storage-domains" | "list-domains":

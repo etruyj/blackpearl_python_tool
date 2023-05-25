@@ -53,7 +53,7 @@ def parseArgs(args):
             case "-k" | "--secret" | "--secret-key":
                 i += 1
                 setSecretKey(args[i])
-            case "--option1":
+            case "--option1" | "--bucket":
                 i += 1
                 setOption1(args[i])
             case "--option2" | "--group-by":
