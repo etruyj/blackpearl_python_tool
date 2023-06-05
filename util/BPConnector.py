@@ -136,6 +136,12 @@ class BPConnector:
     def authenticate(self, url, username, password, logbook):
         return HttpCommands.authenticate(url, username, password, logbook)
 
+    def cases(self, logbook):
+        try:
+            return HttpCommands.cases(self.management_path, self.token, logbook)
+        except Exception as e:
+            raise e
+
     def createCifsShare(self, name, path, volume_id, readonly, service_id, logbook):
         return HttpCommands.createCifsShare(self.management_path, self.token, name, path, volume_id, readonly, service_id, logbook)
 
@@ -213,6 +219,12 @@ class BPConnector:
         except Exception as e:
             raise e
 
+    def getBucket(self, bucket_name, logbook):
+        try:
+            return SDKCommands.getBucket(self.data_path_client, bucket_name, logbook)
+        except Exception as e:
+            raise e
+
     def getBuckets(self, logbook):
         try:
             return SDKCommands.getBuckets(self.data_path_client, logbook)
@@ -249,12 +261,11 @@ class BPConnector:
         except Exception as e:
             raise e
 
-    def getObjects(self, bucket_name, logbook):
+    def getObject(self, bucket, object_name, destination, logbook):
         try:
-            return SDKCommands.getObjects(self.data_path_client, bucket_name, logbook)
+            return SDKCommands.getObject(self.data_path_client, bucket, object_name, destination, logbook)
         except Exception as e:
             raise e
-
 
     def getPools(self, logbook):
         try:

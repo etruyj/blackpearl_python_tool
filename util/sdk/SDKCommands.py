@@ -127,6 +127,24 @@ def createStorageDomainTapeMember(blackpearl, storage_domain_id, tape_par_id, ta
         else:
             raise Exception("Unabled to add tape partition [" + tape_par_id + "] to storage domain.")
 
+def getBucket(blackpearl, bucket_name, logbook):
+    try:
+        logbook.INFO("Getting info on bucket [" + bucket_name + "]");
+        logbook.DEBUG("Calling blackpearl.get_bucket()");
+
+        getObjects = blackpearl.get_bucket(ds3.GetBucketRequest(bucket_name))
+      
+        logbook.INFO("Found (" + str(len(getObjects.result['ContentsList'])) + ") objects in the bucket.")
+
+        return  getObjects.result['ContentsList']
+
+    except Exception as e:
+        logbook.ERROR(e.__str__())
+
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform get-object")
+        else:
+            raise Exception("Unable to list objects.")
 
 def getBuckets(blackpearl, logbook):
     try:
@@ -228,24 +246,21 @@ def getDiskPartitions(blackpearl, logbook):
         else:
             raise Exception("Unable to retrieve disk partitions.")
 
-def getObjects(blackpearl, bucket_name, logbook):
+def getObject(blackpearl, bucket, key, destination_path, logbook):
     try:
-        logbook.INFO("Getting info on bucket [" + bucket_name + "]");
-        logbook.DEBUG("Calling blackpearl.get_bucket()");
+        logbook.INFO("Querying bucket [" + bucket + "] for object " + key)
 
-        getObjects = blackpearl.get_bucket(ds3.GetBucketRequest(bucket_name))
-      
-        logbook.INFO("Found (" + str(len(getObjects.result['ContentsList'])) + ") objects in the bucket.")
+        file_stream = open(destination_path, "wb")
 
-        return  getObjects.result['ContentsList']
+        blackpearl.get_object(ds3.GetObjectRequest(bucket, key, file_stream))
+
+        file_stream.close()
+
+        logbook.INFO("Object saved to " + destination_path)
 
     except Exception as e:
         logbook.ERROR(e.__str__())
-
-        if("AccessDenied" in e.__str__()):
-            raise Exception("Access Denied: User does not have permission to perform get-object")
-        else:
-            raise Exception("Unable to list objects.")
+        raise e
 
 def getPools(blackpearl, logbook):
     try:

@@ -59,10 +59,10 @@ def parseArgs(args):
             case "--option2" | "--group-by":
                 i += 1
                 setOption2(args[i])
-            case "--option3" | "--filter":
+            case "--option3" | "--filter" | "--prefix":
                 i += 1
                 setOption3(args[i])
-            case "--option4" | "--file":
+            case "--option4" | "--file" | "--path":
                 i += 1
                 setOption4(args[i])
             case "--output-format":

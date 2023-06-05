@@ -19,6 +19,8 @@ if(aparser.isValid()):
                 response = controller.configureBP(aparser.getOption4())
             case "fetch-config":
                 response = controller.fetchConfig()
+            case "get-database":
+                response = controller.downloadNewestDatabase(aparser.getOption3(), aparser.getOption4())
             case "job-report":
                 response = controller.jobReport(aparser.getOption3())
             case "list-buckets":

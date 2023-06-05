@@ -7,14 +7,14 @@
 import util.Logger as Logger
 from structures.sdk.Ds3Object import Ds3Object
 
-def createList(blackpearl, bucket, logbook):
+def createList(bucket, blackpearl, logbook):
     logbook.INFO("Creating list of objects for bucket [" + bucket + "].")
 
     try:
-        logbook.DEBUG("Calling blackpearl.getObjects()")
+        logbook.DEBUG("Calling blackpearl.getBucket()")
         output = []
 
-        object_info = blackpearl.getObjects(bucket, logbook)
+        object_info = blackpearl.getBucket(bucket, logbook)
    
         if(object_info == None):
             logbook.ERROR("Unable to return objects for the specified bucket.")
