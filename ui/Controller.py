@@ -8,6 +8,7 @@ from util.BPConnector import BPConnector
 from util.Logger import Logger
 
 import command.ConfigureBlackPearl as ConfigureBlackPearl
+import command.DeleteObjects as DeleteObjects
 import command.DownloadDatabase as DownloadDatabase
 import command.JobReport as JobReport
 import command.ListBuckets as ListBuckets
@@ -30,6 +31,9 @@ class Controller:
     
     def configureBP(self, file_path):
         return ConfigureBlackPearl.fromFile(self.blackpearl, file_path, self.logbook)
+
+    def deleteObjects(self, bucket, file_path, buffer=1000):
+        return DeleteObjects.fromFile(self.blackpearl, bucket, file_path, self.logbook, buffer)
 
     def downloadNewestDatabase(self, file_prefix, file_path):
         return DownloadDatabase.mostRecent(self.blackpearl, file_prefix, file_path, self.logbook)
