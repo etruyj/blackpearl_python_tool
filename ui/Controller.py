@@ -26,14 +26,23 @@ class Controller:
         self.logbook = Logger("../log/bp_script.log", "100 KiB", 2, 2)
         self.blackpearl = BPConnector(endpoint, username, password, access_key, secret_key, self.logbook)
 
+        if(username != None or username != ""):
+            self.user = username
+        else:
+            self.user = access_key
+
     def clientValid(self):
         return self.blackpearl.verifyConnection(self.logbook)
     
     def configureBP(self, file_path):
         return ConfigureBlackPearl.fromFile(self.blackpearl, file_path, self.logbook)
 
-    def deleteObjects(self, bucket, file_path, buffer=1000):
-        return DeleteObjects.fromFile(self.blackpearl, bucket, file_path, self.logbook, buffer)
+    def deleteObjects(self, bucket, file_path, buffer):
+        # Handle potential inputs.
+        if(buffer == None or buffer=="" or int(buffer) <= 0):
+            buffer = 1000
+        
+        return DeleteObjects.fromFile(self.blackpearl, bucket, file_path, self.logbook, self.user, buffer)
 
     def downloadNewestDatabase(self, file_prefix, file_path):
         return DownloadDatabase.mostRecent(self.blackpearl, file_prefix, file_path, self.logbook)

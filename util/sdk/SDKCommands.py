@@ -127,6 +127,40 @@ def createStorageDomainTapeMember(blackpearl, storage_domain_id, tape_par_id, ta
         else:
             raise Exception("Unabled to add tape partition [" + tape_par_id + "] to storage domain.")
 
+def deleteObject(blackpearl, bucket_name, object_name, logbook):
+    try:
+        logbook.WARN("Deleting object [" + object_name + "] from bucket " + bucket_name)
+        logbook.DEBUG("blackpearl.delete_object(" + bucket_name + ", " + object_name + ")...")
+
+        response = blackpearl.delete_object(ds3.DeleteObjectRequest(bucket_name, object_name))
+    except Exception as e:
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to delete object")
+        if("NoSuchKey" in e.__str__()):
+            raise Exception("Unable to delete object. " + object_name + " does not exist in bucket [" + bucket_name + "].")
+        else:
+            raise Exception("Unabled to delete object [" + object_name + "] from bucket " + bucket_name + ".")
+
+
+def deleteObjects(blackpearl, bucket_name, object_list, logbook):
+    try:
+        logbook.WARN("Deleting object [" + object_list + "] from bucket " + bucket_name)
+        logbook.DEBUG("blackpearl.delete_object(" + bucket_name + ", " + object_list + ")...")
+
+        response = blackpearl.delete_object(bucket_name, object_list)
+
+        print(response)
+
+    except Exception as e:
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to delete object")
+        else:
+            raise Exception("Unabled to delete object [" + object_list + "] from bucket " + bucket_name + ".")
+
 def getBucket(blackpearl, bucket_name, logbook):
     try:
         logbook.INFO("Getting info on bucket [" + bucket_name + "]");

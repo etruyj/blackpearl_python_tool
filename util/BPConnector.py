@@ -219,6 +219,12 @@ class BPConnector:
         except Exception as e:
             raise e
 
+    def deleteObject(self, bucket_name, object_name, logbook):
+        try:
+            return SDKCommands.deleteObject(self.data_path_client, bucket_name, object_name, logbook)
+        except Exception as e:
+            raise e
+
     def getBucket(self, bucket_name, logbook):
         try:
             return SDKCommands.getBucket(self.data_path_client, bucket_name, logbook)
