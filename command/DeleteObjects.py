@@ -17,7 +17,21 @@ def createAuditLog(user, bucket):
     audit_log = Logger(log_path, "1 GiB", 1, 1)
     audit_log.INFO("User [" + user + "] issued delete-objects command against bucket " + bucket)
     return audit_log
+
+def deleteObjectBatch(blackpearl, bucket, object_list, logbook, audit_log):
+    try:
+        result = blackpearl.deleteObjects(bucket, object_list, logbook)
     
+        # Print failed.
+        for error in result["ErrorList"]:
+            print(error["Code"] + ": " + error["Key"]) 
+        # Store Success
+        for success in result["DeletedList"]:
+            audit_log.WARN("Batch deleted object: " + success["Key"])
+
+    except Exception as e:
+        raise e
+
 def deleteSingleObject(blackpearl, bucket, to_delete, logbook):
     try:
         blackpearl.deleteObject(bucket, to_delete, logbook)
@@ -41,7 +55,8 @@ def processDeletes(blackpearl, decision, bucket, object_list, logbook, audit_log
                 if(success):
                     audit_log.WARN("Deleted object: " + to_delete)
     elif(decision == "DELETE ALL"):
-        print("Deleting batch of " + str(len(to_delete)) + " objects from bucket [" + bucket + "].")
+        print("Deleting batch of " + str(len(object_list)) + " objects from bucket [" + bucket + "].")
+        deleteObjectBatch(blackpearl, bucket, object_list, logbook, audit_log)
 
 def fromFile(blackpearl, bucket, file, logbook, user, buffer=1000):
     print("WARNING: You are issuing a command to delete multiple objects from the bucket " + bucket + ". These objects cannot be recovered.")

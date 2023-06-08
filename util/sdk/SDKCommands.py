@@ -146,13 +146,18 @@ def deleteObject(blackpearl, bucket_name, object_name, logbook):
 
 def deleteObjects(blackpearl, bucket_name, object_list, logbook):
     try:
-        logbook.WARN("Deleting object [" + object_list + "] from bucket " + bucket_name)
-        logbook.DEBUG("blackpearl.delete_object(" + bucket_name + ", " + object_list + ")...")
+        logbook.WARN("Batch deleting (" + str(len(object_list)) + ") objects from bucket " + bucket_name)
+        logbook.DEBUG("blackpearl.delete_objects(" + bucket_name + ")...")
 
-        response = blackpearl.delete_object(bucket_name, object_list)
+        delete_list = []
 
-        print(response)
+        for to_delete in object_list:
+            del_obj = ds3.DeleteObject(to_delete)
+            delete_list.append(del_obj)
 
+        response = blackpearl.delete_objects(ds3.DeleteObjectsRequest(bucket_name, delete_list))
+
+        return response.result
     except Exception as e:
         logbook.ERROR(e.__str__())
         
