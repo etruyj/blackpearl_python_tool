@@ -5,6 +5,7 @@
 #           in a specified list from the specified bucket.
 #====================================================================
 
+import command.PutObject as PutObject
 import util.io.File as File
 from util.Logger import Logger
 
@@ -42,6 +43,27 @@ def deleteSingleObject(blackpearl, bucket, to_delete, logbook):
         else:
             raise e
 
+def fromFile(blackpearl, bucket, file, logbook, user, buffer=1000, ignore_audit_log=False):
+    print("WARNING: You are issuing a command to delete multiple objects from the bucket " + bucket + ". These objects cannot be recovered.")
+    decision = input("Please type DELETE ALL to delete all objects without prompting or VERIFY to verify each object name before deleting: ")
+
+    if(decision == "VERIFY" or decision == "DELETE ALL"):
+        try:
+            audit_log = createAuditLog(user, bucket)
+
+            while os.path.isfile(file):
+                object_list = File.partialParse(file, buffer)
+            
+                processDeletes(blackpearl, decision, bucket, object_list, logbook, audit_log)
+
+            if(not ignore_audit_log):
+                saveAuditLog(blackpearl, bucket, logbook, audit_log)
+        except Exception as e:
+            logbook.ERROR(e.__str__())
+            return e.__str__()
+    else:
+        return "Invalid input selected. No objects have been deleted."
+
 def processDeletes(blackpearl, decision, bucket, object_list, logbook, audit_log):
     logbook.INFO("Processing deletes for (" + str(len(object_list)) + ") objects from bucket [" + bucket + "].")
     
@@ -58,21 +80,11 @@ def processDeletes(blackpearl, decision, bucket, object_list, logbook, audit_log
         print("Deleting batch of " + str(len(object_list)) + " objects from bucket [" + bucket + "].")
         deleteObjectBatch(blackpearl, bucket, object_list, logbook, audit_log)
 
-def fromFile(blackpearl, bucket, file, logbook, user, buffer=1000):
-    print("WARNING: You are issuing a command to delete multiple objects from the bucket " + bucket + ". These objects cannot be recovered.")
-    decision = input("Please type DELETE ALL to delete all objects without prompting or VERIFY to verify each object name before deleting: ")
+def saveAuditLog(blackpearl, bucket, logbook, audit_log):
+    logbook.INFO("Saving audit log to bucket [" + bucket + "]")
+    
+    log_key = audit_log.getLogPath().split("/")
+    log_key = log_key[len(log_key)-1]
 
-    if(decision == "VERIFY" or decision == "DELETE ALL"):
-        try:
-            audit_log = createAuditLog(user, bucket)
+    PutObject.toBlackPearlAndRename(blackpearl, bucket, log_key, audit_log.getLogPath(), logbook)
 
-            while os.path.isfile(file):
-                object_list = File.partialParse(file, buffer)
-            
-                processDeletes(blackpearl, decision, bucket, object_list, logbook, audit_log)
-
-        except Exception as e:
-            logbook.ERROR(e.__str__())
-            return e.__str__()
-    else:
-        return "Invalid input selected. No objects have been deleted."

@@ -6,6 +6,7 @@
 #====================================================================
 
 import json
+import os
 from ds3 import ds3
 from util.Logger import Logger
 
@@ -407,3 +408,24 @@ def getUsers(blackpearl, logbook):
             raise Exception("Access Denied: User does not have permission to perform list-users")
         else:
             raise Exception("Unable to retrieve user list.")
+
+def putObject(blackpearl, bucket, key, path, logbook):
+    try:
+        logbook.INFO("Sending object to blackpearl...")
+        logbook.DEBUG("blackpearl.put_object(" + bucket + ", " + path + ")...")
+
+        file_stream = open(path, "rb")
+        file_stats = os.stat(path)
+
+        response = blackpearl.put_object(ds3.PutObjectRequest(bucket, key, file_stats.st_size, file_stream))
+
+        logbook.INFO("Object successfully landed in cache.")
+        return key + " put successfully to cache."
+    except Exception as e:
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform list-users")
+        else:
+            raise Exception("Unable to put object [" + path + "] to bucket " + bucket + ".")
+

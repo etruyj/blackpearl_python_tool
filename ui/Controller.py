@@ -19,6 +19,7 @@ import command.ListStorageDomains as ListStorageDomains
 import command.ListTapes as ListTapes
 import command.ListTapePartitions as ListTapePartitions
 import command.ListUsers as ListUsers
+import command.PutObject as PutObject
 import command.TapeReport as TapeReport
 
 class Controller:
@@ -76,6 +77,12 @@ class Controller:
 
     def listUsers(self):
         return ListUsers.createList(self.blackpearl, self.logbook)
+
+    def putObject(self, bucket, path, key=""):
+        if(key == None or key == ""):
+            return PutObject.toBlackPearl(self.blackpearl, bucket, path, self.logbook)
+        else:
+            return PutObject.toBlackPearl(self.blackpearl, bucket, key, path, self.logbook)
 
     def tapeReport(self, group_by, filter_by):
         return TapeReport.createReport(group_by, filter_by, self.blackpearl, self.logbook)

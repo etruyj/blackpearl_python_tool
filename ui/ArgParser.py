@@ -59,7 +59,7 @@ def parseArgs(args):
             case "--option2" | "--group-by" | "--max" | "--max-moves" | "--buffer":
                 i += 1
                 setOption2(args[i])
-            case "--option3" | "--filter" | "--prefix":
+            case "--option3" | "--filter" | "--prefix" | "--key":
                 i += 1
                 setOption3(args[i])
             case "--option4" | "--file" | "--path":

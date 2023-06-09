@@ -314,3 +314,9 @@ class BPConnector:
             return SDKCommands.getUsers(self.data_path_client, logbook)
         except Exception as e:
             raise e
+    
+    def putObject(self, bucket, key, path, logbook):
+        try:
+            return SDKCommands.putObject(self.data_path_client, bucket, key, path, logbook)
+        except Exception as e:
+            raise e
