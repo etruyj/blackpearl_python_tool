@@ -19,6 +19,8 @@ if(aparser.isValid()):
                 response = controller.configureBP(aparser.getOption4())
             case "delete-objects":
                 response = controller.deleteObjects(aparser.getOption1(), aparser.getOption4(), aparser.getOption2())
+            case "eject-tape":
+                response = controller.ejectTape(aparser.getOption1(), aparser.getOption4())
             case "fetch-config":
                 response = controller.fetchConfig()
             case "get-database":

@@ -10,6 +10,7 @@ from util.Logger import Logger
 import command.ConfigureBlackPearl as ConfigureBlackPearl
 import command.DeleteObjects as DeleteObjects
 import command.DownloadDatabase as DownloadDatabase
+import command.EjectTape as EjectTape
 import command.JobReport as JobReport
 import command.ListBuckets as ListBuckets
 import command.ListDataPolicies as ListDataPolicies
@@ -47,6 +48,18 @@ class Controller:
 
     def downloadNewestDatabase(self, file_prefix, file_path):
         return DownloadDatabase.mostRecent(self.blackpearl, file_prefix, file_path, self.logbook)
+
+    def ejectTape(self, barcode="", file_path=""):
+        if(barcode == "" and file_path == ""):
+            # No input was specified.
+            return "Invalid input selected. Please specify tape --barcode or tape list --file."
+        elif(barcode == ""):
+            # File path was specified.
+            return "code needed"
+        elif(file_path == ""):
+            # barcode was specified.
+            print("barcode: " + barcode)
+            return EjectTape.byBarcode(self.blackpearl, barcode, self.logbook)
 
     def fetchConfig(self):
         print("this worked too")

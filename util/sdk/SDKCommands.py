@@ -167,6 +167,24 @@ def deleteObjects(blackpearl, bucket_name, object_list, logbook):
         else:
             raise Exception("Unabled to delete object [" + object_list + "] from bucket " + bucket_name + ".")
 
+def ejectTape(blackpearl, barcode, logbook):
+    try:
+        logbook.INFO("Ejecting tape [" + barcode + "].")
+
+        response = blackpearl.eject_tape_spectra_s3(ds3.EjectTapeSpectraS3Request(barcode))
+
+        print(response.result)
+        
+        
+
+    except Exception as e:
+        logbook.ERROR(e.__str__())
+       
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to delete object")
+        else:
+            raise Exception("Unabled to eject tape  " + barcode + ".")
+
 def getBucket(blackpearl, bucket_name, logbook):
     try:
         logbook.INFO("Getting info on bucket [" + bucket_name + "]");

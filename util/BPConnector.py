@@ -231,6 +231,12 @@ class BPConnector:
         except Exception as e:
             raise e
 
+    def ejectTape(self, barcode, logbook):
+        try:
+            return SDKCommands.ejectTape(self.data_path_client, barcode, logbook)
+        except Exception as e:
+            raise e
+
     def getBucket(self, bucket_name, logbook):
         try:
             return SDKCommands.getBucket(self.data_path_client, bucket_name, logbook)
