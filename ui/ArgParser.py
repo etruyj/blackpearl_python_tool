@@ -56,7 +56,7 @@ def parseArgs(args):
             case "--option1" | "--bucket" | "--barcode":
                 i += 1
                 setOption1(args[i])
-            case "--option2" | "--group-by" | "--max" | "--max-moves" | "--buffer":
+            case "--option2" | "--group-by" | "--max-moves" | "--moves" | "--buffer":
                 i += 1
                 setOption2(args[i])
             case "--option3" | "--filter" | "--prefix" | "--key":
