@@ -231,6 +231,12 @@ class BPConnector:
         except Exception as e:
             raise e
 
+    def deleteLostTape(self, barcode, logbook):
+        try:
+            return SDKCommands.deleteTape(self.data_path_client, barcode, logbook)
+        except Exception as e:
+            raise e
+
     def ejectTape(self, barcode, logbook):
         try:
             return SDKCommands.ejectTape(self.data_path_client, barcode, logbook)
