@@ -8,6 +8,7 @@ from util.BPConnector import BPConnector
 from util.Logger import Logger
 
 import command.ConfigureBlackPearl as ConfigureBlackPearl
+import command.DeleteLostTapes as DeleteLostTapes
 import command.DeleteObjects as DeleteObjects
 import command.DownloadDatabase as DownloadDatabase
 import command.EjectTape as EjectTape
@@ -45,6 +46,26 @@ class Controller:
             buffer = 1000
         
         return DeleteObjects.fromFile(self.blackpearl, bucket, file_path, self.logbook, self.user, buffer)
+
+    def deleteTape(self, barcode="", max_moves="", filter_params="", file_path=""):
+        # Set max moves to 10 if invalid.
+        if(max_moves == None or max_moves == "" or int(max_moves) <= 0):
+            self.logbook.INFO("Maximum number of moves not specified. Setting to 10.")
+            max_moves = 10
+
+        # Determine which command the user would like to use.
+        if(barcode == "" and file_path == "" and filter_params == ""):
+            # No input was specified.
+            return "Invalid input selected. Please specify tape --barcode, filter parameters with --filter, or tape list --file."
+        elif(barcode == "" and filter_params == ""):
+            # File path was specified.
+            return DeleteLostTapes.fromFile(self.blackpearl, file_path, max_moves, self.logbook)
+        elif(file_path == "" and filter_params == ""):
+            # barcode was specified.
+            return DeleteLostTapes.byBarcode(self.blackpearl, barcode, self.logbook)
+        else:
+            # Use a filter to determine which tapes to eject.
+            return DeleteLostTapes.fromFilteredList(self.blackpearl, filter_params, max_moves, self.logbook)
 
     def downloadNewestDatabase(self, file_prefix, file_path):
         return DownloadDatabase.mostRecent(self.blackpearl, file_prefix, file_path, self.logbook)

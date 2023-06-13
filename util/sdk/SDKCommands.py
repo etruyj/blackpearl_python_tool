@@ -126,7 +126,7 @@ def createStorageDomainTapeMember(blackpearl, storage_domain_id, tape_par_id, ta
         if("AccessDenied" in e.__str__()):
             raise Exception("Access Denied: User does not have permission to perform modify-storage-domain")
         else:
-            raise Exception("Unabled to add tape partition [" + tape_par_id + "] to storage domain.")
+            raise Exception("Unable to add tape partition [" + tape_par_id + "] to storage domain.")
 
 def deleteObject(blackpearl, bucket_name, object_name, logbook):
     try:
@@ -142,7 +142,7 @@ def deleteObject(blackpearl, bucket_name, object_name, logbook):
         if("NoSuchKey" in e.__str__()):
             raise Exception("Unable to delete object. " + object_name + " does not exist in bucket [" + bucket_name + "].")
         else:
-            raise Exception("Unabled to delete object [" + object_name + "] from bucket " + bucket_name + ".")
+            raise Exception("Unable to delete object [" + object_name + "] from bucket " + bucket_name + ".")
 
 
 def deleteObjects(blackpearl, bucket_name, object_list, logbook):
@@ -165,7 +165,7 @@ def deleteObjects(blackpearl, bucket_name, object_list, logbook):
         if("AccessDenied" in e.__str__()):
             raise Exception("Access Denied: User does not have permission to delete object")
         else:
-            raise Exception("Unabled to delete object [" + object_list + "] from bucket " + bucket_name + ".")
+            raise Exception("Unable to delete object [" + object_list + "] from bucket " + bucket_name + ".")
 
 def deleteTape(blackpearl, barcode, logbook):
     try:
@@ -181,8 +181,10 @@ def deleteTape(blackpearl, barcode, logbook):
         
         if("AccessDenied" in e.__str__()):
             raise Exception("Access Denied: User does not have permission to delete object")
+        elif("Only LOST" in e.__str__()):
+            raise Exception("Invalid State: Tape [" + barcode + "] is not lost or exported.")
         else:
-            raise Exception("Unabled to delete tape [" + barcode + "].")
+            raise Exception("Unable to delete tape [" + barcode + "].")
 
 def ejectTape(blackpearl, barcode, logbook):
     try:
