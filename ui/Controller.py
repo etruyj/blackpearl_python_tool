@@ -103,7 +103,10 @@ class Controller:
         return ListDataPolicies.createList(self.blackpearl, self.logbook)
 
     def listObjects(self, bucket):
-        return ListObjects.createList(bucket, self.blackpearl, self.logbook)
+        # Basic List Objects
+        #return ListObjects.createList(bucket, self.blackpearl, self.logbook)
+        # Advanced
+        return ListObjects.withPhysicalLocations(bucket, "not-used", self.blackpearl, self.logbook)
 
     def listPools(self):
         return ListPools.createList(self.blackpearl, self.logbook)

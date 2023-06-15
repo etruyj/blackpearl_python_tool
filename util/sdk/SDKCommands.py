@@ -338,6 +338,33 @@ def getObject(blackpearl, bucket, key, destination_path, logbook):
         logbook.ERROR(e.__str__())
         raise e
 
+def getObjectsWithFullDetails(blackpearl, bucket, prefix, include_location, plength, page_start, logbook):
+    try:
+        logbook.INFO("Retrieving list of (" + str(plength) + ") objects in bucket [" + bucket + "] starting from " + str(page_start))
+        logbook.DEBUG("blackpearl.get_objects_with_full_details_spectra_s3()")
+
+        # Set page_start to None if 0
+        # page_start is an object id not an item number.
+        # None is not parsable in text, so page start 0 
+        # must be passed for logging then converted.
+        if(page_start == 0):
+            page_start = None
+
+        response = blackpearl.get_objects_with_full_details_spectra_s3(ds3.GetObjectsWithFullDetailsSpectraS3Request(bucket, include_physical_placement=include_location, page_start_marker=page_start, page_length=plength))
+
+        # Full response payload is returned instead of the
+        # results field like other calls as the paginated
+        # result information is stored outside of the [result].
+        # These details are required to make subsequent calls.
+        return response
+    except Exception as e:
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform list-pools")
+        else:
+            raise Exception("Unable to retrieve object information.")
+
 def getPools(blackpearl, logbook):
     try:
         logbook.INFO("Fetching pools...")

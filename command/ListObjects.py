@@ -6,6 +6,9 @@
 
 import util.Logger as Logger
 from structures.sdk.Ds3Object import Ds3Object
+from structures.sdk.ObjectDetails import ObjectDetails
+
+import json
 
 def createList(bucket, blackpearl, logbook):
     logbook.INFO("Creating list of objects for bucket [" + bucket + "].")
@@ -36,3 +39,32 @@ def createList(bucket, blackpearl, logbook):
         return output
     except Exception as e:
         print(e.__str__())
+
+def withPhysicalLocations(bucket, prefix, blackpearl, logbook):
+    logbook.INFO("Listing objects associated with bucket [" + bucket + "]")
+   
+    page_length = 2
+    page_number = 0
+    objects_remaining = 1
+    details_list = []
+
+    try:
+        while(objects_remaining > 0):
+            response = blackpearl.getObjectsWithFullDetails(bucket, prefix, page_length, page_number, logbook)
+
+            objects_remaining = response.paging_truncated
+            total_objects = response.paging_total_result_count
+            object_list = response.result['ObjectList']
+
+            print("Printing results: 0-" + str(2) + " out of " + str(total_objects))
+            print("there are " + str(objects_remaining) + " objects remaining.")
+
+            for obj in object_list:
+                page_number = obj['Id'] # Excessive assignments but automatically sets to the last in the list.
+                if(obj['Type'] != "FOLDER"):
+                    details = ObjectDetails()
+                    details.importObject(obj)
+                    details_list.append(details)
+
+    except Exception as e:
+        return e.__str__()
