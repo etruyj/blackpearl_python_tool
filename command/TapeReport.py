@@ -44,6 +44,7 @@ import util.map.MapBuckets as MapBuckets
 import util.map.MapStorageDomains as MapStorageDomains
 import util.map.MapTapePartitions as MapTapePartitions
 
+from structures.BucketGroupTapes import BucketGroupTapes
 from structures.TapeSummary import TapeSummary
 from structures.sdk.Tape import Tape
 
@@ -186,6 +187,7 @@ def listAllTapes(tape_list, bucket_map, par_map, member_domain_map, filter_by, l
             tsm.setBucket(findBucketName(tape.getBucketId(), bucket_map, logbook))
             tsm.setState(tape.getState())
             tsm.setStorageDomain(findStorageDomainName(tape.getStorageDomainMemberId(), member_domain_map, logbook))
+            tsm.setTapeCapacity(tape.getTotalCapacity(), tape.getAvailableCapacity())
             tsm.setTapeType(tape.getTapeType())
             tsm.setTapePartition(findTapePartitionName(tape.getPartitionId(), par_map, logbook))
 
@@ -197,10 +199,8 @@ def listGroupBucket(tape_list, bucket_map, filter_by, logbook):
     logbook.INFO("Creating list grouped by bucket...");
     tape_map = {}
 
+    # Error handle to make sure there is a list of tapes.
     if(tape_list != None):
-        # Set the headers
-        tape_map["bucket"] = "tape_count"
-
         for tape in tape_list:
             if(filter_by != None):
                 tape = filterTape(tape, filter_by)
@@ -209,37 +209,60 @@ def listGroupBucket(tape_list, bucket_map, filter_by, logbook):
                 #Blank tapes
                 if(tape.getStorageDomainMemberId() == None):
                     if("scratch" not in tape_map):
-                        tape_map["scratch"] = 1
+                        bgt = BucketGroupTapes()
+                        bgt.setBucketName("scratch")
+                        bgt.addTapeCapacity(tape.getTotalCapacity(), tape.getAvailableCapacity())
+                        bgt.addTape()
+                        tape_map["scratch"] = bgt
                     else:
-                        tape_map["scratch"] = tape_map["scratch"] + 1
+                        bgt = tape_map["scratch"]
+                        bgt.addTapeCapacity(tape.getTotalCapacity(), tape.getAvailableCapacity())
+                        bgt.addTape()
+                        tape_map["scratch"] = bgt
+
                 # Non-bucket isolated tapes
                 elif(tape.getBucketId() == None):
                     if("non-isolated" not in tape_map):
-                        tape_map["non-isolated"] = 1
+                        bgt = BucketGroupTapes()
+                        bgt.setBucketName("non-isolated")
+                        bgt.addTapeCapacity(tape.getTotalCapacity(), tape.getAvailableCapacity())
+                        bgt.addTape()
+                        tape_map["non-isolated"] = bgt
                     else:
-                        tape_map["non-isolated"] = tape_map["non-isolated"] + 1
+                        bgt = tape_map["non-isolated"]
+                        bgt.addTapeCapacity(tape.getTotalCapacity(), tape.getAvailableCapacity())
+                        bgt.addTape()
+                        tape_map["non-isolated"] = bgt
+
                 # Bucket isolated tapes
                 elif(tape.getBucketId() != None):
                     if(tape.getBucketId() not in tape_map):
-                        tape_map[tape.getBucketId()] = 1
+                        bgt = BucketGroupTapes()
+                        bgt.setBucketName(tape.getBucketId())
+                        bgt.addTapeCapacity(tape.getTotalCapacity(), tape.getAvailableCapacity())
+                        bgt.addTape()
+                        tape_map[tape.getBucketId()] = bgt
                     else:
-                        tape_map[tape.getBucketId()] = tape_map[tape.getBucketId()] + 1
+                        bgt = tape_map[tape.getBucketId()]
+                        bgt.addTapeCapacity(tape.getTotalCapacity(), tape.getAvailableCapacity())
+                        bgt.addTape()
+                        tape_map[tape.getBucketId()] = bgt
+
                 # Default - Failed to parse
                 else:
                     logbook.WARN("Unabled to parse tape [" + tape.getBarcode() + "].")
 
     # Convert Bucket ID to Bucket Name
-    # 1. Get headers
-    headers = []
+    # and switch from dictionary to a list.    
+    bucket_list = []
     for key in tape_map.keys():
-        headers.append(key)
+        bgt = tape_map[key]
 
-    # 2. Replace bucket id with bucket_name
-    # 3. Delete bucket_id value. There is risk of deleting a
-    #   bucket_id if the bucket name isn't found in the list.
-    for i in range(0, len(headers)):
-        if(not (headers[i] == "scratch" or headers[i] == "non-isolated" or headers[i] == "bucket")):
-            tape_map[findBucketName(headers[i], bucket_map, logbook)] = tape_map[headers[i]]
-            del tape_map[headers[i]]
+        # Find bucket name if not a scratch or non-isolated.
+        if(key != "scatch" and key != "non-isolated"):
+            bgt.setBucketName(findBucketName(bgt.getBucketName(), bucket_map, logbook))
 
-    return tape_map
+        # Add bgt to list.
+        bucket_list.append(bgt)
+
+    return bucket_list

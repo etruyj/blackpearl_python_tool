@@ -4,6 +4,8 @@
 #           Converts the output to a table format.
 #====================================================================
 
+from structures.BucketGroupedJob import BucketGroupedJob
+from structures.BucketGroupTapes import BucketGroupTapes
 from structures.BucketSummary import BucketSummary
 from structures.TapeSummary import TapeSummary
 from structures.UserSummary import UserSummary
@@ -18,6 +20,10 @@ def toOutput(output):
         if(type(output) is dict):
             tables = loadDict(output)
         elif(len(output) >= 1):
+            if(isinstance(output[0], BucketGroupedJob)):
+                tables = loadBucketGroupedJobSummary(output)
+            if(isinstance(output[0], BucketGroupTapes)):
+                tables = loadBucketGroupSummary(output)
             if(isinstance(output[0], BucketSummary)):
                 tables = loadBucketSummary(output)
             if(isinstance(output[0], TapeSummary)):
@@ -87,6 +93,57 @@ def buildRow(fields, column_size):
 
     return row
 
+def loadBucketGroupedJobSummary(output):
+    table = []
+    row = []
+
+    # Load Table Headers
+    row.append("bucket name")
+    row.append("total jobs")
+    row.append("total writes")
+    row.append("data written")
+    row.append("total reads")
+    row.append("data read")
+    table.append(row)
+
+    # Load Valus
+    for job in output:
+        row = []
+        row.append(job.getBucket())
+        row.append(job.getJobCount())
+        row.append(job.getWriteCount())
+        row.append(StorageUnits.bytesToHumanReadable(int(job.getDataWrite())))
+        row.append(job.getReadCount())
+        row.append(StorageUnits.bytesToHumanReadable(int(job.getDataRead())))
+        table.append(row)
+
+    return table
+
+def loadBucketGroupSummary(output):
+    table = []
+    row = []
+
+    # Load Table Headers
+    row.append("bucket name")
+    row.append("tape count")
+    row.append("available allocated")
+    row.append("used")
+    row.append("total allocated")
+    table.append(row)
+
+    # Load Values
+    for bucket in output:
+        row = []
+        row.append(bucket.getBucketName())
+        row.append(bucket.getTapeCount())
+        row.append(StorageUnits.bytesToHumanReadable(int(bucket.getAvailableCapacity())))
+        row.append(StorageUnits.bytesToHumanReadable(int(bucket.getUsedCapacity())))
+        row.append(StorageUnits.bytesToHumanReadable(int(bucket.getTotalCapacity())))
+        table.append(row)
+    
+    return table
+
+
 def loadBucketSummary(output):
     table = []
     row = []
@@ -136,6 +193,9 @@ def loadTapeSummary(output):
     row.append("storage domain")
     row.append("state")
     row.append("tape type")
+    row.append("available capacity")
+    row.append("used capacity")
+    row.append("total capacity")
     table.append(row)
 
     # Fill values
@@ -147,6 +207,9 @@ def loadTapeSummary(output):
         row.append(tape.getStorageDomain())
         row.append(tape.getState())
         row.append(tape.getTapeType())
+        row.append(StorageUnits.bytesToHumanReadable(int(tape.getAvailableCapacity())))
+        row.append(StorageUnits.bytesToHumanReadable(int(tape.getUsedCapacity())))
+        row.append(StorageUnits.bytesToHumanReadable(int(tape.getTotalCapacity())))
 
         table.append(row)
 

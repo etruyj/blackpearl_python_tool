@@ -53,16 +53,16 @@ def parseArgs(args):
             case "-k" | "--secret" | "--secret-key":
                 i += 1
                 setSecretKey(args[i])
-            case "--option1":
+            case "--option1" | "--bucket" | "--barcode":
                 i += 1
                 setOption1(args[i])
-            case "--option2" | "--group-by":
+            case "--option2" | "--group-by" | "--max-moves" | "--moves" | "--buffer":
                 i += 1
                 setOption2(args[i])
-            case "--option3" | "--filter":
+            case "--option3" | "--filter" | "--prefix" | "--key":
                 i += 1
                 setOption3(args[i])
-            case "--option4" | "--file":
+            case "--option4" | "--file" | "--path":
                 i += 1
                 setOption4(args[i])
             case "--output-format":

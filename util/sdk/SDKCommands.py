@@ -5,6 +5,8 @@
 #           commands.
 #====================================================================
 
+import json
+import os
 from ds3 import ds3
 from util.Logger import Logger
 
@@ -124,8 +126,101 @@ def createStorageDomainTapeMember(blackpearl, storage_domain_id, tape_par_id, ta
         if("AccessDenied" in e.__str__()):
             raise Exception("Access Denied: User does not have permission to perform modify-storage-domain")
         else:
-            raise Exception("Unabled to add tape partition [" + tape_par_id + "] to storage domain.")
+            raise Exception("Unable to add tape partition [" + tape_par_id + "] to storage domain.")
 
+def deleteObject(blackpearl, bucket_name, object_name, logbook):
+    try:
+        logbook.WARN("Deleting object [" + object_name + "] from bucket " + bucket_name)
+        logbook.DEBUG("blackpearl.delete_object(" + bucket_name + ", " + object_name + ")...")
+
+        response = blackpearl.delete_object(ds3.DeleteObjectRequest(bucket_name, object_name))
+    except Exception as e:
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to delete object")
+        if("NoSuchKey" in e.__str__()):
+            raise Exception("Unable to delete object. " + object_name + " does not exist in bucket [" + bucket_name + "].")
+        else:
+            raise Exception("Unable to delete object [" + object_name + "] from bucket " + bucket_name + ".")
+
+
+def deleteObjects(blackpearl, bucket_name, object_list, logbook):
+    try:
+        logbook.WARN("Batch deleting (" + str(len(object_list)) + ") objects from bucket " + bucket_name)
+        logbook.DEBUG("blackpearl.delete_objects(" + bucket_name + ")...")
+
+        delete_list = []
+
+        for to_delete in object_list:
+            del_obj = ds3.DeleteObject(to_delete)
+            delete_list.append(del_obj)
+
+        response = blackpearl.delete_objects(ds3.DeleteObjectsRequest(bucket_name, delete_list))
+
+        return response.result
+    except Exception as e:
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to delete object")
+        else:
+            raise Exception("Unable to delete object [" + object_list + "] from bucket " + bucket_name + ".")
+
+def deleteTape(blackpearl, barcode, logbook):
+    try:
+        logbook.INFO("Sending delete lost or exported tape command for [" + barcode + "].")
+        logbook.DEBUG("blackpearl.delete_permanently_lost_tape_spectra_s3(" + barcode + ")...")
+           
+        response = blackpearl.delete_permanently_lost_tape_spectra_s3(ds3.DeletePermanentlyLostTapeSpectraS3Request(barcode))
+
+        print(response.result)
+        return response.result
+    except Exception as e:
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to delete object")
+        elif("Only LOST" in e.__str__()):
+            raise Exception("Invalid State: Tape [" + barcode + "] is not lost or exported.")
+        else:
+            raise Exception("Unable to delete tape [" + barcode + "].")
+
+def ejectTape(blackpearl, barcode, logbook):
+    try:
+        logbook.INFO("Sending eject tape command for [" + barcode + "].")
+
+        response = blackpearl.eject_tape_spectra_s3(ds3.EjectTapeSpectraS3Request(barcode))
+        
+        return response.result
+    except Exception as e:
+        logbook.ERROR(e.__str__())
+       
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to delete object")
+        elif("NotFound" in e.__str__()):
+            raise Exception("Tape with barcode [" + barcode + "] does not exist.")
+        else:
+            raise Exception("Unabled to eject tape  " + barcode + ".")
+
+def getBucket(blackpearl, bucket_name, logbook):
+    try:
+        logbook.INFO("Getting info on bucket [" + bucket_name + "]");
+        logbook.DEBUG("Calling blackpearl.get_bucket()");
+
+        getObjects = blackpearl.get_bucket(ds3.GetBucketRequest(bucket_name))
+      
+        logbook.INFO("Found (" + str(len(getObjects.result['ContentsList'])) + ") objects in the bucket.")
+
+        return  getObjects.result['ContentsList']
+
+    except Exception as e:
+        logbook.ERROR(e.__str__())
+
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform get-object")
+        else:
+            raise Exception("Unable to list objects.")
 
 def getBuckets(blackpearl, logbook):
     try:
@@ -180,6 +275,19 @@ def getBucketNames(blackpearl, logbook):
         else:
             raise Exception("Unable to retrieve bucket list.")
 
+def getCompletedJobs(blackpearl, logbook):
+    try:
+        logbook.INFO("Fetching completed jobs...")
+        logbook.DEBUG("Calling blackpearl.get_completed_jobs_spectra_s3()...")
+
+        getCompletedJobs = blackpearl.get_completed_jobs_spectra_s3(ds3.GetCompletedJobsSpectraS3Request())
+
+        logbook.INFO("Found (" + str(len(getCompletedJobs.result['CompletedJobList'])) + ") completed jobs.")
+
+        return getCompletedJobs.result['CompletedJobList']
+    except Exception as e:
+        print(e)
+
 def getDataPolicies(blackpearl, logbook):
     try:
         logbook.INFO("Fetching data policies...")
@@ -213,6 +321,49 @@ def getDiskPartitions(blackpearl, logbook):
             raise Exception("Access Denied: User does not have permission to perform list-disk-partitions")
         else:
             raise Exception("Unable to retrieve disk partitions.")
+
+def getObject(blackpearl, bucket, key, destination_path, logbook):
+    try:
+        logbook.INFO("Querying bucket [" + bucket + "] for object " + key)
+
+        file_stream = open(destination_path, "wb")
+
+        blackpearl.get_object(ds3.GetObjectRequest(bucket, key, file_stream))
+
+        file_stream.close()
+
+        logbook.INFO("Object saved to " + destination_path)
+
+    except Exception as e:
+        logbook.ERROR(e.__str__())
+        raise e
+
+def getObjectsWithFullDetails(blackpearl, bucket, prefix, include_location, plength, page_start, logbook):
+    try:
+        logbook.INFO("Retrieving list of (" + str(plength) + ") objects in bucket [" + bucket + "] starting from " + str(page_start))
+        logbook.DEBUG("blackpearl.get_objects_with_full_details_spectra_s3()")
+
+        # Set page_start to None if 0
+        # page_start is an object id not an item number.
+        # None is not parsable in text, so page start 0 
+        # must be passed for logging then converted.
+        if(page_start == 0):
+            page_start = None
+
+        response = blackpearl.get_objects_with_full_details_spectra_s3(ds3.GetObjectsWithFullDetailsSpectraS3Request(bucket, include_physical_placement=include_location, page_start_marker=page_start, page_length=plength))
+
+        # Full response payload is returned instead of the
+        # results field like other calls as the paginated
+        # result information is stored outside of the [result].
+        # These details are required to make subsequent calls.
+        return response
+    except Exception as e:
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform list-pools")
+        else:
+            raise Exception("Unable to retrieve object information.")
 
 def getPools(blackpearl, logbook):
     try:
@@ -320,3 +471,24 @@ def getUsers(blackpearl, logbook):
             raise Exception("Access Denied: User does not have permission to perform list-users")
         else:
             raise Exception("Unable to retrieve user list.")
+
+def putObject(blackpearl, bucket, key, path, logbook):
+    try:
+        logbook.INFO("Sending object to blackpearl...")
+        logbook.DEBUG("blackpearl.put_object(" + bucket + ", " + path + ")...")
+
+        file_stream = open(path, "rb")
+        file_stats = os.stat(path)
+
+        response = blackpearl.put_object(ds3.PutObjectRequest(bucket, key, file_stats.st_size, file_stream))
+
+        logbook.INFO("Object successfully landed in cache.")
+        return key + " put successfully to cache."
+    except Exception as e:
+        logbook.ERROR(e.__str__())
+        
+        if("AccessDenied" in e.__str__()):
+            raise Exception("Access Denied: User does not have permission to perform list-users")
+        else:
+            raise Exception("Unable to put object [" + path + "] to bucket " + bucket + ".")
+

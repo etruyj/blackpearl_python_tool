@@ -8,6 +8,9 @@ class Tape:
     #============================================
     # Getters
     #============================================
+    def getAvailableCapacity(self):
+        return self.available_raw_capacity
+    
     def getBarcode(self):
         return self.barcode
 
@@ -23,12 +26,44 @@ class Tape:
     def getTapeType(self):
         return self.tape_type
 
+    def getTotalCapacity(self):
+        return self.total_raw_capacity
+
     def getPartitionId(self):
         return self.partition_id
 
     #============================================
     # Setters
     #============================================
+    def importTape(self, t):
+        # Imports the tape contained in the blob object returned by the SDK
+        # and converts it to a Tape.
+        self.setAssignedToStorageDomain(t['AssignedToStorageDomain'])
+        self.setAvailableCapacity(t['AvailableRawCapacity'])
+        self.setBarcode(t['BarCode'])
+        self.setBucketId(t['BucketId'])
+        self.setDescription(t['DescriptionForIdentification'])
+        self.setEjectDate(t['EjectDate'])
+        self.setEjectLabel(t['EjectLabel'])
+        self.setEjectLocation(t['EjectLocation'])
+        self.setFullOfData(t['FullOfData'])
+        self.setId(t['Id'])
+        self.setLastAccessed(t['LastAccessed'])
+        self.setLastCheckpoint(t['LastCheckpoint'])
+        self.setLastModified(t['LastModified'])
+        self.setLastVerified(t['LastVerified'])
+        self.setPartiallyVerifiedEndOfTape(t['PartiallyVerifiedEndOfTape'])
+        self.setPartitionId(t['PartitionId'])
+        self.setPreviousState(t['PreviousState'])
+        self.setSerialNumber(t['SerialNumber'])
+        self.setState(t['State'])
+        self.setStorageDomainId(t['StorageDomainMemberId'])
+        self.setTakeOwnershipPending(t['TakeOwnershipPending'])
+        self.setTotalRawCapacity(t['TotalRawCapacity'])
+        self.setType(t['Type'])
+        self.setVerifyPending(t['VerifyPending'])
+        self.setWriteProtected(t['WriteProtected'])
+
     def setAssignedToStorageDomain(self, v):
         self.assigned_to_storage_domain = v
 

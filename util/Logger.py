@@ -60,6 +60,9 @@ class Logger:
             self.writeLog("Maximum log size reached. Rolling logs.", 5)
             self.rotateLogs()
 
+    def getLogPath(self):
+        return os.path.expanduser(self.path)
+
     def rotateLogs(self):
         # Remove the last log if max has been reached.
         if(self.log_count == 1):

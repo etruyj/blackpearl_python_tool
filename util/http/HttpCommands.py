@@ -39,6 +39,32 @@ def authenticate(url, username, password, logbook):
         logbook.ERROR("Unable to connect to BlackPearl management path: " + url)
         return "none"
 
+def cases(endpoint, token, logbook):
+    #============================================
+    #   cases
+    #       retrieves a list of attached hardware
+    #       i.e. the blackpearl server and the
+    #       tape libraries (not tape partitions)
+    #============================================
+
+    logbook.INFO("Retrieving hardware information...")
+
+    url = "https://" + endpoint + "/api/cases"
+
+    logbook.DEBUG("Calling HttpHandler.get(" + url + ")...")
+
+    response = HttpHandler.get(url, token, logbook)
+
+    if(response != None):
+        data = json.loads(response)
+        logbook.INFO("Found (" + str(len(data["data"])) + ") units.")
+        return data["data"]
+    else:
+        message = "Unable to retrieve hardware information."
+        print("WARNING: " + message)
+        logbook.ERROR(message)
+        raise message
+
 def createCifsShare(endpoint, token, name, path, volume_id, readonly, service_id, logbook):
     logbook.INFO("Creating CIFS share [" + name + "]...")
 

@@ -13,7 +13,7 @@ import command.CreateVolume as CreateVolume
 import command.ListDataPolicies as ListDataPolicies
 import command.ListStorageDomains as ListStorageDomains
 import command.ListUsers as ListUsers
-import util.input.ImportJson as ImportJson
+import util.io.ImportJson as ImportJson
 import util.map.MapDataPolicies as MapDataPolicies
 import util.map.MapPartitions as MapPartitions
 import util.map.MapPools as MapPools

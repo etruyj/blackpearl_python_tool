@@ -136,6 +136,12 @@ class BPConnector:
     def authenticate(self, url, username, password, logbook):
         return HttpCommands.authenticate(url, username, password, logbook)
 
+    def cases(self, logbook):
+        try:
+            return HttpCommands.cases(self.management_path, self.token, logbook)
+        except Exception as e:
+            raise e
+
     def createCifsShare(self, name, path, volume_id, readonly, service_id, logbook):
         return HttpCommands.createCifsShare(self.management_path, self.token, name, path, volume_id, readonly, service_id, logbook)
 
@@ -213,6 +219,36 @@ class BPConnector:
         except Exception as e:
             raise e
 
+    def deleteObject(self, bucket_name, object_name, logbook):
+        try:
+            return SDKCommands.deleteObject(self.data_path_client, bucket_name, object_name, logbook)
+        except Exception as e:
+            raise e
+
+    def deleteObjects(self, bucket_name, object_list, logbook):
+        try:
+            return SDKCommands.deleteObjects(self.data_path_client, bucket_name, object_list, logbook)
+        except Exception as e:
+            raise e
+
+    def deleteLostTape(self, barcode, logbook):
+        try:
+            return SDKCommands.deleteTape(self.data_path_client, barcode, logbook)
+        except Exception as e:
+            raise e
+
+    def ejectTape(self, barcode, logbook):
+        try:
+            return SDKCommands.ejectTape(self.data_path_client, barcode, logbook)
+        except Exception as e:
+            raise e
+
+    def getBucket(self, bucket_name, logbook):
+        try:
+            return SDKCommands.getBucket(self.data_path_client, bucket_name, logbook)
+        except Exception as e:
+            raise e
+
     def getBuckets(self, logbook):
         try:
             return SDKCommands.getBuckets(self.data_path_client, logbook)
@@ -231,6 +267,12 @@ class BPConnector:
         except Exception as e:
             raise e
 
+    def getCompletedJobs(self, logbook):
+        try:
+            return SDKCommands.getCompletedJobs(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
+
     def getDataPolicies(self, logbook):
         try:
             return SDKCommands.getDataPolicies(self.data_path_client, logbook)
@@ -240,6 +282,18 @@ class BPConnector:
     def getDiskPartitions(self, logbook):
         try:
             return SDKCommands.getDiskPartitions(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
+
+    def getObject(self, bucket, object_name, destination, logbook):
+        try:
+            return SDKCommands.getObject(self.data_path_client, bucket, object_name, destination, logbook)
+        except Exception as e:
+            raise e
+
+    def getObjectsWithFullDetails(self, bucket, prefix, page_length, page_start, logbook):
+        try:
+            return SDKCommands.getObjectsWithFullDetails(self.data_path_client, bucket, prefix, True, page_length, page_start, logbook)
         except Exception as e:
             raise e
 
@@ -276,5 +330,11 @@ class BPConnector:
     def getUsers(self, logbook):
         try:
             return SDKCommands.getUsers(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
+    
+    def putObject(self, bucket, key, path, logbook):
+        try:
+            return SDKCommands.putObject(self.data_path_client, bucket, key, path, logbook)
         except Exception as e:
             raise e

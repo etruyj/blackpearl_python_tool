@@ -13,15 +13,28 @@ if(aparser.isValid()):
 
     if controller.clientValid():
         response = None # Declare response as none to allow testing for valid response.
+
         match aparser.getCommand():
             case "configure":
                 response = controller.configureBP(aparser.getOption4())
+            case "delete-objects":
+                response = controller.deleteObjects(aparser.getOption1(), aparser.getOption4(), aparser.getOption2())
+            case "delete-tape" | "delete-tapes":
+                response = controller.deleteTape(aparser.getOption1(), aparser.getOption2(), aparser.getOption3(), aparser.getOption4())
+            case "eject-tape" | "eject-tapes" | "export-tape" | "export-tapes":
+                response = controller.ejectTape(aparser.getOption1(), aparser.getOption2(), aparser.getOption3(), aparser.getOption4())
             case "fetch-config":
                 response = controller.fetchConfig()
+            case "get-database":
+                response = controller.downloadNewestDatabase(aparser.getOption3(), aparser.getOption4())
+            case "job-report":
+                response = controller.jobReport(aparser.getOption3())
             case "list-buckets":
                 response = controller.listBuckets()
             case "list-data-policies" | "list-policies":
                 response = controller.listDataPolicies()
+            case "list-objects":
+                response = controller.listObjects(aparser.getOption1())
             case "list-pools":
                 response = controller.listPools()
             case "list-storage-domains" | "list-domains":
@@ -32,6 +45,8 @@ if(aparser.isValid()):
                 response = controller.listTapePartitions()
             case "list-users":
                 response = controller.listUsers()
+            case "put-object":
+                response = controller.putObject(aparser.getOption1(), aparser.getOption4(), aparser.getOption3())
             case "tape-report":
                 response = controller.tapeReport(aparser.getOption2(), aparser.getOption3())
             case _:
