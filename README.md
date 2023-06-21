@@ -20,21 +20,21 @@ tape-report         Creates a report of all the tapes in the library. -
 | --- | --- |
 | --access-key(-a) | BlackPearl user ds3 access key (only required if connecting to the data path). | 
 | --barcode | The tape barcode |
---bucket            The bucket name 
---command(-c)       The command to execute 
---endpoint(-e)      The IP address or URL of the management port or data port of the BlackPearl  
---file              Specify a file name for read from or write to operations  
---filter            Specify a key value pair to filter by such as barcode, state, and status. Example --filter state:scratch.  
-                        Accepted values:  
-                            - tape-report: barcode:PARTIAL_STRING, state:[NORMAL | EJECTED | LOST], status:[ blank | scratch | in-use ]  
---group-by          Specify a field to group tape report items by. Accepted values: bucket  
---key               The key (name) of the object.  
---max-moves/--moves Specify the maximum number of moves to execute. Used to control for available EE slots.  
---output-format     The formatting to use for output. Options: csv | table  
---password(-p)      BlackPearl login password  
---path              The path to a file directory.  
---secret-key(-k)    BlackPearl user ds3 secret key (only required if connecting to the data path).   
---username(-u)      BlackPearl login username  
+| --bucket | The bucket name |
+| --command(-c) | The command to execute |
+| --endpoint(-e) | The IP address or URL of the management port or data port of the BlackPearl | 
+| --file | Specify a file name for read from or write to operations | 
+| --filter | Specify a key value pair to filter by such as barcode, state, and status. Example --filter state:scratch.  
+    Accepted values:  
+        - tape-report: barcode:PARTIAL_STRING, state:[NORMAL | EJECTED | LOST], status:[ blank | scratch | in-use ] |
+| --group-by  | Specify a field to group tape report items by. Accepted values: bucket | 
+| --key | The key (name) of the object. | 
+| --max-moves/--moves | Specify the maximum number of moves to execute. Used to control for available EE slots. | 
+| --output-format | The formatting to use for output. Options: csv | table | 
+| --password(-p) | BlackPearl login password | 
+| --path | The path to a file directory. | 
+| --secret-key(-k) | BlackPearl user ds3 secret key (only required if connecting to the data path). |  
+| --username(-u) | BlackPearl login username | 
 
 ## Operating Systems
 Three binaries exist for the log parser depending on the operating system. All three binaries can be located in the bin/ directory of this script. ./nacre is the Linux version of the script (specifically compiled with Ubuntu 22). Some Debian and Redhat versions do not have the required dependencies to use this script. In this case, a Docker container can be used to create an Ubuntu environment for this script. ./nacre_osx is the MacOs version of the script. This is compiled and tested with MacOS. ./nacre_win.exe is the Windows executable for this script. It's compiled and tested with Windows 10. 
