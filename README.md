@@ -25,8 +25,8 @@ tape-report         Creates a report of all the tapes in the library. -
 | --endpoint(-e) | The IP address or URL of the management port or data port of the BlackPearl | 
 | --file | Specify a file name for read from or write to operations | 
 | --filter | Specify a key value pair to filter by such as barcode, state, and status. Example --filter state:scratch.  
- | Accepted values:  
- |    - tape-report: barcode:PARTIAL_STRING, state:[NORMAL | EJECTED | LOST], status:[ blank | scratch | in-use ] |
+ | Accepted values:  
+ | * tape-report: barcode:PARTIAL_STRING, state:[NORMAL : EJECTED : LOST], status:[ blank : scratch : in-use ] |
 | --group-by  | Specify a field to group tape report items by. Accepted values: bucket | 
 | --key | The key (name) of the object. | 
 | --max-moves/--moves | Specify the maximum number of moves to execute. Used to control for available EE slots. | 
