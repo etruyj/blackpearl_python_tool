@@ -16,8 +16,8 @@ tape-report         Creates a report of all the tapes in the library. -
 
 
 ## Options 
---access-key(-a)    BlackPearl user ds3 access key (only required if connecting to the data path).
---barcode           The tape barcode 
+--access-key(-a) | BlackPearl user ds3 access key (only required if connecting to the data path).
+--barcode | The tape barcode 
 --bucket            The bucket name 
 --command(-c)       The command to execute 
 --endpoint(-e)      The IP address or URL of the management port or data port of the BlackPearl  
