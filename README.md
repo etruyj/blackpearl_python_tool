@@ -4,15 +4,17 @@ The blackpearl_python_tool (script name: nacre) is a Python 3.10 script to inter
 ## Commands  
 configure&emsp;&emsp;Configure the BlackPearl with the specified --file in JSON format.
 
-configure           Configure the BlackPearl with the specified json configuration file. Requires --endpoint, --username, --password, --file.  
-delete-object       Deletes objects from the BlackPearl. Specify --bucket and --file listing the objects to be deleted.  
-get-database        Downloads the most recent BlackPearl database to the downloads directory. A different file name can be specified with --file. A different directory can be specified with --path. A prefix, such as hostname, can be added to the file with --prefix.  
-eject-tape          Issues the command for the BlackPearl to move the tape specified by --barcode or tapes listing in tape list --file from storage slots to entry/exit. Use [--max-moves | --moves] to specify entry/exit size. The plural eject-tapes also works.  
-export-tape         Issues the command for the BlackPearl to move the tape specified by --barcode or tapes listing in tape list --file from storage slots to entry/exit. Use [--max-moves | --moves] to specify entry/exit size. The plural export-tapes also works.  
-job-report          Provides a list of data written and read from a bucket over the desired period. Accepts --filter [ days | hours ]:INTEGER  
-list-buckets        Provides a list of all buckets visible to the user on the BlackPearl  
-put-object          Puts an object to the BlackPearl. Specify --bucket, --file, and (optionally) --key to rename the object.  
-tape-report         Creates a report of all the tapes in the library. --group-by can group results by a field. --filter can filter the results. 
+| Command | Description |
+| --- | --- |
+| configure | Configure the BlackPearl with the specified json configuration file. Requires --endpoint, --username, --password, --file. | 
+| delete-object | Deletes objects from the BlackPearl. Specify --bucket and --file listing the objects to be deleted. |
+| get-database | Downloads the most recent BlackPearl database to the downloads directory. A different file name can be specified with --file. A different directory can be specified with --path. A prefix, such as hostname, can be added to the file with --prefix. | 
+| eject-tape | Issues the command for the BlackPearl to move the tape specified by --barcode or tapes listing in tape list --file from storage slots to entry/exit. Use [--max-moves : --moves] to specify entry/exit size. The plural eject-tapes also works. | 
+| export-tape | Issues the command for the BlackPearl to move the tape specified by --barcode or tapes listing in tape list --file from storage slots to entry/exit. Use [--max-moves : --moves] to specify entry/exit size. The plural export-tapes also works. |  
+| job-report | Provides a list of data written and read from a bucket over the desired period. Accepts --filter [ days : hours ]:INTEGER |
+| list-buckets | Provides a list of all buckets visible to the user on the BlackPearl | 
+| put-object | Puts an object to the BlackPearl. Specify --bucket, --file, and (optionally) --key to rename the object. | 
+| tape-report | Creates a report of all the tapes in the library. --group-by can group results by a field. --filter can filter the results. | 
 
 
 ## Options 
