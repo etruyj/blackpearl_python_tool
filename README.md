@@ -4,35 +4,35 @@ The blackpearl_python_tool (script name: nacre) is a Python 3.10 script to inter
 ## Commands  
 configure&emsp;&emsp;Configure the BlackPearl with the specified --file in JSON format.
 
-configure           Configure the BlackPearl with the specified json configuration file. Requires --endpoint, --username, --password, --file.  
-delete-object       Deletes objects from the BlackPearl. Specify --bucket and --file listing the objects to be deleted.  
-get-database        Downloads the most recent BlackPearl database to the downloads directory. A different file name can be specified with --file. A different directory can be specified with --path. A prefix, such as hostname, can be added to the file with --prefix.  
-eject-tape          Issues the command for the BlackPearl to move the tape specified by --barcode or tapes listing in tape list --file from storage slots to entry/exit. Use [--max-moves | --moves] to specify entry/exit size. The plural eject-tapes also works.  
-export-tape          Issues the command for the BlackPearl to move the tape specified by --barcode or tapes listing in tape list --file from storage slots to entry/exit. Use [--max-moves | --moves] to specify entry/exit size. The plural export-tapes also works.  
-job-report          Provides a list of data written and read from a bucket over the desired period. Accepts --filter [ days | hours ]:INTEGER  
-list-buckets        Provides a list of all buckets visible to the user on the BlackPearl  
-put-object          Puts an object to the BlackPearl. Specify --bucket, --file, and (optionally) --key to rename the object.  
-tape-report         Creates a report of all the tapes in the library. --group-by can group results by a field. --filter can filter the results. 
+configure           Configure the BlackPearl with the specified json configuration file. Requires --endpoint, --username, --password, --file.  
+delete-object       Deletes objects from the BlackPearl. Specify --bucket and --file listing the objects to be deleted.  
+get-database        Downloads the most recent BlackPearl database to the downloads directory. A different file name can be specified with --file. A different directory can be specified with --path. A prefix, such as hostname, can be added to the file with --prefix.  
+eject-tape          Issues the command for the BlackPearl to move the tape specified by --barcode or tapes listing in tape list --file from storage slots to entry/exit. Use [--max-moves | --moves] to specify entry/exit size. The plural eject-tapes also works.  
+export-tape         Issues the command for the BlackPearl to move the tape specified by --barcode or tapes listing in tape list --file from storage slots to entry/exit. Use [--max-moves | --moves] to specify entry/exit size. The plural export-tapes also works.  
+job-report          Provides a list of data written and read from a bucket over the desired period. Accepts --filter [ days | hours ]:INTEGER  
+list-buckets        Provides a list of all buckets visible to the user on the BlackPearl  
+put-object          Puts an object to the BlackPearl. Specify --bucket, --file, and (optionally) --key to rename the object.  
+tape-report         Creates a report of all the tapes in the library. --group-by can group results by a field. --filter can filter the results. 
 
 
 ## Options 
---access-key(-a)    BlackPearl user ds3 access key (only required if connecting to the data path).
---barcode           The tape barcode 
---bucket            The bucket name 
---command(-c)       The command to execute 
---endpoint(-e)      The IP address or URL of the management port or data port of the BlackPearl  
---file              Specify a file name for read from or write to operations  
---filter            Specify a key value pair to filter by such as barcode, state, and status. Example --filter state:scratch.  
-			            Accepted values:  
-                            - tape-report: barcode:PARTIAL_STRING, state:[NORMAL | EJECTED | LOST], status:[ blank | scratch | in-use ]  
---group-by          Specify a field to group tape report items by. Accepted values: bucket  
---key               The key (name) of the object.  
---max-moves/--moves Specify the maximum number of moves to execute. Used to control for available EE slots.  
---output-format     The formatting to use for output. Options: csv | table  
---password(-p)      BlackPearl login password  
---path              The path to a file directory.  
---secret-key(-k)    BlackPearl user ds3 secret key (only required if connecting to the data path).   
---username(-u)      BlackPearl login username  
+--access-key(-a)    BlackPearl user ds3 access key (only required if connecting to the data path).
+--barcode           The tape barcode 
+--bucket            The bucket name 
+--command(-c)       The command to execute 
+--endpoint(-e)      The IP address or URL of the management port or data port of the BlackPearl  
+--file              Specify a file name for read from or write to operations  
+--filter            Specify a key value pair to filter by such as barcode, state, and status. Example --filter state:scratch.  
+                        Accepted values:  
+                            - tape-report: barcode:PARTIAL_STRING, state:[NORMAL | EJECTED | LOST], status:[ blank | scratch | in-use ]  
+--group-by          Specify a field to group tape report items by. Accepted values: bucket  
+--key               The key (name) of the object.  
+--max-moves/--moves Specify the maximum number of moves to execute. Used to control for available EE slots.  
+--output-format     The formatting to use for output. Options: csv | table  
+--password(-p)      BlackPearl login password  
+--path              The path to a file directory.  
+--secret-key(-k)    BlackPearl user ds3 secret key (only required if connecting to the data path).   
+--username(-u)      BlackPearl login username  
 
 ## Operating Systems
 Three binaries exist for the log parser depending on the operating system. All three binaries can be located in the bin/ directory of this script. ./nacre is the Linux version of the script (specifically compiled with Ubuntu 22). Some Debian and Redhat versions do not have the required dependencies to use this script. In this case, a Docker container can be used to create an Ubuntu environment for this script. ./nacre_osx is the MacOs version of the script. This is compiled and tested with MacOS. ./nacre_win.exe is the Windows executable for this script. It's compiled and tested with Windows 10. 
