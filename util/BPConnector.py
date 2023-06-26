@@ -8,6 +8,7 @@ from ds3 import ds3
 from util.Logger import Logger
 
 import util.http.HttpCommands as HttpCommands
+import util.sdk.BucketAclCommands as BucketAclCommands
 import util.sdk.SDKCommands as SDKCommands
 
 class BPConnector:
@@ -332,7 +333,13 @@ class BPConnector:
             return SDKCommands.getUsers(self.data_path_client, logbook)
         except Exception as e:
             raise e
-    
+   
+    def putBucketAclForUser(self, bucket, user, permissions, logbook):
+        try:
+            return BucketAclCommands.putBucketAclForUser(bucket, user, permissions, self.data_path_client, logbook)
+        except Exception as e:
+            raise e
+
     def putObject(self, bucket, key, path, logbook):
         try:
             return SDKCommands.putObject(self.data_path_client, bucket, key, path, logbook)

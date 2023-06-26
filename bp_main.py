@@ -15,6 +15,8 @@ if(aparser.isValid()):
         response = None # Declare response as none to allow testing for valid response.
 
         match aparser.getCommand():
+            case "command-test":
+                response = controller.test(aparser.getOption1())
             case "configure":
                 response = controller.configureBP(aparser.getOption4())
             case "delete-objects":
