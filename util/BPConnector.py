@@ -220,6 +220,12 @@ class BPConnector:
         except Exception as e:
             raise e
 
+    def deleteBucketAcl(self, bucket_id, acl, logbook):
+        try:
+            return BucketAclCommands.deleteBucketAcl(bucket_id, acl, self.data_path_client, logbook)
+        except Exception as e:
+            raise e
+
     def deleteObject(self, bucket_name, object_name, logbook):
         try:
             return SDKCommands.deleteObject(self.data_path_client, bucket_name, object_name, logbook)
@@ -241,6 +247,12 @@ class BPConnector:
     def ejectTape(self, barcode, logbook):
         try:
             return SDKCommands.ejectTape(self.data_path_client, barcode, logbook)
+        except Exception as e:
+            raise e
+
+    def getBucketAcls(self, bucket_name, logbook):
+        try:
+            return BucketAclCommands.getBucketAcls(bucket_name, self.data_path_client, logbook)
         except Exception as e:
             raise e
 
@@ -334,6 +346,12 @@ class BPConnector:
         except Exception as e:
             raise e
    
+    def putBucketAclForGroup(self, bucket, group, permissions, logbook):
+        try:
+            return BucketAclCommands.putBucketAclForGroup(bucket, group, permissions, self.data_path_client, logbook)
+        except Exception as e:
+            raise e
+
     def putBucketAclForUser(self, bucket, user, permissions, logbook):
         try:
             return BucketAclCommands.putBucketAclForUser(bucket, user, permissions, self.data_path_client, logbook)

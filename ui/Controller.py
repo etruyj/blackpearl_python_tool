@@ -134,4 +134,4 @@ class Controller:
         return TapeReport.createReport(group_by, filter_by, self.blackpearl, self.logbook)
 
     def test(self, bucket):
-        return ReadOnlyBucket.testCode(bucket, self.blackpearl, self.logbook)
+        return ReadOnlyBucket.configureAcls(bucket, self.blackpearl, self.logbook)
