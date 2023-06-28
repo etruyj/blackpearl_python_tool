@@ -6,6 +6,7 @@
 
 from util.BPConnector import BPConnector
 from util.Logger import Logger
+#import util.Configuration as Configuration
 
 import command.ConfigureBlackPearl as ConfigureBlackPearl
 import command.DeleteLostTapes as DeleteLostTapes
@@ -13,6 +14,7 @@ import command.DeleteObjects as DeleteObjects
 import command.DownloadDatabase as DownloadDatabase
 import command.EjectTape as EjectTape
 import command.JobReport as JobReport
+import command.LimitBucketSize as LimitBucketSize
 import command.ListBuckets as ListBuckets
 import command.ListDataPolicies as ListDataPolicies
 import command.ListObjects as ListObjects
@@ -133,5 +135,5 @@ class Controller:
     def tapeReport(self, group_by, filter_by):
         return TapeReport.createReport(group_by, filter_by, self.blackpearl, self.logbook)
 
-    def test(self, bucket):
-        return ReadOnlyBucket.configureAcls(bucket, self.blackpearl, self.logbook)
+    def test(self, option):
+        return LimitBucketSize.test(option, self.blackpearl, self.logbook)
