@@ -8,6 +8,7 @@ from util.BPConnector import BPConnector
 from util.Logger import Logger
 #import util.Configuration as Configuration
 
+import command.ClearCache as ClearCache
 import command.ConfigureBlackPearl as ConfigureBlackPearl
 import command.DeleteLostTapes as DeleteLostTapes
 import command.DeleteObjects as DeleteObjects
@@ -37,6 +38,9 @@ class Controller:
             self.user = username
         else:
             self.user = access_key
+
+    def clearCache(self):
+        return ClearCache.forceFullReclaim(self.blackpearl, self.logbook)
 
     def clientValid(self):
         return self.blackpearl.verifyConnection(self.logbook)

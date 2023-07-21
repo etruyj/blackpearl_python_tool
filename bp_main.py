@@ -17,6 +17,8 @@ if(aparser.isValid()):
         match aparser.getCommand():
             case "command-test":
                 response = controller.test(aparser.getOption1(), aparser.getOption3())
+            case "clear-cache":
+                response = controller.clearCache();
             case "configure":
                 response = controller.configureBP(aparser.getOption4())
             case "delete-objects":
