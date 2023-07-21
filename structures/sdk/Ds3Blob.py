@@ -88,7 +88,6 @@ class Placement:
                 tape = Tape()
                 tape.importTape(t)
                 tape_list.append(tape)
-                print(tape.getBarcode())
             except Exception as e:
                 print(t)
                 raise e

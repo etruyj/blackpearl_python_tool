@@ -69,7 +69,7 @@ class ObjectDetails:
         return self.Latest
 
     def isInCache(self):
-        if(self.BlobsCached == self.BlobsTotal):
+        if(self.BlobsInCache == self.BlobsTotal):
             return True
         else:
             return False

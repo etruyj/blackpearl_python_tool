@@ -9,7 +9,9 @@ from util.Logger import Logger
 
 import util.http.HttpCommands as HttpCommands
 import util.sdk.BucketAclCommands as BucketAclCommands
+import util.sdk.Cache as Cache
 import util.sdk.SDKCommands as SDKCommands
+import util.sdk.StageObjects as StageObjects
 
 class BPConnector:
     def __init__(self, endpoint, username, password, access_key, secret_key, logbook):
@@ -361,5 +363,17 @@ class BPConnector:
     def putObject(self, bucket, key, path, logbook):
         try:
             return SDKCommands.putObject(self.data_path_client, bucket, key, path, logbook)
+        except Exception as e:
+            raise e
+
+    def reclaimCache(self, logbook):
+        try:
+            return Cache.forceClear(self.data_path_client, logbook)
+        except Exception as e:
+            raise e
+
+    def stageObject(self, bucket, object_name, logbook):
+        try:
+            return StageObjects.singleObject(bucket, object_name, self.data_path_client, logbook)
         except Exception as e:
             raise e

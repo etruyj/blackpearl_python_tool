@@ -25,6 +25,7 @@ import command.ListTapePartitions as ListTapePartitions
 import command.ListUsers as ListUsers
 import command.PutObject as PutObject
 import command.ReadOnlyBucket as ReadOnlyBucket
+import command.StageObject as StageObject
 import command.TapeReport as TapeReport
 
 class Controller:
@@ -135,5 +136,5 @@ class Controller:
     def tapeReport(self, group_by, filter_by):
         return TapeReport.createReport(group_by, filter_by, self.blackpearl, self.logbook)
 
-    def test(self, option):
-        return LimitBucketSize.test(option, self.blackpearl, self.logbook)
+    def test(self, option1, option2):
+        return StageObject.singleObject(option1, option2, self.blackpearl, self.logbook)
