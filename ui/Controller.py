@@ -136,4 +136,4 @@ class Controller:
         return TapeReport.createReport(group_by, filter_by, self.blackpearl, self.logbook)
 
     def test(self, option):
-        return LimitBucketSize.test(option, self.blackpearl, self.logbook)
+        return LimitBucketSize.checkLimits(self.blackpearl, self.logbook)
