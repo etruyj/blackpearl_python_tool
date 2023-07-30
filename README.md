@@ -6,6 +6,7 @@ configure&emsp;&emsp;Configure the BlackPearl with the specified --file in JSON 
 
 | Command | Description |
 | --- | --- |
+| clear-cache | Clears the BlackPearl's cache. |
 | configure | Configure the BlackPearl with the specified json configuration file. Requires --endpoint, --username, --password, --file. | 
 | delete-object | Deletes objects from the BlackPearl. Specify --bucket and --file listing the objects to be deleted. |
 | get-database | Downloads the most recent BlackPearl database to the downloads directory. A different file name can be specified with --file. A different directory can be specified with --path. A prefix, such as hostname, can be added to the file with --prefix. | 
@@ -14,6 +15,7 @@ configure&emsp;&emsp;Configure the BlackPearl with the specified --file in JSON 
 | job-report | Provides a list of data written and read from a bucket over the desired period. Accepts --filter [ days : hours ]:INTEGER |
 | list-buckets | Provides a list of all buckets visible to the user on the BlackPearl | 
 | put-object | Puts an object to the BlackPearl. Specify --bucket, --file, and (optionally) --key to rename the object. | 
+| stage-objects | Stages objects contained in a text list from tape to disk. Requires --bucket and --file option flags. |
 | tape-report | Creates a report of all the tapes in the library. --group-by can group results by a field. --filter can filter the results. | 
 
 
