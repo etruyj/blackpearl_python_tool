@@ -51,6 +51,8 @@ if(aparser.isValid()):
                 response = controller.listUsers()
             case "put-object":
                 response = controller.putObject(aparser.getOption1(), aparser.getOption4(), aparser.getOption3())
+            case "stage-objects":
+                response = controller.stageObjects(aparser.getOption1(), aparser.getOption4())
             case "tape-report":
                 response = controller.tapeReport(aparser.getOption2(), aparser.getOption3())
             case _:

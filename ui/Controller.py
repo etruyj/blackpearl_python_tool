@@ -137,8 +137,11 @@ class Controller:
         else:
             return PutObject.toBlackPearl(self.blackpearl, bucket, key, path, self.logbook)
 
+    def stageObjects(self, bucket, object_file):
+        return StageObjects.fromList(bucket, object_file, self.blackpearl, self.logbook)
+
     def tapeReport(self, group_by, filter_by):
         return TapeReport.createReport(group_by, filter_by, self.blackpearl, self.logbook)
 
     def test(self, option1, option2):
-        return StageObject.singleObject(option1, option2, self.blackpearl, self.logbook)
+        return StageObject.fromList(option1, option2, self.blackpearl, self.logbook)

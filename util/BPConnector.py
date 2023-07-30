@@ -372,8 +372,8 @@ class BPConnector:
         except Exception as e:
             raise e
 
-    def stageObject(self, bucket, object_name, logbook):
+    def stageObject(self, bucket, object_list, logbook):
         try:
-            return StageObjects.singleObject(bucket, object_name, self.data_path_client, logbook)
+            return StageObjects.fromList(bucket, object_list, self.data_path_client, logbook)
         except Exception as e:
             raise e
