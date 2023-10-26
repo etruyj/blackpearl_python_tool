@@ -143,5 +143,5 @@ class Controller:
     def tapeReport(self, group_by, filter_by):
         return TapeReport.createReport(group_by, filter_by, self.blackpearl, self.logbook)
 
-    def test(self, option1, option2):
-        return StageObject.fromList(option1, option2, self.blackpearl, self.logbook)
+    def test(self, option):
+        return LimitBucketSize.checkLimits(self.blackpearl, self.logbook)
