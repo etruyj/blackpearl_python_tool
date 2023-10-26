@@ -56,7 +56,7 @@ if(aparser.isValid()):
             case "tape-report":
                 response = controller.tapeReport(aparser.getOption2(), aparser.getOption3())
             case _:
-                print("ERROR: Invalid command selected. Please type help to see valid commands.")
+                print("ERROR: Invalid command selected [" + aparser.getCommand() + "]. Please type help to see valid commands.")
         
         if(response != None):
             Display.output(response, aparser.getOutputFormat(), aparser.getOption4())

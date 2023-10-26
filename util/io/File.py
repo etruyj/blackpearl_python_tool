@@ -19,10 +19,13 @@ def load(file):
 
     try:
         data = []
-        in_file = open(file, "r")
+        in_file = open(file, "r", encoding='utf-8')
 
         for line in in_file:
-            line = line[:-1]
+            # Need to remove end of line (EOL) characters from
+            # the input data.
+            # line = line[:-1] this is not descriminating enough.
+            line = line.rstrip('\n')
             data.append(line)
 
         in_file.close()

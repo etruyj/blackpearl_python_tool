@@ -15,6 +15,7 @@ def fromList(bucket, object_list, blackpearl, log):
         for obj in object_list:
             log.DEBUG("Staging object " + bucket + "/" + obj)
             stage_object = ds3.Ds3GetObject(obj)
+            log.DEBUG("ds3.Ds3GetObject.name: [" + str(stage_object.name) + "]")
             stage_list.append(stage_object)
 
         log.INFO("Issuing stage command for (" + str(len(stage_list)) + ") objects in bucket " + bucket)
@@ -23,10 +24,18 @@ def fromList(bucket, object_list, blackpearl, log):
         response = blackpearl.stage_objects_job_spectra_s3(ds3.StageObjectsJobSpectraS3Request(bucket, stage_list))
 
     except Exception as e:
-        logbook.ERROR(e.__str__())
+        log.ERROR(e.__str__())
 
         if("AccessDenied" in e.__str__()):
-            raise Exception("Access Denied: User does not have permission to perform put-data-persistence-rule")
+            raise Exception("Access Denied: User does not have permission to perform stage-objects for bucket " + bucket)
+        elif("codec can't encode character" in e.__str__()):
+            raise Exception("Access Denied: Attempted to connect to wrong interface.")
+        elif("Could not find requested blobs" in e.__str__()):
+            obj = e.__str__().split("blobs for: ")[1] # Parse for failed objects
+            raise Exception("Failed to stage object(s): " + obj)
+        elif("MediaOnliningRequired" in e.__str__()):
+            tapes = e.__str__().split("Online: ")[1] # Parse for required tapes
+            raise Exception("Failed to stage objects: Media onlining required. Please insert tape(s) " + tapes)
         else:
             raise Exception("Failed to stage objects.")
 
