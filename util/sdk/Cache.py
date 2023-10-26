@@ -11,7 +11,5 @@ def forceClear(blackpearl, log):
     
     try:
         response = blackpearl.force_full_cache_reclaim_spectra_s3(ds3.ForceFullCacheReclaimSpectraS3Request())
-
-        print(response)
     except Exception as e:
         print(e)
