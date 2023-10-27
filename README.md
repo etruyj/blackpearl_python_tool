@@ -9,11 +9,13 @@ configure&emsp;&emsp;Configure the BlackPearl with the specified --file in JSON 
 | clear-cache | Clears the BlackPearl's cache. |
 | configure | Configure the BlackPearl with the specified json configuration file. Requires --endpoint, --username, --password, --file. | 
 | delete-object | Deletes objects from the BlackPearl. Specify --bucket and --file listing the objects to be deleted. |
+| delete-tapes | Deletes lost tapes from the BlackPearl database. Specify --barcode, --filter, or --file to specify which tapes to delete. Use --max-moves to specify how many tapes to delete in a batch. The default max is 10. | 
 | get-database | Downloads the most recent BlackPearl database to the downloads directory. A different file name can be specified with --file. A different directory can be specified with --path. A prefix, such as hostname, can be added to the file with --prefix. | 
 | eject-tape | Issues the command for the BlackPearl to move the tape specified by --barcode or tapes listing in tape list --file from storage slots to entry/exit. Use [--max-moves : --moves] to specify entry/exit size. The plural eject-tapes also works. | 
 | export-tape | Issues the command for the BlackPearl to move the tape specified by --barcode or tapes listing in tape list --file from storage slots to entry/exit. Use [--max-moves : --moves] to specify entry/exit size. The plural export-tapes also works. |  
 | job-report | Provides a list of data written and read from a bucket over the desired period. Accepts --filter [ days : hours ]:INTEGER |
 | list-buckets | Provides a list of all buckets visible to the user on the BlackPearl | 
+| mark-read-only | Mark the specified bucket read-only by removing all bucket ACLs from the bucket except for LIST, READ, and JOB. Requires --bucket to be specified. | 
 | put-object | Puts an object to the BlackPearl. Specify --bucket, --file, and (optionally) --key to rename the object. | 
 | stage-objects | Stages objects contained in a text list from tape to disk. Requires --bucket and --file option flags. |
 | tape-report | Creates a report of all the tapes in the library. --group-by can group results by a field. --filter can filter the results. | 
