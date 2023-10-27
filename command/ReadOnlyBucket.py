@@ -13,7 +13,9 @@
 # Resets all users to have the same 3 permissions with the exception
 # of the bucket owner.
 #================================================
-
+# Commented out for v1.4.0 on Oct 27 2023
+# Remove at next version if not issues arise.
+'''
 def configureAcls(bucket, blackpearl, logbook):
     try:
         logbook.INFO("Changing permissions to make bucket [" + bucket + "] read-only.")
@@ -98,7 +100,7 @@ def setUserAsReadOnly(bucket, user, blackpearl, logbook):
             blackpearl.putBucketAclForUser(bucket, user, perm, logbook)
     except Exception as e:
         raise e
-
+'''
 #================================================
 # Distribution Attempt
 #================================================

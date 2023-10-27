@@ -5,6 +5,7 @@ The blackpearl_python_tool (script name: nacre) is a Python 3.10 script to inter
 
 | Command | Description |
 | --- | --- |
+| check-bucket-limits | Reads the nacre.yml config file to determine max sizes for the buckets. If the bucket is larger than the specified size, mark-read-only is called for that bucket to keep it from growing larger. Intended as a CRON or Task Scheduler job. | 
 | clear-cache | Clears the BlackPearl's cache. |
 | configure | Configure the BlackPearl with the specified json configuration file. Requires --endpoint, --username, --password, --file. | 
 | delete-object | Deletes objects from the BlackPearl. Specify --bucket and --file listing the objects to be deleted. |

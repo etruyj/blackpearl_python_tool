@@ -19,7 +19,7 @@ import command.ReadOnlyBucket as ReadOnlyBucket
 import util.Configuration as Configuration
 import util.convert.StorageUnits as StorageUnits
 
-def test(option, blackpearl, logbook):
+def checkLimits(option, blackpearl, logbook):
     try:
         logbook.INFO("Checking bucket size limits.")
 
@@ -44,7 +44,7 @@ def enforceLimits(out_of_policy, blackpearl, logbook):
 
     try:
         for bucket in out_of_policy:
-            ReadOnlyBucket.configureAcls(bucket, blackpearl, logbook)
+            ReadOnlyBucket.makeBucketReadOnly(bucket, blackpearl, logbook)
     except Exception as e:
         raise e
 

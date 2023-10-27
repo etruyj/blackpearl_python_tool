@@ -39,6 +39,9 @@ class Controller:
         else:
             self.user = access_key
 
+    def checkLimits(self, ):
+        return LimitBucketSize.checkLimits()
+
     def clearCache(self):
         return ClearCache.forceFullReclaim(self.blackpearl, self.logbook)
 
