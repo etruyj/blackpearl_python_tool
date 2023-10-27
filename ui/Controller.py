@@ -131,6 +131,9 @@ class Controller:
     def listUsers(self):
         return ListUsers.createList(self.blackpearl, self.logbook)
 
+    def makeBucketReadOnly(self, bucket):
+        return ReadOnlyBucket.makeBucketReadOnly(bucket, self.blackpearl, self.logbook)
+
     def putObject(self, bucket, path, key=""):
         if(key == None or key == ""):
             return PutObject.toBlackPearl(self.blackpearl, bucket, path, self.logbook)

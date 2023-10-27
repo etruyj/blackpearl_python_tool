@@ -49,6 +49,8 @@ if(aparser.isValid()):
                 response = controller.listTapePartitions()
             case "list-users":
                 response = controller.listUsers()
+            case "mark-read-only":
+                response = controller.makeBucketReadOnly(aparser.getOption1())
             case "put-object":
                 response = controller.putObject(aparser.getOption1(), aparser.getOption4(), aparser.getOption3())
             case "stage-objects":
