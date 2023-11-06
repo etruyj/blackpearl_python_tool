@@ -6,10 +6,11 @@ import ui.display.Display as Display
 from ui.Controller import Controller
 from ds3 import ds3
 
+aparser.loadConfiguration()
 aparser.parseArgs(sys.argv)
 
 if(aparser.isValid()):
-    controller = Controller(aparser.getEndpoint(), aparser.getUsername(), aparser.getPassword(), aparser.getAccessKey(), aparser.getSecretKey())
+    controller = Controller(aparser.getEndpoint(), aparser.getUsername(), aparser.getPassword(), aparser.getAccessKey(), aparser.getSecretKey(), aparser.getLogCount(), aparser.getLogLevel(), aparser.getLogLocation(), aparser.getLogSize())
 
     if controller.clientValid():
         response = None # Declare response as none to allow testing for valid response.

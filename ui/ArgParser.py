@@ -7,6 +7,7 @@
 
 import ui.display.Display as Display
 import util.Configuration as Configuration
+import util.convert.StorageUnits as StorageUnits
 
 # Variable declarations
 https = True
@@ -17,6 +18,7 @@ log_level = 2
 log_location = "../log/"
 log_name = "bp_main.log"
 log_size = 102400
+object_fetch_limit = 500
 option1_set = False
 option2_set = False
 option3_set = False
@@ -38,18 +40,71 @@ def configureLogging(log_settings):
     if log_settings == None or len(log_settings) == 0:
         print("Configuration file missing log settings. Using defaults.")
     else:
+        # Log Count
         if 'log_count' in log_settings:
             log_count = log_settings['log_count']
         else:
             print("log_count not specified in configuration file. Using default " + str(log_count))
 
+        # Log Level
         if 'log_level' in log_settings:
-            print("log level")    
+            match log_settings['log_level']:
+                case "NONE":
+                    log_level = 0
+                case "DEBUG":
+                    log_level = 1
+                case "INFO":
+                    log_level = 2
+                case "WARNING":
+                    log_level = 3
+                case "ERROR":
+                    log_level = 4
+                case _:
+                    print("Invalid log level specified in configuration file. Please specify NONE, DEBUG, INFO, WARNING, or ERROR.")
+
         else:
             print("log_level not specified in configuration file. Using default INFO")
 
+        # Log Path
+        if "log_location" in log_settings:
+            log_location = log_settings['log_location']
+            
+            if( not (log_location[:-1] == "/" or log_location[:-1] == "\\")):
+                log_location = log_location + "/"
+
+        else:
+            print("log_location not present in configuration file. Using default: " + log_location)
+
+        # Log Name
+        if "log_name" in log_settings:
+            log_name = log_settings['log_name']
+        else:
+            print("log_name not present in configuraiton file. Using default: " + log_name)
+
+        # Log Size
+        if "log_size" in log_settings:
+            log_size = log_settings['log_size']
+        else:
+            print("log_size not present in configuration file. Using default: " + str(log_size))
+
 def configureSettings(settings):
-    print(settings)
+    global object_fetch_limit # scope is clashing for some reason.
+    try:
+        if(settings != None and len(settings) > 0):
+            if('max_moves' in settings):
+                option2 = settings["max_moves"]
+        
+            if('object_fetch_limit' in settings):
+                object_fetch_limit = settings["object_fetch_limit"]
+            else:
+                print("object_fetch_limit not found in configuration file. Using default value: " + str(object_fetch_limit))
+
+        else:
+            print("No script settings found in the configuration file. Using default values.")
+
+
+    except Exception as e:
+        print("ERROR: " + e.__str__())
 
 def loadConfiguration():
     try:
@@ -57,11 +112,9 @@ def loadConfiguration():
     
         for doc in config:
             if 'logging' in doc:
-                print(doc)
-                print(doc['logging'])
                 configureLogging(doc['logging'])
             elif 'settings' in doc:
-                configureSettings(doc)
+                configureSettings(doc['settings'])
     except Exception as e:
         print("ERROR: " + e.__str__())
 
@@ -126,6 +179,21 @@ def getCommand():
 
 def getEndpoint():
     return endpoint
+
+def getLogCount():
+    return log_count
+
+def getLogLevel():
+    return log_level
+
+def getLogLocation():
+    return log_location + log_name
+
+def getLogSize():
+    return log_size
+
+def getObjectFetchLimit():
+    return object_fetch_limit
 
 def getOption1():
     if(option1 != None):

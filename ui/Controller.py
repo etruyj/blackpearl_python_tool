@@ -30,8 +30,8 @@ import command.StageObject as StageObject
 import command.TapeReport as TapeReport
 
 class Controller:
-    def __init__(self, endpoint, username, password, access_key, secret_key):
-        self.logbook = Logger("../log/bp_script.log", "100 KiB", 2, 1)
+    def __init__(self, endpoint, username, password, access_key, secret_key, log_count, log_level, log_location, log_size):
+        self.logbook = Logger(log_location, log_size, log_count, log_level)
         self.blackpearl = BPConnector(endpoint, username, password, access_key, secret_key, self.logbook)
 
         if(username != None or username != ""):
