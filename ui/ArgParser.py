@@ -6,11 +6,17 @@
 #====================================================================
 
 import ui.display.Display as Display
+import util.Configuration as Configuration
 
 # Variable declarations
 https = True
 is_valid = True
 command_set = False
+log_count = 3
+log_level = 2
+log_location = "../log/"
+log_name = "bp_main.log"
+log_size = 102400
 option1_set = False
 option2_set = False
 option3_set = False
@@ -27,6 +33,37 @@ access_key = "none"
 secret_key = "none"
 command = "none"
 output_format = "table"
+
+def configureLogging(log_settings):
+    if log_settings == None or len(log_settings) == 0:
+        print("Configuration file missing log settings. Using defaults.")
+    else:
+        if 'log_count' in log_settings:
+            log_count = log_settings['log_count']
+        else:
+            print("log_count not specified in configuration file. Using default " + str(log_count))
+
+        if 'log_level' in log_settings:
+            print("log level")    
+        else:
+            print("log_level not specified in configuration file. Using default INFO")
+
+def configureSettings(settings):
+    print(settings)
+
+def loadConfiguration():
+    try:
+        config = Configuration.load()
+    
+        for doc in config:
+            if 'logging' in doc:
+                print(doc)
+                print(doc['logging'])
+                configureLogging(doc['logging'])
+            elif 'settings' in doc:
+                configureSettings(doc)
+    except Exception as e:
+        print("ERROR: " + e.__str__())
 
 def parseArgs(args):
     global is_valid
