@@ -1,6 +1,8 @@
 # blackpearl_python_tool (nacre)
 The blackpearl_python_tool (script name: nacre) is a Python 3.10 script to interact with the BlackPearl via both the management and data ports. Which port is determined by the operation desired. Access to both network addresses is recommended as this script allows for DS3 access without having to know a users access_key and secret_key. Those can be retrieved for the user after logging in with UI credentials.
 
+This script requires Spectra Logic's DS3 Python3 SDK to be installed. The repository can be found here: https://github.com/SpectraLogic/ds3_python3_sdk
+
 ## Commands  
 
 | Command | Description |

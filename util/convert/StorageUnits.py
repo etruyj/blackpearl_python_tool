@@ -3,6 +3,10 @@
 #       Convert storage units to and from bytes
 
 def bytesToHumanReadable(storage):
+    # convert storage to int
+    # It appears python defaults all objects to string when
+    # passed in a function.
+    storage = int(storage)
     unit = "B"
 
     while(storage >= 1024):

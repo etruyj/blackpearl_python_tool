@@ -9,13 +9,14 @@
 from structures.BucketGroupedJob import BucketGroupedJob
 from structures.BucketGroupTapes import BucketGroupTapes
 from structures.BucketSummary import BucketSummary
+from structures.ObjectSummary import ObjectSummary
 from structures.TapeSummary import TapeSummary
 from structures.UserSummary import UserSummary
 from structures.sdk.Ds3Object import Ds3Object
 
 import util.convert.StorageUnits as StorageUnits
 
-def toOutput(output):
+def toOutput(output, include_headers):
     if(output != None):
         toPrint = []
 
@@ -30,12 +31,18 @@ def toOutput(output):
                 toPrint = convertBucketGroupSummary(output)
             if(isinstance(output[0], BucketSummary)):  
                 toPrint = convertBucketSummary(output)
+            if(isinstance(output[0], ObjectSummary)):
+                toPrint = convertObjectSummary(output)
             if(isinstance(output[0], Ds3Object)):
                 toPrint = convertDs3Object(output)
             if(isinstance(output[0], TapeSummary)):
                 toPrint = convertTapeSummary(output)
             if(isinstance(output[0], UserSummary)):
                 toPrint = convertUserSummary(output)
+
+        # Delete headers if not included.
+        if(not include_headers):
+            toPrint.pop(0)
 
         return toPrint
 
@@ -120,6 +127,49 @@ def convertDs3Object(output):
         toPrint.append(row)
 
     return toPrint
+
+def convertObjectSummary(output):
+    toPrint = []
+    headers = "name"
+    row = ""
+
+    for obj in output:
+        row = obj.getName() 
+
+        if(obj.getId() != None):
+            headers = headers + ",id"
+            row = row + "," + obj.getId()
+        if(obj.getBucketName() != None):
+            headers = headers + ",bucket_name"
+            row = row + "," + obj.getBucketName()
+        if(obj.getSize() != None):
+            headers = headers + ",size"
+            row = row + "," + obj.getSize()
+        if(obj.getInCache() != None):
+            headers = headers + ",in_cache"
+            
+            if(obj.getInCache()):
+                row = row + ",y"
+            else:
+                row = row + ",n"
+        if(obj.getOwner() != None):
+            headers = headers + ",owner"
+            row = row + "," + obj.getOwner()
+        if(obj.getCreationDate() != None):
+            headers = headers + ",creation_date"
+            row = row + "," + obj.getCreationDate()
+        if(obj.getEtag() != None):
+            headers = headers + ",etag"
+            row = row + "," + obj.getEtag()
+
+        if(len(toPrint) == 0):
+            toPrint.append(headers)
+        
+        toPrint.append(row)
+        headers = ""
+
+    return toPrint
+
 
 def convertTapeSummary(output):
     toPrint = []

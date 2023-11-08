@@ -48,7 +48,7 @@ class ObjectDetails:
         return self.CreationDate
 
     def getETag(self):
-        return self.Etag
+        return self.ETag
 
     def getId(self):
         return self.Id
@@ -93,7 +93,6 @@ class ObjectDetails:
         self.setOwner(o['Owner'])
         self.setSize(o['Size'])
         self.setType(o['Type'])
-
 
     def setBlobs(self, b):
         if(b != None):

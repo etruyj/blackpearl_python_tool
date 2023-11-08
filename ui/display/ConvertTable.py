@@ -7,12 +7,13 @@
 from structures.BucketGroupedJob import BucketGroupedJob
 from structures.BucketGroupTapes import BucketGroupTapes
 from structures.BucketSummary import BucketSummary
+from structures.ObjectSummary import ObjectSummary
 from structures.TapeSummary import TapeSummary
 from structures.UserSummary import UserSummary
 
 import util.convert.StorageUnits as StorageUnits
 
-def toOutput(output):
+def toOutput(output, include_headers):
     toPrint = []
     tables = []
 
@@ -26,10 +27,15 @@ def toOutput(output):
                 tables = loadBucketGroupSummary(output)
             if(isinstance(output[0], BucketSummary)):
                 tables = loadBucketSummary(output)
+            if(isinstance(output[0], ObjectSummary)):
+                tables = loadObjectSummary(output)
             if(isinstance(output[0], TapeSummary)):
                 tables = loadTapeSummary(output)
             if(isinstance(output[0], UserSummary)):
                 print("add code")
+
+    if(not include_headers):
+       tables.pop(0)
 
     if(tables != None):
         toPrint = buildTable(tables)
@@ -180,6 +186,50 @@ def loadDict(output):
         row.append(output[headers[i]])
         table.append(row)
 
+    return table
+
+
+def loadObjectSummary(output):
+    table = []
+    headers = []
+    row = []
+
+    for obj in output:
+        headers.append("name")
+        row.append(obj.getName())
+
+        if(obj.getId() != None):
+            headers.append("id")
+            row.append(obj.getId())
+        if(obj.getBucketName() != None):
+            headers.append("bucket_name")
+            row.append(obj.getBucketName())
+        if(obj.getSize() != None):
+            headers.append("size")
+            row.append(obj.getSize())
+        if(obj.getInCache() != None):
+            headers.append("in_cache")
+
+            if(obj.getInCache()):
+                row.append("y")
+            else:
+                row.append("n")
+        if(obj.getOwner() != None):
+            headers.append("owner")
+            row.append(obj.getOwner())
+        if(obj.getCreationDate() != None):
+            headers.append("creation_date")
+            row.append(obj.getCreationDate())
+        if(obj.getEtag() != None):
+            headers.append("etag")
+            row.append(obj.getEtag())
+
+        if(len(table) == 0):
+            table.append(headers)
+    
+        table.append(row)
+        headers = []
+        row = []
     return table
 
 def loadTapeSummary(output):

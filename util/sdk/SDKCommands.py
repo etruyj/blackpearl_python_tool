@@ -350,7 +350,11 @@ def getObjectsWithFullDetails(blackpearl, bucket, prefix, include_location, plen
         if(page_start == 0):
             page_start = None
 
-        response = blackpearl.get_objects_with_full_details_spectra_s3(ds3.GetObjectsWithFullDetailsSpectraS3Request(bucket, include_physical_placement=include_location, page_start_marker=page_start, page_length=plength))
+        if(prefix == None): # Option without a prefix.
+            response = blackpearl.get_objects_with_full_details_spectra_s3(ds3.GetObjectsWithFullDetailsSpectraS3Request(bucket, include_physical_placement=include_location, page_start_marker=page_start, page_length=plength))
+        else:
+            response = blackpearl.get_objects_with_full_details_spectra_s3(ds3.GetObjectsWithFullDetailsSpectraS3Request(bucket, include_physical_placement=include_location, page_start_marker=page_start, page_length=plength, name=prefix))
+
 
         # Full response payload is returned instead of the
         # results field like other calls as the paginated

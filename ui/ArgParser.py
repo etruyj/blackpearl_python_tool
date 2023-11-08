@@ -37,6 +37,12 @@ command = "none"
 output_format = "table"
 
 def configureLogging(log_settings):
+    global log_count
+    global log_level
+    global log_location
+    global log_name
+    global log_size
+
     if log_settings == None or len(log_settings) == 0:
         print("Configuration file missing log settings. Using defaults.")
     else:
@@ -89,6 +95,8 @@ def configureLogging(log_settings):
 
 def configureSettings(settings):
     global object_fetch_limit # scope is clashing for some reason.
+    global option2
+
     try:
         if(settings != None and len(settings) > 0):
             if('max_moves' in settings):
@@ -101,7 +109,6 @@ def configureSettings(settings):
 
         else:
             print("No script settings found in the configuration file. Using default values.")
-
 
     except Exception as e:
         print("ERROR: " + e.__str__())

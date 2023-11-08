@@ -113,11 +113,13 @@ class Controller:
     def listDataPolicies(self):
         return ListDataPolicies.createList(self.blackpearl, self.logbook)
 
-    def listObjects(self, bucket):
+    def listObjects(self, bucket, filters, object_fetch_limit, starting_page):
         # Basic List Objects
         #return ListObjects.createList(bucket, self.blackpearl, self.logbook)
         # Advanced
-        return ListObjects.withPhysicalLocations(bucket, "not-used", self.blackpearl, self.logbook)
+        #return ListObjects.withPhysicalLocations(bucket, "not-used", object_fetch_limit, self.blackpearl, self.logbook)
+        # Pagenated
+        return ListObjects.customList(bucket, filters, object_fetch_limit, starting_page, self.blackpearl, self.logbook) 
 
     def listPools(self):
         return ListPools.createList(self.blackpearl, self.logbook)
@@ -149,5 +151,5 @@ class Controller:
     def tapeReport(self, group_by, filter_by):
         return TapeReport.createReport(group_by, filter_by, self.blackpearl, self.logbook)
 
-    def test(self, option):
-        return LimitBucketSize.checkLimits(self.blackpearl, self.logbook)
+    def test(self, option, option3):
+        return ListObjects.customList(option, option3, 5, None, self.blackpearl, self.logbook)

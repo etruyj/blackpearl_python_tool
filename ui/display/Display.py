@@ -17,7 +17,7 @@ def fileContents(path):
     else:
         print("Error [" + path + "] does not exist.")
 
-def output(output, output_format="csv", file=None):
+def output(output, output_format="csv", file=None, first_run=True, re_run=False):
     toPrint = []
 
     # Handle error outputs. If the output is a single string
@@ -30,13 +30,17 @@ def output(output, output_format="csv", file=None):
         # Covert output to the desired format
         match output_format:
             case "csv":
-                toPrint = ConvertCSV.toOutput(output)
+                toPrint = ConvertCSV.toOutput(output, first_run)
             case "table":
-                toPrint = ConvertTable.toOutput(output)
+                toPrint = ConvertTable.toOutput(output, first_run)
             case _:
-                toPrint = ConvertTable.toOutput(output)
+                toPrint = ConvertTable.toOutput(output, first_run)
 
     if(file==None or file==""):
         Print.toShell(toPrint)
     else:
-        Save.toFile(toPrint, file)
+        # Whether it should be an append or fresh file is the opposite
+        # of whether or not this is the first run. The same is true about
+        # whether the file path should be printed being the opposite off
+        # the state of re_run.
+        Save.appendToFile(toPrint, file, not first_run, not re_run)

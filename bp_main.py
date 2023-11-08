@@ -39,7 +39,7 @@ if(aparser.isValid()):
             case "list-data-policies" | "list-policies":
                 response = controller.listDataPolicies()
             case "list-objects":
-                response = controller.listObjects(aparser.getOption1())
+                response = controller.listObjects(aparser.getOption1(), aparser.getObjectFetchLimit())
             case "list-pools":
                 response = controller.listPools()
             case "list-storage-domains" | "list-domains":
