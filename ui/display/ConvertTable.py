@@ -220,6 +220,14 @@ def loadObjectSummary(output):
         if(obj.getCreationDate() != None):
             headers.append("creation_date")
             row.append(obj.getCreationDate())
+        if(obj.getTapes() != None):
+            headers.append("barcode")
+            tape_str = ""
+            for i in range(0, obj.getTapeCount()):
+                tape_str = tape_str + " " + str(obj.getTape(i))
+
+            row.append(tape_str)
+
         if(obj.getEtag() != None):
             headers.append("etag")
             row.append(obj.getEtag())

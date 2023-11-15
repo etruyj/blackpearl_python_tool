@@ -15,6 +15,7 @@ class ObjectSummary:
     owner = None
     name = None
     size = None
+    tapes = None
     version_id = None
     version_latest = None
 
@@ -46,6 +47,21 @@ class ObjectSummary:
 
     def getSize(self):
         return self.size
+
+    def getTapeCount(self):
+        if(self.tapes != None):
+            return len(self.tapes)
+        else:
+            return 0
+
+    def getTape(self, t):
+        if(t < len(self.tapes)):
+            return self.tapes[t].getBarcode()
+        else:
+            return "invalid index"
+
+    def getTapes(self):
+        return self.tapes
 
     def getVersionId(self):
         return self.version_id
@@ -80,6 +96,9 @@ class ObjectSummary:
 
     def setSize(self, s):
         self.size = s
+
+    def setTapes(self, t):
+        self.tapes = t
 
     def setVersionId(self, v):
         self.version_id = v

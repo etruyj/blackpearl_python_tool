@@ -8,8 +8,21 @@
 #====================================================================
 
 from structures.sdk.Ds3Blob import Ds3Blob
+from structures.sdk.Tape import Tape
 
 class ObjectDetails:
+    def __init__(self):
+        # Declare lists up here as these values are not reset
+        # with class initialization if they are initially declared
+        # as zero.
+        self.AzureTargetList = []
+        self.Ds3TargetList = []
+        self.PoolList = []
+        self.S3TargetList = []
+        self.TapeList = []
+        self.PhysicalPlacement = { "AzureTargetList", "Ds3TargetList", "TapeList", "PoolList", "S3TargetList" }
+
+
     #============================================
     # Getters
     #============================================
@@ -62,6 +75,12 @@ class ObjectDetails:
     def getSize(self):
         return self.Size
 
+    def getTapeCount(self):
+        return len(self.TapeList)
+
+    def getTapes(self):
+        return self.TapeList
+
     def getType(self):
         return self.Type
 
@@ -79,6 +98,8 @@ class ObjectDetails:
     #============================================
     
     def importObject(self, o):
+        if(self.getName() != None):
+            print(self.getName() + " " + self.getTapeCount())
         self.setBlobs(o['Blobs'])
         self.setBlobsPersisted(o['BlobsBeingPersisted'])
         self.setBlobsDegraded(o['BlobsDegraded'])
@@ -93,6 +114,15 @@ class ObjectDetails:
         self.setOwner(o['Owner'])
         self.setSize(o['Size'])
         self.setType(o['Type'])
+
+        # Physical Placement
+        for obj in o['Blobs']['ObjectList']:
+            # Tape Locations
+            if(obj['PhysicalPlacement']['TapeList'] != None):
+                for tape in obj['PhysicalPlacement']['TapeList']:
+                    t = Tape()
+                    t.importTape(tape)
+                    self.TapeList.append(t)
 
     def setBlobs(self, b):
         if(b != None):

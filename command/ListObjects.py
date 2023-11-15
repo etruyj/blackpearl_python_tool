@@ -45,6 +45,8 @@ def createList(bucket, blackpearl, logbook):
 
 def customList(bucket, filters, object_fetch_limit, starting_page, blackpearl, logbook):
     try:
+        logbook.INFO("Creating custom list of objects in bucket [" + bucket + "]")
+        logbook.DEBUG("Calling ArgFilters.parseParameters()...")
         filter_params = ArgFilters.parseParameters(filters)
         
         # Check to see if an object_name was specified.
@@ -53,6 +55,7 @@ def customList(bucket, filters, object_fetch_limit, starting_page, blackpearl, l
                 raise Exception("Invalid parameter. Object name must be a single field.")
             else:
                 name = filter_params["name"]
+                logbook.INFO("Querying for specific object: " + name)
         else:
             name = None
 
@@ -61,7 +64,11 @@ def customList(bucket, filters, object_fetch_limit, starting_page, blackpearl, l
         else:
             fields = "all"
 
+        logbook.INFO("Returned fields will be: " + str(fields))
+        logbook.DEBUG("Calling withPhysicalLocations()...")
         results = withPhysicalLocations(bucket, name, object_fetch_limit, starting_page, blackpearl, logbook)
+        
+        logbook.DEBUG("Calling summarizeResults()...")
         results["results_list"] = summarizeResults(bucket, results["results_list"], fields, logbook)
 
         return results
@@ -80,6 +87,8 @@ def summarizeResults(bucket, object_list, fields, logbook):
 
         summary.setName(obj.getName())
 
+        if("all" in fields or "barcode" in fields):
+            summary.setTapes(obj.getTapes())
         if("all" in fields or "bucket" in fields):
             summary.setBucketName(bucket)
         if("all" in fields or "created" in fields):

@@ -158,6 +158,14 @@ def convertObjectSummary(output):
         if(obj.getCreationDate() != None):
             headers = headers + ",creation_date"
             row = row + "," + obj.getCreationDate()
+        if(obj.getTapes() != None):
+            headers = headers + ",barcode"
+            row = row + ","
+
+            for i in range(0, obj.getTapeCount()):
+                row = row + obj.getTape(i) + " "
+
+            row = row[:-1] # strip last space from line.
         if(obj.getEtag() != None):
             headers = headers + ",etag"
             row = row + "," + obj.getEtag()
