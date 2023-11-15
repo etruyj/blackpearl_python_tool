@@ -15,9 +15,9 @@ This script requires Spectra Logic's DS3 Python3 SDK to be installed. The reposi
 | get-database | Downloads the most recent BlackPearl database to the downloads directory. A different file name can be specified with --file. A different directory can be specified with --path. A prefix, such as hostname, can be added to the file with --prefix. | 
 | eject-tape | Issues the command for the BlackPearl to move the tape specified by --barcode or tapes listing in tape list --file from storage slots to entry/exit. Use [--max-moves : --moves] to specify entry/exit size. The plural eject-tapes also works. | 
 | export-tape | Issues the command for the BlackPearl to move the tape specified by --barcode or tapes listing in tape list --file from storage slots to entry/exit. Use [--max-moves : --moves] to specify entry/exit size. The plural export-tapes also works. |  
-| job-report | Provides a list of data written and read from a bucket over the desired period. Accepts --filter [ days | hours ]:INTEGER |
+| job-report | Provides a list of data written and read from a bucket over the desired period. Accepts --filter [ days : hours ]:INTEGER |
 | list-buckets | Provides a list of all buckets visible to the user on the BlackPearl | 
-| list-objects | Provides a list of all objects in a bucket. Requires --bucket Accepts --filter [ name | fields ] |  
+| list-objects | Provides a list of all objects in a bucket. Requires --bucket Accepts --filter [ name : fields ] |  
 | mark-read-only | Mark the specified bucket read-only by removing all bucket ACLs from the bucket except for LIST, READ, and JOB. Requires --bucket to be specified. | 
 | put-object | Puts an object to the BlackPearl. Specify --bucket, --file, and (optionally) --key to rename the object. | 
 | stage-objects | Stages objects contained in a text list from tape to disk. Requires --bucket and --file option flags. |
