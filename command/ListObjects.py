@@ -46,9 +46,14 @@ def createList(bucket, blackpearl, logbook):
 def customList(bucket, filters, object_fetch_limit, starting_page, blackpearl, logbook):
     try:
         logbook.INFO("Creating custom list of objects in bucket [" + bucket + "]")
-        logbook.DEBUG("Calling ArgFilters.parseParameters()...")
-        filter_params = ArgFilters.parseParameters(filters)
         
+        if(filters is not None and len(filters) > 0):
+            logbook.DEBUG("Calling ArgFilters.parseParameters()...")
+            filter_params = ArgFilters.parseParameters(filters)
+        else:
+            filter_params = {}
+            filter_params['fields'] = "all"
+
         # Check to see if an object_name was specified.
         if("name" in filter_params):
             if(isinstance(filter_params["name"], list)):
@@ -69,7 +74,9 @@ def customList(bucket, filters, object_fetch_limit, starting_page, blackpearl, l
         results = withPhysicalLocations(bucket, name, object_fetch_limit, starting_page, blackpearl, logbook)
         
         logbook.DEBUG("Calling summarizeResults()...")
+        logbook.DEBUG("Passing (" + str(len(results["results_list"])) + ") raw objects for clean-up.")
         results["results_list"] = summarizeResults(bucket, results["results_list"], fields, logbook)
+        logbook.DEBUG("Returning (" + str(len(results["results_list"])) + ") objects for output.")
 
         return results
     except Exception as e:
