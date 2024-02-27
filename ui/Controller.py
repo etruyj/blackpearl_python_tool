@@ -26,6 +26,7 @@ import command.ListTapePartitions as ListTapePartitions
 import command.ListUsers as ListUsers
 import command.PutObject as PutObject
 import command.ReadOnlyBucket as ReadOnlyBucket
+import command.RestoreTape as RestoreTape
 import command.StageObject as StageObject
 import command.TapeReport as TapeReport
 
@@ -152,4 +153,4 @@ class Controller:
         return TapeReport.createReport(group_by, filter_by, self.blackpearl, self.logbook)
 
     def test(self, option, option3):
-        return ListObjects.customList(option, option3, 5, None, self.blackpearl, self.logbook)
+        return RestoreTape.withBarcode(option, self.blackpearl, self.logbook)

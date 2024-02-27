@@ -88,7 +88,10 @@ def createReport(group_by, filter_by, blackpearl, logbook):
                 match group_by:
                     case "bucket":
                         output = listGroupBucket(tape_list, bucket_map, params, logbook)
+                    case "storage_domain":
+                        output = listGroupStorageDomain(tape_list, bucket_map, params, logbook)
                     case _:
+                        logbook.WARN("group-by [" + group_by + "] not supported. Outputing list of all tapes.")
                         output = listAllTapes(tape_list, bucket_map, par_map, member_domain_map, params, logbook)
 
             else:
@@ -196,6 +199,78 @@ def listAllTapes(tape_list, bucket_map, par_map, member_domain_map, filter_by, l
     return tsm_list
 
 def listGroupBucket(tape_list, bucket_map, filter_by, logbook):
+    logbook.INFO("Creating list grouped by bucket...");
+    tape_map = {}
+
+    # Error handle to make sure there is a list of tapes.
+    if(tape_list != None):
+        for tape in tape_list:
+            if(filter_by != None):
+                tape = filterTape(tape, filter_by)
+
+            if(tape != None):
+                #Blank tapes
+                if(tape.getStorageDomainMemberId() == None):
+                    if("scratch" not in tape_map):
+                        bgt = BucketGroupTapes()
+                        bgt.setBucketName("scratch")
+                        bgt.addTapeCapacity(tape.getTotalCapacity(), tape.getAvailableCapacity())
+                        bgt.addTape()
+                        tape_map["scratch"] = bgt
+                    else:
+                        bgt = tape_map["scratch"]
+                        bgt.addTapeCapacity(tape.getTotalCapacity(), tape.getAvailableCapacity())
+                        bgt.addTape()
+                        tape_map["scratch"] = bgt
+
+                # Non-bucket isolated tapes
+                elif(tape.getBucketId() == None):
+                    if("non-isolated" not in tape_map):
+                        bgt = BucketGroupTapes()
+                        bgt.setBucketName("non-isolated")
+                        bgt.addTapeCapacity(tape.getTotalCapacity(), tape.getAvailableCapacity())
+                        bgt.addTape()
+                        tape_map["non-isolated"] = bgt
+                    else:
+                        bgt = tape_map["non-isolated"]
+                        bgt.addTapeCapacity(tape.getTotalCapacity(), tape.getAvailableCapacity())
+                        bgt.addTape()
+                        tape_map["non-isolated"] = bgt
+
+                # Bucket isolated tapes
+                elif(tape.getBucketId() != None):
+                    if(tape.getBucketId() not in tape_map):
+                        bgt = BucketGroupTapes()
+                        bgt.setBucketName(tape.getBucketId())
+                        bgt.addTapeCapacity(tape.getTotalCapacity(), tape.getAvailableCapacity())
+                        bgt.addTape()
+                        tape_map[tape.getBucketId()] = bgt
+                    else:
+                        bgt = tape_map[tape.getBucketId()]
+                        bgt.addTapeCapacity(tape.getTotalCapacity(), tape.getAvailableCapacity())
+                        bgt.addTape()
+                        tape_map[tape.getBucketId()] = bgt
+
+                # Default - Failed to parse
+                else:
+                    logbook.WARN("Unabled to parse tape [" + tape.getBarcode() + "].")
+
+    # Convert Bucket ID to Bucket Name
+    # and switch from dictionary to a list.    
+    bucket_list = []
+    for key in tape_map.keys():
+        bgt = tape_map[key]
+
+        # Find bucket name if not a scratch or non-isolated.
+        if(key != "scatch" and key != "non-isolated"):
+            bgt.setBucketName(findBucketName(bgt.getBucketName(), bucket_map, logbook))
+
+        # Add bgt to list.
+        bucket_list.append(bgt)
+
+    return bucket_list
+
+def listGroupStorageDomain(tape_list, bucket_map, filter_by, logbook):
     logbook.INFO("Creating list grouped by bucket...");
     tape_map = {}
 

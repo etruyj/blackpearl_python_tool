@@ -17,7 +17,7 @@ def fileContents(path):
     else:
         print("Error [" + path + "] does not exist.")
 
-def output(output, output_format="csv", file=None, first_run=True, re_run=False):
+def output(output, output_format="csv", file=None, first_run=True):
     toPrint = []
 
     # Handle error outputs. If the output is a single string
@@ -39,8 +39,12 @@ def output(output, output_format="csv", file=None, first_run=True, re_run=False)
     if(file==None or file==""):
         Print.toShell(toPrint)
     else:
-        # Whether it should be an append or fresh file is the opposite
-        # of whether or not this is the first run. The same is true about
-        # whether the file path should be printed being the opposite off
-        # the state of re_run.
-        Save.appendToFile(toPrint, file, not first_run, not re_run)
+        # For saving the file, two pieces of information need to be tracked
+        # should we append the file (or create new) and should the output
+        # path be printed multiple times. Both of this triggers relate to 
+        # whether this is the first run of the script.
+        # If it is the first run:
+        #   append is false (aka not first_run)
+        #   print_file_path is true (aka first_run)
+        # The inverse is true in for the reverse.
+        Save.appendToFile(toPrint, file, not first_run, first_run) 

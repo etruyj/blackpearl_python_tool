@@ -10,6 +10,7 @@ from util.Logger import Logger
 import util.http.HttpCommands as HttpCommands
 import util.sdk.BucketAclCommands as BucketAclCommands
 import util.sdk.Cache as Cache
+import util.sdk.RestoreTape as RestoreTape
 import util.sdk.SDKCommands as SDKCommands
 import util.sdk.StageObjects as StageObjects
 
@@ -375,5 +376,11 @@ class BPConnector:
     def stageObject(self, bucket, object_list, logbook):
         try:
             return StageObjects.fromList(bucket, object_list, self.data_path_client, logbook)
+        except Exception as e:
+            raise e
+
+    def restoreTape(self, tape_id, logbook):
+        try:
+            return RestoreTape.getTape(tape_id, self.data_path_client, logbook)
         except Exception as e:
             raise e
